@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity
             "\\d+",
             "<([a-z]+)([^<]+)*(?:>(.*)<\\/\\1>|\\s+\\/>)",
             "\\[\\d+\\]",
-            "(?<!http:|\\S)//.*$",
+            "(?<!http:|\\S)//.*",
             "[\\u2E80-\\u9FFF]+"
     };
 
