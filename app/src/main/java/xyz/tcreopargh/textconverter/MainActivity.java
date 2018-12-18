@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity
             "电子邮箱",
             "URL",
             "IP地址",
+            "整数",
             "常规数字",
             "HTML标签",
             "维基百科注释",
@@ -110,7 +111,8 @@ public class MainActivity extends AppCompatActivity
             "[a-z\\d]+(\\.[a-z\\d]+)*@([\\da-z](-[\\da-z])?)+(\\.{1,2}[a-z]+)+",
             "(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?",
             "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
-            "\\d+",
+            "-?\\d+",
+            "(-?\\d+)(\\.\\d+)?",
             "<([a-z]+)([^<]+)*(?:>(.*)<\\/\\1>|\\s+\\/>)",
             "\\[\\d+\\]",
             "(?<!http:|\\S)//.*",
@@ -1056,56 +1058,68 @@ public class MainActivity extends AppCompatActivity
                                     dialog.cancel();
                                 }
                             })
+                            .setNeutralButton("查看示例", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    moreInput.setText("生成随机时间：{0,23}:{0,59}\n");
+                                    dialog.dismiss();
+                                }
+                            })
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    final EditText dataQuantity = dialogView.findViewById(R.id.dataQuantity);
-                                    dataQuantityString[0] = dataQuantity.getText().toString();
-                                    if (dataQuantityString[0].isEmpty()) {
-                                        dataQuantityString[0] = "1";
-                                    }
-
-                                    int quantity = Integer.parseInt(dataQuantityString[0]);
-                                    StringBuilder finalOutputBuilder = new StringBuilder();
-                                    int min = 0, max = 0;
-                                    String format = moreInput.getText().toString();
-                                    for (int q = 0; q < quantity; q++) {
-                                        StringBuilder tempOutput = new StringBuilder();
-                                        for (int i = 0; i < format.length(); i++) {
-                                            if (i < format.length() - 1 && format.charAt(i) == '{' && format.charAt(i + 1) == '{') {
-                                                i++;
-                                                tempOutput.append('{');
-                                                continue;
-                                            }
-                                            if (format.charAt(i) == '{') {
-                                                int length = 0;
-                                                for (int j = 1; i + j < format.length(); j++) {
-                                                    if (format.charAt(i + j) == ',' || format.charAt(i + j) == '，') {
-                                                        min = Integer.parseInt(format.substring(i + 1, i + j));
-                                                        for (int k = 1; i + j + k < format.length(); k++) {
-                                                            if (format.charAt(i + j + k) == '}') {
-                                                                max = Integer.parseInt(format.substring(i + j + 1, i + j + k));
-                                                                length = j + k;
-                                                                break;
-                                                            }
-                                                        }
-                                                        break;
-                                                    }
-                                                }
-                                                Random random = new Random();
-                                                int randNum = random.nextInt(max - min + 1) + min;
-                                                tempOutput.append(String.valueOf(randNum));
-                                                i += length;
-                                            } else {
-                                                tempOutput.append(format.charAt(i));
-                                            }
+                                    try {
+                                        final EditText dataQuantity = dialogView.findViewById(R.id.dataQuantity);
+                                        dataQuantityString[0] = dataQuantity.getText().toString();
+                                        if (dataQuantityString[0].isEmpty()) {
+                                            dataQuantityString[0] = "1";
                                         }
-                                        finalOutputBuilder.append(tempOutput.toString());
+
+                                        int quantity = Integer.parseInt(dataQuantityString[0]);
+                                        StringBuilder finalOutputBuilder = new StringBuilder();
+                                        int min = 0, max = 0;
+                                        String format = moreInput.getText().toString();
+                                        for (int q = 0; q < quantity; q++) {
+                                            StringBuilder tempOutput = new StringBuilder();
+                                            for (int i = 0; i < format.length(); i++) {
+                                                if (i < format.length() - 1 && format.charAt(i) == '{' && format.charAt(i + 1) == '{') {
+                                                    i++;
+                                                    tempOutput.append('{');
+                                                    continue;
+                                                }
+                                                if (format.charAt(i) == '{') {
+                                                    int length = 0;
+                                                    for (int j = 1; i + j < format.length(); j++) {
+                                                        if (format.charAt(i + j) == ',' || format.charAt(i + j) == '，') {
+                                                            min = Integer.parseInt(format.substring(i + 1, i + j));
+                                                            for (int k = 1; i + j + k < format.length(); k++) {
+                                                                if (format.charAt(i + j + k) == '}') {
+                                                                    max = Integer.parseInt(format.substring(i + j + 1, i + j + k));
+                                                                    length = j + k;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                    Random random = new Random();
+                                                    int randNum = random.nextInt(max - min + 1) + min;
+                                                    tempOutput.append(String.valueOf(randNum));
+                                                    i += length;
+                                                } else {
+                                                    tempOutput.append(format.charAt(i));
+                                                }
+                                            }
+                                            finalOutputBuilder.append(tempOutput.toString());
+                                        }
+                                        moreOutput.setText(finalOutputBuilder.toString(), TextView.BufferType.EDITABLE);
+                                    } catch (Exception e) {
+                                        moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                                    } finally {
+                                        dialog.dismiss();
                                     }
-                                    moreOutput.setText(finalOutputBuilder.toString(), TextView.BufferType.EDITABLE);
                                     //dataQuantityString[0] = dataQuantity.getText().toString();
                                     //Toast.makeText(MainActivity.this,dataQuantityString[0],Toast.LENGTH_LONG).show();
-                                    dialog.cancel();
                                 }
                             }).create().show();
                 } catch (Exception e) {
@@ -1191,7 +1205,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static String getMD5(String plainText) {
-        String encryptText = null;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(plainText.getBytes("UTF8"));
