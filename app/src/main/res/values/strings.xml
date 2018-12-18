@@ -140,4 +140,5 @@
     <string name="format_instruction">输入一段自定义文本，文本中出现的{min,max}将被替换为min和max闭区间上的随机整数。注意：min和max必须是整数，如果要输出"{"符号，请用"{{"代替。</string>
     <string name="to_base_64">Base64编码</string>
     <string name="from_base_64">Base64解码</string>
+    <string name="github_address">GitHub项目地址</string>
 </resources>

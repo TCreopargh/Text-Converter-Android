@@ -31,7 +31,7 @@ public class AboutActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://blog.tcreopargh.xyz/archives/425"));
+                intent.setData(Uri.parse("https://github.com/TCreopargh/Text-Converter-Android"));
                 startActivity(intent);
             }
         });
