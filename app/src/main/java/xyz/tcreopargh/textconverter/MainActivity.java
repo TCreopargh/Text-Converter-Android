@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
 
     boolean keyGenNeedToReset = true;
 
-    final boolean doCapsSensitive[] = new boolean[]{false,false};
+    final boolean doCapsSensitive[] = new boolean[]{false, false};
 
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
 
@@ -148,9 +148,9 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        doCapsSensitive[0] = sharedPreferences.getBoolean("doCapsSensitive",false);
+        doCapsSensitive[0] = sharedPreferences.getBoolean("doCapsSensitive", false);
         doCapsSensitive[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
-        if(doCapsSensitive[1]) {
+        if (doCapsSensitive[1]) {
             replaceInput.setTextAppearance(R.style.MyMonospace);
             replaceOutput.setTextAppearance(R.style.MyMonospace);
             replaceTo.setTextAppearance(R.style.MyMonospace);
@@ -166,20 +166,20 @@ public class MainActivity extends AppCompatActivity
             moreInput.setTextAppearance(R.style.MyMonospace);
             moreOutput.setTextAppearance(R.style.MyMonospace);
         } else {
-            replaceInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            replaceOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            replaceTo.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            targetSeq.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            searchInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            searchOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            searchTarget.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            shuffleInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            shuffleOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            encryptInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            encryptOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            encryptKey.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            moreInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-            moreOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
+            replaceInput.setTextAppearance(R.style.MyRegular);
+            replaceOutput.setTextAppearance(R.style.MyRegular);
+            replaceTo.setTextAppearance(R.style.MyRegular);
+            targetSeq.setTextAppearance(R.style.MyRegular);
+            searchInput.setTextAppearance(R.style.MyRegular);
+            searchOutput.setTextAppearance(R.style.MyRegular);
+            searchTarget.setTextAppearance(R.style.MyRegular);
+            shuffleInput.setTextAppearance(R.style.MyRegular);
+            shuffleOutput.setTextAppearance(R.style.MyRegular);
+            encryptInput.setTextAppearance(R.style.MyRegular);
+            encryptOutput.setTextAppearance(R.style.MyRegular);
+            encryptKey.setTextAppearance(R.style.MyRegular);
+            moreInput.setTextAppearance(R.style.MyRegular);
+            moreOutput.setTextAppearance(R.style.MyRegular);
         }
 
         doUseRegexSearchCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -553,15 +553,15 @@ public class MainActivity extends AppCompatActivity
             builder.setTitle(R.string.settings)
                     .setIcon(R.drawable.baselinesettings)
                     //.setMessage("仅在不使用正则表达式时有效")
-                    .setMultiChoiceItems(new String[]{"区分大小写","设置输入框为等宽字体"}, doCapsSensitive, new DialogInterface.OnMultiChoiceClickListener() {
+                    .setMultiChoiceItems(new String[]{"区分大小写", "设置输入框为等宽字体"}, doCapsSensitive, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                             try {
-                                if(which == 0) {
+                                if (which == 0) {
                                     doCapsSensitive[which] = isChecked;
                                     Toast.makeText(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT).show();
-                                } else if(which == 1) {
-                                    if(isChecked) {
+                                } else if (which == 1) {
+                                    if (isChecked) {
                                         replaceInput.setTextAppearance(R.style.MyMonospace);
                                         replaceOutput.setTextAppearance(R.style.MyMonospace);
                                         replaceTo.setTextAppearance(R.style.MyMonospace);
@@ -578,28 +578,28 @@ public class MainActivity extends AppCompatActivity
                                         moreOutput.setTextAppearance(R.style.MyMonospace);
                                         doCapsSensitive[which] = true;
                                     } else {
-                                        replaceInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        replaceOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        replaceTo.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        targetSeq.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        searchInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        searchOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        searchTarget.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        shuffleInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        shuffleOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        encryptInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        encryptOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        encryptKey.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        moreInput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-                                        moreOutput.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
+                                        replaceInput.setTextAppearance(R.style.MyRegular);
+                                        replaceOutput.setTextAppearance(R.style.MyRegular);
+                                        replaceTo.setTextAppearance(R.style.MyRegular);
+                                        targetSeq.setTextAppearance(R.style.MyRegular);
+                                        searchInput.setTextAppearance(R.style.MyRegular);
+                                        searchOutput.setTextAppearance(R.style.MyRegular);
+                                        searchTarget.setTextAppearance(R.style.MyRegular);
+                                        shuffleInput.setTextAppearance(R.style.MyRegular);
+                                        shuffleOutput.setTextAppearance(R.style.MyRegular);
+                                        encryptInput.setTextAppearance(R.style.MyRegular);
+                                        encryptOutput.setTextAppearance(R.style.MyRegular);
+                                        encryptKey.setTextAppearance(R.style.MyRegular);
+                                        moreInput.setTextAppearance(R.style.MyRegular);
+                                        moreOutput.setTextAppearance(R.style.MyRegular);
                                         doCapsSensitive[which] = false;
                                     }
-                                    Toast.makeText(MainActivity.this,"设置成功！",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "设置成功！", Toast.LENGTH_LONG).show();
                                 }
-                                SharedPreferences sharedPreferences = getSharedPreferences("settings",MODE_PRIVATE);
+                                SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putBoolean("doCapsSensitive",doCapsSensitive[0]);
-                                editor.putBoolean("doUseMonospaced",doCapsSensitive[1]);
+                                editor.putBoolean("doCapsSensitive", doCapsSensitive[0]);
+                                editor.putBoolean("doUseMonospaced", doCapsSensitive[1]);
                                 editor.apply();
                             } catch (Exception e) {
                                 Toast.makeText(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_SHORT).show();
