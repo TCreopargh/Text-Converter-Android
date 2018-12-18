@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_text_replace"
+            android:icon="@drawable/baselinefindreplace"
+            android:title="@string/string_replace" />
+        <item
+            android:id="@+id/nav_text_search"
+            android:icon="@drawable/baselinesearch"
+            android:title="@string/text_search" />
+        <item
+            android:id="@+id/nav_text_shuffle"
+            android:icon="@drawable/baselineshuffle"
+            android:title="@string/string_shuffle_sort" />
+        <item
+            android:id="@+id/nav_text_encrypt"
+            android:icon="@drawable/ic_lock"
+            android:title="@string/text_encrypt" />
+        <item
+            android:id="@+id/nav_more_functions"
+            android:icon="@drawable/outline_more_horiz_24px"
+            android:title="@string/more_handy_function"/>
+    </group>
+
+    <item android:title="@string/more_function">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/share" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/baselinesettings"
+                android:title="@string/settings" />
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/baselinehelpoutline"
+                android:title="@string/view_help" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_info"
+                android:title="@string/about" />
+        </menu>
+    </item>
+
+</menu>

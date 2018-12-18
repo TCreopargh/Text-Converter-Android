@@ -1,0 +1,143 @@
+<resources>
+    <string name="app_name">文本转换</string>
+    <string name="navigation_drawer_open">打开抽屉</string>
+    <string name="navigation_drawer_close">关闭抽屉</string>
+    <string name="nav_header_subtitle">一个简单易用的小工具</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="input_source_text">输入源文本</string>
+    <string name="replace_from">将… (留空表示在每个字符中间插入字符串)</string>
+    <string name="replace_to">替换为… (留空表示删除)</string>
+    <string name="use_regex">使用正则表达式</string>
+    <string name="output">输出内容</string>
+    <string name="generate">生成</string>
+    <string name="copy_to_clipboard">复制到剪贴板</string>
+    <string name="no_use_spaces">使用换行符连接打乱后的字符串</string>
+    <string name="random_shuffle">子字符串打乱排序</string>
+    <string name="shuffle_hint">在这里输入内容，元素之间用空格或换行分隔</string>
+    <string name="shuffle_instruction">请在下面的文本框中输入内容，用空格或换行分隔的字符串表示一个元素，点击按钮后，系统将打乱所有的元素。</string>
+    <string name="shuffle">打乱</string>
+    <string name="sort_by_dict">按字典序排序</string>
+    <string name="sort_by_number">按数字大小排序</string>
+    <string name="string_replace">字符串替换</string>
+    <string name="string_shuffle_sort">字符串打乱/排序</string>
+    <string name="i_know">我知道了</string>
+    <string name="confirm">确定</string>
+    <string name="regex_info">正则表达式是一个强大的功能，如果您不了解什么是正则表达式，建议您参阅我们的帮助文档。\n我们预先制作了一些您很可能会用到的正则表达式。点击右上角的菜单，就可以载入这些预设值。</string>
+    <string name="view_help">查看帮助</string>
+    <string name="cleared">已清除</string>
+    <string name="undo">撤销</string>
+    <string name="caution">注意</string>
+    <string name="reverse_io">将输出内容复制到输入内容</string>
+    <string name="clear_all">清除所有</string>
+    <string name="search_next">查找下一个</string>
+    <string name="input_search_hint">输入要搜索的内容</string>
+    <string name="search_result">搜索结果</string>
+    <string name="search_previous">查找上一个</string>
+    <string name="text_search">字符串查找</string>
+    <string name="reset">重置搜索结果</string>
+    <string name="settings">设置</string>
+    <string name="share">分享</string>
+    <string name="load_presets">载入预设正则表达式</string>
+    <string name="title_activity_view_help">ViewHelpActivity</string>
+    <string name="search_all">查找所有</string>
+    <string name="action_share">分享</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="text_encrypt">AES加解密</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="uppercase_sensitive">区分大小写</string>
+    <string name="input_password">输入密钥</string>
+    <string name="encrypt">加密</string>
+    <string name="decrypt">解密</string>
+    <string name="password_visible">使密钥可见</string>
+    <string name="about">关于</string>
+    <string name="app_discription">好用轻便的文本高级转换工具</string>
+    <string name="error_loading_version">Error loading version</string>
+    <string name="developer">开发者：TCreopargh</string>
+    <string name="visit_my_website">访问我的网站</string>
+    <string name="update">检查更新/查看介绍</string>
+    <string name="exception_occured">发生异常：</string>
+    <string name="key_empty">密钥不能为空！</string>
+    <string name="string_reverse">字符串反转</string>
+    <string name="add_spaces">分段并缩进</string>
+    <string name="more_handy_function">更多实用功能</string>
+    <string name="more_function">更多功能</string>
+    <string name="add_numbers">分段并添加标号</string>
+    <string name="format_java_code">格式化Java代码</string>
+    <string name="custom_random">自定义随机数</string>
+    <string name="generate_md5">生成MD5编码</string>
+    <string name="format_instruction">输入一段自定义文本，文本中出现的{min,max}将被替换为min和max闭区间上的随机整数。注意：min和max必须是整数，如果要输出"{"符号，请用"{{"代替。</string>
+    <string name="to_base_64">Base64编码</string>
+    <string name="from_base_64">Base64解码</string>
+</resources>

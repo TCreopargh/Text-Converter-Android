@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_copy_to_clipboard"
+        android:title="@string/copy_to_clipboard" />
+    <item
+        android:id="@+id/action_reverse_io"
+        android:title="@string/reverse_io" />
+    <item
+        android:id="@+id/load_presets"
+        android:title="@string/load_presets"/>
+    <item
+        android:id="@+id/action_clear_all"
+        android:title="@string/clear_all" />
+</menu>
