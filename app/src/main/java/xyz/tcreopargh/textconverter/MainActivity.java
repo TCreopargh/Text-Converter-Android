@@ -520,17 +520,17 @@ public class MainActivity extends AppCompatActivity
                     }).create().show();
         } else if (id == R.id.action_read_file) {
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_DENIED) {
+                    != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             } else {
                 getFile();
             }
         } else if (id == R.id.action_write_file) {
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_DENIED) {
+                    != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
             } else {
                 getStoreLocation();
             }
@@ -826,7 +826,7 @@ public class MainActivity extends AppCompatActivity
                     for (int i = 0; i < elementCount; i++) {
                         elements = inputStr.split("[\n ]", elementCount);
                     }
-                    for(int i=elements.length-1;i>=0;i--) {
+                    for (int i = elements.length - 1; i >= 0; i--) {
                         outputBuilder.append(elements[i]).append(spiltWithChar);
                     }
                     shuffleOutput.setText(outputBuilder.toString());
@@ -1350,10 +1350,10 @@ public class MainActivity extends AppCompatActivity
                 Date date = new Date();
                 filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
                 writeSDFile(filename.toString(), outputString);
-                Toast.makeText(MainActivity.this,"文件已保存为: "+filename,Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "文件已保存为: " + filename, Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this,getString(R.string.exception_occured),Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, getString(R.string.exception_occured), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1395,17 +1395,17 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     getFile();
                 } else {
-                    Toast.makeText(MainActivity.this, "您拒绝了文件权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
                 }
                 break;
             case 2:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     getStoreLocation();
                 } else {
-                    Toast.makeText(MainActivity.this, "您拒绝了文件权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
                 }
                 break;
             default:
