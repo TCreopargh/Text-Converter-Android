@@ -141,4 +141,7 @@
     <string name="to_base_64">Base64编码</string>
     <string name="from_base_64">Base64解码</string>
     <string name="github_address">GitHub项目地址</string>
+    <string name="read_file">从文件读取内容</string>
+    <string name="write_file">输出内容到文件</string>
+    <string name="reverse_substring">颠倒字串顺序</string>
 </resources>

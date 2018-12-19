@@ -69,12 +69,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shuffledText" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
+        android:id="@+id/LinearLayout4"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,7 +89,29 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/shuffle"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/shuffleReverse"
+            style="@android:style/Widget.Material.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="49dp"
+            android:layout_weight="1"
+            android:text="@string/reverse_substring"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LinearLayout4">
 
         <Button
             android:id="@+id/sortByDictionaryIndex"
@@ -98,7 +120,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/sort_by_dict"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
         <Button
             android:id="@+id/sortByNumberValue"
@@ -107,7 +129,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/sort_by_number"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

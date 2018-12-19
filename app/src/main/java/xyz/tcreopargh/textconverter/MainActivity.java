@@ -3,19 +3,27 @@
 //including libraries:
 //com.google.googlejavaformat
 //pinyin4j
+//AESUtils
+//LfilePicker
 
 package xyz.tcreopargh.textconverter;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,14 +48,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.googlejavaformat.java.Formatter;
+import com.leon.lfilepickerlibrary.LFilePicker;
+import com.leon.lfilepickerlibrary.utils.Constant;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -57,7 +76,7 @@ public class MainActivity extends AppCompatActivity
     CheckBox doUseRegexCheckbox;
     LinearLayout textReplaceLayout, textShuffleLayout, textSearchLayout, textEncryptLayout, textMoreLayout;
 
-    Button shuffle, sortByDictionaryIndex, sortByNumberValue;
+    Button shuffle, sortByDictionaryIndex, sortByNumberValue, shuffleReverse;
     EditText shuffleInput;
     EditText shuffleOutput;
     CheckBox noUseSpaces;
@@ -89,6 +108,11 @@ public class MainActivity extends AppCompatActivity
     String generatedKey = "";
 
     boolean keyGenNeedToReset = true;
+
+    String path = "";
+
+    final int REQUESTCODE_READ = 1000;
+    final int REQUESTCODE_WRITE = 2000;
 
     final boolean doCapsSensitive[] = new boolean[]{false, false};
 
@@ -494,6 +518,22 @@ public class MainActivity extends AppCompatActivity
 
                         }
                     }).create().show();
+        } else if (id == R.id.action_read_file) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            } else {
+                getFile();
+            }
+        } else if (id == R.id.action_write_file) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+            } else {
+                getStoreLocation();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -640,6 +680,7 @@ public class MainActivity extends AppCompatActivity
         noUseSpaces = findViewById(R.id.noUseSpaces);
         sortByDictionaryIndex = findViewById(R.id.sortByDictionaryIndex);
         sortByNumberValue = findViewById(R.id.sortByNumberValue);
+        shuffleReverse = findViewById(R.id.shuffleReverse);
 
         textSearchLayout = findViewById(R.id.textSearchLayout);
         searchReset = findViewById(R.id.searchReset);
@@ -672,6 +713,7 @@ public class MainActivity extends AppCompatActivity
 
         generateReplacedText.setOnClickListener(this);
         shuffle.setOnClickListener(this);
+        shuffleReverse.setOnClickListener(this);
         sortByNumberValue.setOnClickListener(this);
         sortByDictionaryIndex.setOnClickListener(this);
         searchNext.setOnClickListener(this);
@@ -757,6 +799,35 @@ public class MainActivity extends AppCompatActivity
                                 outputBuilder.append(elements[i]);
                             }
                         }
+                    }
+                    shuffleOutput.setText(outputBuilder.toString());
+                } catch (Exception e) {
+                    shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                }
+                break;
+            case R.id.shuffleReverse:
+                try {
+                    char spiltWithChar;
+                    if (noUseSpaces.isChecked()) {
+                        spiltWithChar = '\n';
+                    } else {
+                        spiltWithChar = ' ';
+                    }
+                    String inputStr = shuffleInput.getText().toString();
+                    StringBuilder outputBuilder = new StringBuilder();
+                    int elementCount = 0;
+                    for (int i = 0; i < inputStr.length(); i++) {
+                        if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
+                            elementCount++;
+                        }
+                    }
+                    elementCount++;
+                    String elements[] = new String[elementCount];
+                    for (int i = 0; i < elementCount; i++) {
+                        elements = inputStr.split("[\n ]", elementCount);
+                    }
+                    for(int i=elements.length-1;i>=0;i--) {
+                        outputBuilder.append(elements[i]).append(spiltWithChar);
                     }
                     shuffleOutput.setText(outputBuilder.toString());
                 } catch (Exception e) {
@@ -1218,5 +1289,155 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (resultCode == RESULT_OK) {
+                if (requestCode == REQUESTCODE_READ) {
+                    //List<String> list = data.getStringArrayListExtra(Constant.RESULT_INFO);
+                    List<String> list = data.getStringArrayListExtra("paths");
+                    path = list.get(0);
+                } else if (requestCode == REQUESTCODE_WRITE) {
+                    path = data.getStringExtra("path");
+                }
+            }
+            if (requestCode == REQUESTCODE_READ) {
+                String getFileContent = readToString(path);
+                switch (getCurrentShowingLayoutId()) {
+                    case R.id.textReplaceLayout:
+                        replaceInput.setText(getFileContent, TextView.BufferType.EDITABLE);
+                        break;
+                    case R.id.textSearchLayout:
+                        searchInput.setText(getFileContent, TextView.BufferType.EDITABLE);
+                        break;
+                    case R.id.textShuffleLayout:
+                        shuffleInput.setText(getFileContent, TextView.BufferType.EDITABLE);
+                        break;
+                    case R.id.textEncryptLayout:
+                        encryptInput.setText(getFileContent, TextView.BufferType.EDITABLE);
+                        break;
+                    case R.id.textMoreLayout:
+                        moreInput.setText(getFileContent, TextView.BufferType.EDITABLE);
+                        break;
+                    default:
+                }
+            } else if (requestCode == REQUESTCODE_WRITE) {
+                String outputString = "";
+                switch (getCurrentShowingLayoutId()) {
+                    case R.id.textReplaceLayout:
+                        outputString = replaceOutput.getText().toString();
+                        break;
+                    case R.id.textSearchLayout:
+                        outputString = searchOutput.getText().toString();
+                        break;
+                    case R.id.textShuffleLayout:
+                        outputString = shuffleOutput.getText().toString();
+                        break;
+                    case R.id.textEncryptLayout:
+                        outputString = encryptOutput.getText().toString();
+                        break;
+                    case R.id.textMoreLayout:
+                        outputString = moreOutput.getText().toString();
+                        break;
+                    default:
+                }
+                StringBuilder filename = new StringBuilder(path);
+                SimpleDateFormat sdf = new SimpleDateFormat();
+                sdf.applyPattern("yyyy-MM-dd_HH:mm:ss");
+                Date date = new Date();
+                filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
+                writeSDFile(filename.toString(), outputString);
+                Toast.makeText(MainActivity.this,"文件已保存为: "+filename,Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this,getString(R.string.exception_occured),Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void writeSDFile(String fileName, String write_str) throws IOException {
+
+        File file = new File(fileName);
+
+        FileOutputStream fos = new FileOutputStream(file);
+
+        byte[] bytes = write_str.getBytes();
+
+        fos.write(bytes);
+
+        fos.close();
+    }
+
+    public String readToString(String fileName) {
+        String encoding = "UTF-8";
+        File file = new File(fileName);
+        Long filelength = file.length();
+        byte[] filecontent = new byte[filelength.intValue()];
+        try {
+            FileInputStream in = new FileInputStream(file);
+            in.read(filecontent);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            return new String(filecontent, encoding);
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("The OS does not support " + encoding);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getFile();
+                } else {
+                    Toast.makeText(MainActivity.this, "您拒绝了文件权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case 2:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getStoreLocation();
+                } else {
+                    Toast.makeText(MainActivity.this, "您拒绝了文件权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                }
+                break;
+            default:
+        }
+    }
+
+    public void getStoreLocation() {
+        new LFilePicker()
+                .withActivity(MainActivity.this)
+                .withRequestCode(REQUESTCODE_WRITE)
+                .withChooseMode(false)
+                .withIconStyle(Constant.ICON_STYLE_YELLOW)
+                .withBackIcon(Constant.BACKICON_STYLETHREE)
+                .start();
+    }
+
+    public void getFile() {
+        /*
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, 1);
+        */
+
+        new LFilePicker()
+                .withActivity(MainActivity.this)
+                .withRequestCode(REQUESTCODE_READ)
+                .withMutilyMode(false)
+                .withIconStyle(Constant.ICON_STYLE_YELLOW)
+                .withBackIcon(Constant.BACKICON_STYLETHREE)
+                .withIsGreater(false)
+                .withFileSize(102400)
+                .start();
     }
 }
