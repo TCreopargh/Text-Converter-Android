@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/searchInput"
         android:layout_width="match_parent"
-        android:layout_height="128dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -19,14 +19,17 @@
         android:maxLines="6"
         android:scrollHorizontally="false"
         android:singleLine="false"
+        app:layout_constraintBottom_toTopOf="@+id/searchTargetText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="4" />
 
     <EditText
         android:id="@+id/searchTargetText"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -36,9 +39,12 @@
         android:maxLines="6"
         android:scrollHorizontally="false"
         android:singleLine="false"
+        app:layout_constraintBottom_toTopOf="@+id/doUseRegexInSearch"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchInput" />
+        app:layout_constraintTop_toBottomOf="@+id/searchInput"
+        app:layout_constraintVertical_weight="1" />
 
     <CheckBox
         android:id="@+id/doUseRegexInSearch"
@@ -50,17 +56,18 @@
         android:gravity="end|center"
         android:text="@string/use_regex"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/searchOutput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchTargetText" />
+        app:layout_constraintTop_toBottomOf="@+id/searchTargetText"
+        app:layout_constraintVertical_weight="1" />
 
     <EditText
         android:id="@+id/searchOutput"
         android:layout_width="match_parent"
-        android:layout_height="128dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/search_result"
@@ -68,19 +75,22 @@
         android:maxLines="6"
         android:scrollHorizontally="false"
         android:singleLine="false"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/doUseRegexInSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/doUseRegexInSearch"
+        app:layout_constraintVertical_weight="2" />
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchOutput">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/searchReset"
@@ -89,7 +99,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/reset"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
         <Button
             android:id="@+id/searchAll"
@@ -98,7 +108,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/search_all"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
         <Button
             android:id="@+id/searchNext"
@@ -107,7 +117,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/search_next"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 

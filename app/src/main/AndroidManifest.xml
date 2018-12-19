@@ -4,8 +4,8 @@
     package="xyz.tcreopargh.textconverter">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +20,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,12 +28,10 @@
         </activity>
         <activity
             android:name=".ViewHelpActivity"
-            android:label="@string/view_help"
-            android:screenOrientation="portrait" />
+            android:label="@string/view_help" />
         <activity
             android:name=".AboutActivity"
-            android:label="@string/about"
-            android:screenOrientation="portrait" />
+            android:label="@string/about" />
     </application>
 
 </manifest>

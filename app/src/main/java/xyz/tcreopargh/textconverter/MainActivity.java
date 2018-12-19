@@ -994,6 +994,11 @@ public class MainActivity extends AppCompatActivity
                     }
                     boolean doUseRegexInSearch = doUseRegexSearchCheckbox.isChecked();
                     if (!doUseRegexInSearch) {
+                        String tempFindSrc = findSrc;
+                        if (!doCapsSensitive[0]) {
+                            findTarget = findTarget.toLowerCase();
+                            findSrc = findSrc.toLowerCase();
+                        }
                         if (searchCount == -1) {
                             searchCount = stringAppearCounter(findSrc, findTarget);
                             currentSearchCount = 0;
@@ -1003,11 +1008,12 @@ public class MainActivity extends AppCompatActivity
                             searchOutput.setText("未查找到目标！", TextView.BufferType.EDITABLE);
                         } else {
                             for (int i = 0; i < searchCount; i++) {
-                                searchResult.append(findTarget).append('\n');
+                                currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
+                                searchResult.append(tempFindSrc.substring(currentSearchPos, currentSearchPos + findTarget.length())).append("\n");
+                                currentSearchPos++;
                             }
                         }
                     } else {
-
                         if (searchCount == -1) {
                             searchCount = regexAppearCounter(findSrc, findTarget);
                             currentSearchCount = 0;
@@ -1325,6 +1331,10 @@ public class MainActivity extends AppCompatActivity
                     default:
                 }
             } else if (requestCode == REQUESTCODE_WRITE) {
+                if (path.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "未选定目标文件夹！", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 String outputString = "";
                 switch (getCurrentShowingLayoutId()) {
                     case R.id.textReplaceLayout:
@@ -1353,7 +1363,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, "文件已保存为: " + filename, Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this, getString(R.string.exception_occured), Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1413,6 +1423,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void getStoreLocation() {
+        path = "";
         new LFilePicker()
                 .withActivity(MainActivity.this)
                 .withRequestCode(REQUESTCODE_WRITE)
@@ -1429,7 +1440,7 @@ public class MainActivity extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(intent, 1);
         */
-
+        path = "";
         new LFilePicker()
                 .withActivity(MainActivity.this)
                 .withRequestCode(REQUESTCODE_READ)

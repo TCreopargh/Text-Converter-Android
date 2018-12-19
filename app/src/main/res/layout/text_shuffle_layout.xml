@@ -8,10 +8,10 @@
     <EditText
         android:id="@+id/shuffledText"
         android:layout_width="match_parent"
-        android:layout_height="99dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="@string/output"
         android:inputType="textMultiLine"
@@ -19,9 +19,12 @@
         android:scrollHorizontally="false"
         android:singleLine="false"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/noUseSpaces"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shuffleInput" />
+        app:layout_constraintTop_toBottomOf="@+id/shuffleInput"
+        app:layout_constraintVertical_weight="1" />
 
     <TextView
         android:id="@+id/textView6"
@@ -41,7 +44,7 @@
     <EditText
         android:id="@+id/shuffleInput"
         android:layout_width="match_parent"
-        android:layout_height="99dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -52,35 +55,38 @@
         android:scrollHorizontally="false"
         android:singleLine="false"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/shuffledText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        app:layout_constraintVertical_weight="1" />
 
     <CheckBox
         android:id="@+id/noUseSpaces"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:gravity="end|center"
         android:text="@string/no_use_spaces"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/LinearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shuffledText" />
+        app:layout_constraintStart_toStartOf="parent" />
+
     <LinearLayout
+        android:id="@+id/LinearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:id="@+id/LinearLayout4"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/noUseSpaces">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/generateShuffleRand"
@@ -101,17 +107,19 @@
             android:textSize="15sp" />
 
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LinearLayout4">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/sortByDictionaryIndex"

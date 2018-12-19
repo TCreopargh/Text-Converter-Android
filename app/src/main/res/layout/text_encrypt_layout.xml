@@ -8,7 +8,7 @@
     <EditText
         android:id="@+id/encryptInput"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -18,42 +18,49 @@
         android:maxLines="6"
         android:scrollHorizontally="false"
         android:singleLine="false"
+        app:layout_constraintBottom_toTopOf="@+id/encryptKey"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="3" />
 
     <EditText
         android:id="@+id/encryptKey"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/input_password"
         android:inputType="textPassword"
+        app:layout_constraintBottom_toTopOf="@+id/doPasswordVisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/encryptInput" />
+        app:layout_constraintTop_toBottomOf="@+id/encryptInput"
+        app:layout_constraintVertical_weight="1" />
 
     <EditText
         android:id="@+id/encryptOutput"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="@string/output"
         android:inputType="textMultiLine"
         android:maxLines="6"
         android:scrollHorizontally="false"
         android:singleLine="false"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/doPasswordVisible" />
+        app:layout_constraintTop_toBottomOf="@+id/doPasswordVisible"
+        app:layout_constraintVertical_weight="3" />
 
     <CheckBox
         android:id="@+id/doPasswordVisible"
@@ -62,25 +69,29 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:gravity="end|center"
         android:text="@string/password_visible"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/encryptOutput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/encryptKey" />
+        app:layout_constraintTop_toBottomOf="@+id/encryptKey"
+        app:layout_constraintVertical_weight="1" />
 
     <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/encryptOutput">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/encrypt"

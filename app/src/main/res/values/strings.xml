@@ -6,7 +6,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="input_source_text">输入源文本</string>
-    <string name="replace_from">将… (留空表示在每个字符中间插入字符串)</string>
+    <string name="replace_from">将… (留空表示在每个字符中间插入)</string>
     <string name="replace_to">替换为… (留空表示删除)</string>
     <string name="use_regex">使用正则表达式</string>
     <string name="output">输出内容</string>
@@ -143,5 +143,6 @@
     <string name="github_address">GitHub项目地址</string>
     <string name="read_file">从文件读取内容</string>
     <string name="write_file">输出内容到文件</string>
-    <string name="reverse_substring">颠倒字串顺序</string>
+    <string name="reverse_substring">颠倒子串顺序</string>
+    <string name="replace">替换</string>
 </resources>
