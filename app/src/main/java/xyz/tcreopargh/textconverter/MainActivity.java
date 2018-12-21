@@ -1525,7 +1525,7 @@ public class MainActivity extends AppCompatActivity
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .withIsGreater(false)
-                .withFileSize(5*1048576)
+                .withFileSize(10*1048576)
                 .start();
     }
 }
