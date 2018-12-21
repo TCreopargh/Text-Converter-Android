@@ -10,7 +10,7 @@ package xyz.tcreopargh.textconverter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -18,8 +18,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -50,7 +50,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -527,12 +526,41 @@ public class MainActivity extends AppCompatActivity
                 getFile();
             }
         } else if (id == R.id.action_write_file) {
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+            String outputString = "";
+            switch (getCurrentShowingLayoutId()) {
+                case R.id.textReplaceLayout:
+                    outputString = replaceOutput.getText().toString();
+                    break;
+                case R.id.textSearchLayout:
+                    outputString = searchOutput.getText().toString();
+                    break;
+                case R.id.textShuffleLayout:
+                    outputString = shuffleOutput.getText().toString();
+                    break;
+                case R.id.textEncryptLayout:
+                    outputString = encryptOutput.getText().toString();
+                    break;
+                case R.id.textMoreLayout:
+                    outputString = moreOutput.getText().toString();
+                    break;
+                default:
+            }
+            if (outputString.length() < 500 * 1024) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                } else {
+                    getStoreLocation();
+                }
             } else {
-                getStoreLocation();
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 3);
+                } else {
+                    storeDirectly();
+                }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -942,17 +970,13 @@ public class MainActivity extends AppCompatActivity
                                 currentSearchCount = 0;
                                 resetSearch();
                                 onClick(findViewById(R.id.searchNext));
-                                resetSearch();
-                                currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
-                                currentSearchCount++;
-                                onClick(findViewById(R.id.searchNext));
                             } else {
                                 currentSearchCount++;
                                 searchInput.requestFocus();
                                 searchInput.setSelection(currentSearchPos, currentSearchPos + findTarget.length());
                                 searchOutput.setText("目标共出现" + searchCount + "处，正在选中第" + currentSearchCount + "处");
+                                currentSearchPos += findTarget.length();
                             }
-                            currentSearchPos += findTarget.length();
                         }
                     } else {
                         if (searchCount == -1) {
@@ -1424,6 +1448,13 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
                 }
                 break;
+            case 3:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    storeDirectly();
+                } else {
+                    Toast.makeText(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                }
+                break;
             default:
         }
     }
@@ -1437,6 +1468,46 @@ public class MainActivity extends AppCompatActivity
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .start();
+    }
+
+    public void storeDirectly() {
+        try {
+            path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/TextConverter";
+            File destDir = new File(path);
+            if (!destDir.exists()) {
+                destDir.mkdirs();
+            }
+            String outputString = "";
+            switch (getCurrentShowingLayoutId()) {
+                case R.id.textReplaceLayout:
+                    outputString = replaceOutput.getText().toString();
+                    break;
+                case R.id.textSearchLayout:
+                    outputString = searchOutput.getText().toString();
+                    break;
+                case R.id.textShuffleLayout:
+                    outputString = shuffleOutput.getText().toString();
+                    break;
+                case R.id.textEncryptLayout:
+                    outputString = encryptOutput.getText().toString();
+                    break;
+                case R.id.textMoreLayout:
+                    outputString = moreOutput.getText().toString();
+                    break;
+                default:
+            }
+            StringBuilder filename = new StringBuilder(path);
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern("yyyy-MM-dd_HH:mm:ss");
+            Date date = new Date();
+            filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
+            writeSDFile(filename.toString(), outputString);
+            Toast.makeText(MainActivity.this, "文件过大，因此将直接保存。\n文件已保存为: " + filename, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG).show();
+        } finally {
+            path = "";
+        }
     }
 
     public void getFile() {
@@ -1454,7 +1525,7 @@ public class MainActivity extends AppCompatActivity
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .withIsGreater(false)
-                .withFileSize(2048*1024)
+                .withFileSize(5*1048576)
                 .start();
     }
 }
