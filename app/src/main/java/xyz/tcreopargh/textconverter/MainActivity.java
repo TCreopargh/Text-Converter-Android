@@ -940,6 +940,11 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
                             if (currentSearchPos == -1) {
                                 currentSearchCount = 0;
+                                resetSearch();
+                                onClick(findViewById(R.id.searchNext));
+                                resetSearch();
+                                currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
+                                currentSearchCount++;
                                 onClick(findViewById(R.id.searchNext));
                             } else {
                                 currentSearchCount++;
@@ -970,6 +975,7 @@ public class MainActivity extends AppCompatActivity
                                 pattern = Pattern.compile(searchTarget.getText().toString());
                                 matcher = pattern.matcher(searchInput.getText().toString());
                                 currentSearchCount = 0;
+                                resetSearch();
                                 onClick(findViewById(R.id.searchNext));
                             }
                         }
@@ -1448,7 +1454,7 @@ public class MainActivity extends AppCompatActivity
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .withIsGreater(false)
-                .withFileSize(102400)
+                .withFileSize(2048*1024)
                 .start();
     }
 }
