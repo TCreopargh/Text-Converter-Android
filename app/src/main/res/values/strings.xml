@@ -148,4 +148,5 @@
     <string name="send_feedback">发送反馈</string>
     <string name="to_morse_code">转为摩斯电码</string>
     <string name="from_morse_code">摩斯电码解码</string>
+    <string name="switch_cases">切换大小写</string>
 </resources>

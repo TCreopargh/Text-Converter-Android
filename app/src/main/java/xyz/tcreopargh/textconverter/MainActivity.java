@@ -101,6 +101,13 @@ public class MainActivity extends AppCompatActivity
     Pattern pattern;
     Matcher matcher;
 
+    final int ALL_LOWER = 0;
+    final int ALL_UPPER = 1;
+    final int CASE_REVERSE = 2;
+    final int FIRST_UPPER = 3;
+    final int SENTENCE_FIRST = 4;
+    int caseSwitchStatus = ALL_LOWER;
+
     boolean regexCautionIsShown = false;
     //View settingsView;
 
@@ -737,7 +744,7 @@ public class MainActivity extends AppCompatActivity
         moreInput = findViewById(R.id.moreInput);
         moreOutput = findViewById(R.id.moreOutput);
         reverseText = findViewById(R.id.textReverse);
-        addIndent = findViewById(R.id.addIndent);
+        addIndent = findViewById(R.id.upperLowerCase);
         addNumbers = findViewById(R.id.addNumbers);
         formatCode = findViewById(R.id.formatCode);
         customRandom = findViewById(R.id.customRandom);
@@ -1129,15 +1136,70 @@ public class MainActivity extends AppCompatActivity
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
                 }
                 break;
-            case R.id.addIndent:
+            case R.id.upperLowerCase:
                 try {
-                    String addIndentSrc = moreInput.getText().toString();
-                    String paragraphs[] = addIndentSrc.split("\\cJ");
-                    StringBuilder addIndentResult = new StringBuilder();
-                    for (String paragraph : paragraphs) {
-                        addIndentResult.append("    ").append(paragraph).append('\n');
+                    String caseSrc = moreInput.getText().toString();
+                    StringBuilder caseOutput = new StringBuilder();
+                    String toastMessage = "未知错误";
+                    switch (caseSwitchStatus) {
+                        case ALL_LOWER:
+                            caseOutput.append(caseSrc.toLowerCase());
+                            toastMessage = "全部转为小写，再次点击全部转为大写";
+                            caseSwitchStatus++;
+                            break;
+                        case ALL_UPPER:
+                            caseOutput.append(caseSrc.toUpperCase());
+                            toastMessage = "全部转为大写，再次点击切换大小写";
+                            caseSwitchStatus++;
+                            break;
+                        case CASE_REVERSE:
+                            for (int i = 0; i < caseSrc.length(); i++) {
+                                caseOutput.append(switchCase(caseSrc.charAt(i)));
+                            }
+                            toastMessage = "切换大小写，再次点击单词首字母大写";
+                            caseSwitchStatus++;
+                            break;
+                        case FIRST_UPPER:
+                            //String[] words = caseSrc.split("[ \n\r\t|!@#$%^&*(),./?><:\"《》，'。；‘：“—+=！￥…（）\\[\\]~\\\\]");
+                            final String symbols = " \n\r\t|!@#$%^&*(),./?><:\"《》，'。；‘：“—+=！￥…（）[]~\\";
+                            boolean wordBegin = true;
+                            for (int i = 0; i < caseSrc.length(); i++) {
+                                if (wordBegin) {
+                                    caseOutput.append(Character.toUpperCase(caseSrc.charAt(i)));
+                                    wordBegin = false;
+                                } else {
+                                    caseOutput.append(Character.toLowerCase(caseSrc.charAt(i)));
+                                }
+                                if (symbols.contains(String.valueOf(caseSrc.charAt(i)))) {
+                                    wordBegin = true;
+                                }
+                            }
+                            toastMessage = "单词首字母大写，再次点击句子首字母大写";
+                            caseSwitchStatus++;
+                            break;
+                        case SENTENCE_FIRST:
+                            boolean sentenceBegin = true;
+                            final String endSentence = "\n\r\t?!.？。！…";
+                            for (int i = 0; i < caseSrc.length(); i++) {
+                                if (sentenceBegin && ((caseSrc.charAt(i) >= 'a' && caseSrc.charAt(i) <= 'z') ||
+                                        (caseSrc.charAt(i) >= 'A' && caseSrc.charAt(i) <= 'Z'))) {
+                                    caseOutput.append(Character.toUpperCase(caseSrc.charAt(i)));
+                                    sentenceBegin = false;
+                                } else {
+                                    caseOutput.append(Character.toLowerCase(caseSrc.charAt(i)));
+                                }
+                                if (endSentence.contains(String.valueOf(caseSrc.charAt(i)))) {
+                                    sentenceBegin = true;
+                                }
+                            }
+                            toastMessage = "句子首字母大写，再次点击全部转为小写";
+                            caseSwitchStatus = 0;
+                            break;
+                        default:
+                            caseSwitchStatus = ALL_LOWER;
                     }
-                    moreOutput.setText(addIndentResult, TextView.BufferType.EDITABLE);
+                    moreOutput.setText(caseOutput.toString(), TextView.BufferType.EDITABLE);
+                    Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
                 }
@@ -1576,5 +1638,15 @@ public class MainActivity extends AppCompatActivity
                 .withIsGreater(false)
                 .withFileSize(10 * 1048576)
                 .start();
+    }
+
+    public char switchCase(char ch) {
+        if (ch >= 'a' && ch <= 'z') {
+            return Character.toUpperCase(ch);
+        } else if (ch >= 'A' && ch <= 'Z') {
+            return Character.toLowerCase(ch);
+        } else {
+            return ch;
+        }
     }
 }

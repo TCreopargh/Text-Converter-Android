@@ -67,12 +67,12 @@
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/addIndent"
+            android:id="@+id/upperLowerCase"
             style="@android:style/Widget.Material.Button.Colored"
             android:layout_width="0dp"
             android:layout_height="49dp"
             android:layout_weight="1"
-            android:text="@string/add_spaces"
+            android:text="@string/switch_cases"
             android:textAllCaps="false"
             android:textSize="15sp" />
 
