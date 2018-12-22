@@ -5,6 +5,7 @@
 //pinyin4j
 //AESUtils
 //LfilePicker
+//com.takwolf:morse-coder
 
 package xyz.tcreopargh.textconverter;
 
