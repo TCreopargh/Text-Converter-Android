@@ -1359,6 +1359,7 @@ public class MainActivity extends AppCompatActivity
                 try {
                     String morseCodeInput = moreInput.getText().toString();
                     morseCodeInput = morseCodeInput.replace(' ', '/').replace('\\', '/')
+                            .replace('\n','/').replace('\r','/')
                             .replace('*', '.').replace('·', '.')
                             .replace('_', '-').replace('—', '-');
                     MorseCoder morseCoder = new MorseCoder();
