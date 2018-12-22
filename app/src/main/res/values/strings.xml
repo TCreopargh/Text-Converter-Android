@@ -146,4 +146,6 @@
     <string name="reverse_substring">颠倒子串顺序</string>
     <string name="replace">替换</string>
     <string name="send_feedback">发送反馈</string>
+    <string name="to_morse_code">转为摩斯电码</string>
+    <string name="from_morse_code">摩斯电码解码</string>
 </resources>

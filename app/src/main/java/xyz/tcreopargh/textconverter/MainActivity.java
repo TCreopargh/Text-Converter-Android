@@ -10,7 +10,6 @@ package xyz.tcreopargh.textconverter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -66,6 +65,7 @@ import java.util.regex.Pattern;
 import com.google.googlejavaformat.java.Formatter;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.Constant;
+import com.takwolf.morsecoder.MorseCoder;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity
     CheckBox doPasswordVisible;
 
     EditText moreInput, moreOutput;
-    Button reverseText, addIndent, formatCode, addNumbers, customRandom, generateMD5, toBase64, fromBase64;
+    Button reverseText, addIndent, formatCode, addNumbers, customRandom, generateMD5, toBase64, fromBase64, toMorseCode, fromMorseCode;
 
     //EditText dataQuantity;
 
@@ -344,26 +344,32 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_copy_to_clipboard) {
             ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText("Error", "");
+            String clip = "";
             switch (currentShowingLayout) {
                 case R.id.textReplaceLayout:
-                    mClipData = ClipData.newPlainText("TextConverter", replaceOutput.getText().toString());
+                    clip = replaceOutput.getText().toString();
                     break;
                 case R.id.textShuffleLayout:
-                    mClipData = ClipData.newPlainText("TextConverter", shuffleOutput.getText().toString());
+                    clip = shuffleOutput.getText().toString();
                     break;
                 case R.id.textSearchLayout:
-                    mClipData = ClipData.newPlainText("TextConverter", searchOutput.getText().toString());
+                    clip = searchOutput.getText().toString();
                     break;
                 case R.id.textEncryptLayout:
-                    mClipData = ClipData.newPlainText("TextConverter", encryptOutput.getText().toString());
+                    clip = encryptOutput.getText().toString();
                     break;
                 case R.id.textMoreLayout:
-                    mClipData = ClipData.newPlainText("TextConverter", moreOutput.getText().toString());
+                    clip = moreOutput.getText().toString();
                     break;
                 default:
             }
-            clipboardManager.setPrimaryClip(mClipData);
-            Toast.makeText(MainActivity.this, "复制成功！", Toast.LENGTH_LONG).show();
+            if (clip.length() > 512000) {
+                Toast.makeText(MainActivity.this, "内容过长，无法复制到剪贴板！", Toast.LENGTH_LONG).show();
+            } else {
+                mClipData = ClipData.newPlainText("TextConverter", clip);
+                clipboardManager.setPrimaryClip(mClipData);
+                Toast.makeText(MainActivity.this, "复制成功！", Toast.LENGTH_LONG).show();
+            }
         } else if (id == R.id.action_reverse_io) {
             switch (currentShowingLayout) {
                 case R.id.textReplaceLayout:
@@ -586,7 +592,7 @@ public class MainActivity extends AppCompatActivity
             textSearchLayout.setVisibility(View.GONE);
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
-            setTitle(R.string.random_shuffle);
+            setTitle(R.string.string_shuffle_sort);
         } else if (id == R.id.nav_text_search) {
             textSearchLayout.setVisibility(View.VISIBLE);
             textShuffleLayout.setVisibility(View.GONE);
@@ -738,6 +744,8 @@ public class MainActivity extends AppCompatActivity
         generateMD5 = findViewById(R.id.toMD5);
         toBase64 = findViewById(R.id.toBase64);
         fromBase64 = findViewById(R.id.fromBase64);
+        toMorseCode = findViewById(R.id.toMorseCode);
+        fromMorseCode = findViewById(R.id.fromMorseCode);
 
         generateReplacedText.setOnClickListener(this);
         shuffle.setOnClickListener(this);
@@ -757,6 +765,8 @@ public class MainActivity extends AppCompatActivity
         generateMD5.setOnClickListener(this);
         toBase64.setOnClickListener(this);
         fromBase64.setOnClickListener(this);
+        toMorseCode.setOnClickListener(this);
+        fromMorseCode.setOnClickListener(this);
 
         //settingsView=View.inflate(this,R.layout.settings_layout,null);
     }
@@ -904,7 +914,11 @@ public class MainActivity extends AppCompatActivity
                     }
                     shuffleOutput.setText(outputBuilder.toString());
                 } catch (Exception e) {
-                    shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    if (e instanceof NumberFormatException) {
+                        shuffleOutput.setText("发生错误：所有元素必须是数字！" + e.toString());
+                    } else {
+                        shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    }
                 }
                 break;
             case R.id.sortByDictionaryIndex:
@@ -1221,7 +1235,13 @@ public class MainActivity extends AppCompatActivity
                                         }
                                         moreOutput.setText(finalOutputBuilder.toString(), TextView.BufferType.EDITABLE);
                                     } catch (Exception e) {
-                                        moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                                        if (e instanceof NumberFormatException) {
+                                            moreOutput.setText("输入格式错误：" + e.toString(), TextView.BufferType.EDITABLE);
+                                        } else if (e instanceof IllegalArgumentException) {
+                                            moreOutput.setText("参数错误，随机数的上界必须大于下界！", TextView.BufferType.EDITABLE);
+                                        } else {
+                                            moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                                        }
                                     } finally {
                                         dialog.dismiss();
                                     }
@@ -1257,7 +1277,36 @@ public class MainActivity extends AppCompatActivity
                     String decodedStr = new String(Base64.decode(base64Input.getBytes(), Base64.DEFAULT));
                     moreOutput.setText(decodedStr, TextView.BufferType.EDITABLE);
                 } catch (Exception e) {
+                    if (e instanceof IllegalArgumentException) {
+                        moreOutput.setText("输入内容不是合法的Base64编码！", TextView.BufferType.EDITABLE);
+                    } else {
+                        moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    }
+                }
+                break;
+            case R.id.toMorseCode:
+                try {
+                    String morseCodeInput = moreInput.getText().toString();
+                    MorseCoder morseCoder = new MorseCoder();
+                    moreOutput.setText(morseCoder.encode(morseCodeInput), TextView.BufferType.EDITABLE);
+                } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                }
+                break;
+            case R.id.fromMorseCode:
+                try {
+                    String morseCodeInput = moreInput.getText().toString();
+                    morseCodeInput = morseCodeInput.replace(' ', '/').replace('\\', '/')
+                            .replace('*', '.').replace('·', '.')
+                            .replace('_', '-').replace('—', '-');
+                    MorseCoder morseCoder = new MorseCoder();
+                    moreOutput.setText(morseCoder.decode(morseCodeInput), TextView.BufferType.EDITABLE);
+                } catch (Exception e) {
+                    if (e instanceof IllegalArgumentException) {
+                        moreOutput.setText("输入内容不是合法的摩斯电码！", TextView.BufferType.EDITABLE);
+                    } else {
+                        moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    }
                 }
                 break;
             default:
@@ -1459,7 +1508,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void getStoreLocation() {
+    private void getStoreLocation() {
         path = "";
         new LFilePicker()
                 .withActivity(MainActivity.this)
@@ -1470,7 +1519,7 @@ public class MainActivity extends AppCompatActivity
                 .start();
     }
 
-    public void storeDirectly() {
+    private void storeDirectly() {
         try {
             path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/TextConverter";
             File destDir = new File(path);
@@ -1510,7 +1559,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void getFile() {
+    private void getFile() {
         /*
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("");
@@ -1525,7 +1574,7 @@ public class MainActivity extends AppCompatActivity
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .withIsGreater(false)
-                .withFileSize(10*1048576)
+                .withFileSize(10 * 1048576)
                 .start();
     }
 }

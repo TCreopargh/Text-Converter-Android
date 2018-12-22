@@ -49,7 +49,7 @@ public class AboutActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("mailto:admin@tcreopargh.xyz"))
-                        .putExtra(Intent.EXTRA_SUBJECT,"《文本转换》用户反馈")
+                        .putExtra(Intent.EXTRA_SUBJECT, "《文本转换》用户反馈")
                         .putExtra(Intent.EXTRA_TEXT, "请在此处附上您遇到问题的详细内容，最好能附上截图。感谢您的反馈。");
                 startActivity(intent);
             }
