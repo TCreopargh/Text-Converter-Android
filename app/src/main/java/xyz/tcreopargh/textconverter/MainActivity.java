@@ -1434,7 +1434,7 @@ public class MainActivity extends AppCompatActivity
                     default:
                 }
                 StringBuilder filename = new StringBuilder(path);
-                SimpleDateFormat sdf = new SimpleDateFormat();
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat();
                 sdf.applyPattern("yyyy-MM-dd_HH:mm:ss");
                 Date date = new Date();
                 filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
@@ -1546,7 +1546,7 @@ public class MainActivity extends AppCompatActivity
                 default:
             }
             StringBuilder filename = new StringBuilder(path);
-            SimpleDateFormat sdf = new SimpleDateFormat();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat();
             sdf.applyPattern("yyyy-MM-dd_HH:mm:ss");
             Date date = new Date();
             filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
