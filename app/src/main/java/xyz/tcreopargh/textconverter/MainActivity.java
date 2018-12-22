@@ -1537,7 +1537,7 @@ public class MainActivity extends AppCompatActivity
         try {
             return new String(filecontent, encoding);
         } catch (UnsupportedEncodingException e) {
-            System.err.println("The OS does not support " + encoding);
+            System.err.println("抱歉，本系统不支持以下编码格式：" + encoding);
             e.printStackTrace();
             return null;
         }
@@ -1572,11 +1572,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getStoreLocation() {
-        path = "";
+        String pathTemp = Environment.getExternalStorageDirectory().getAbsolutePath() + "/TextConverter";
+        File destDir = new File(pathTemp);
+        if (!destDir.exists()) {
+            boolean doMkdirSuccess = destDir.mkdirs();
+            if(!doMkdirSuccess) {
+                Toast.makeText(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG).show();
+                pathTemp = Environment.getExternalStorageDirectory().getAbsolutePath();
+            }
+        }
         new LFilePicker()
                 .withActivity(MainActivity.this)
                 .withRequestCode(REQUESTCODE_WRITE)
                 .withChooseMode(false)
+                .withStartPath(pathTemp)
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .start();
@@ -1587,7 +1596,11 @@ public class MainActivity extends AppCompatActivity
             path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/TextConverter";
             File destDir = new File(path);
             if (!destDir.exists()) {
-                destDir.mkdirs();
+                boolean doMkdirSuccess = destDir.mkdirs();
+                if(!doMkdirSuccess) {
+                    Toast.makeText(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG).show();
+                    return;
+                }
             }
             String outputString = "";
             switch (getCurrentShowingLayoutId()) {
