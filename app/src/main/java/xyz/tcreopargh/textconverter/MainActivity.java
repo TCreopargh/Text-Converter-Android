@@ -6,6 +6,7 @@
 //AESUtils
 //LfilePicker
 //com.takwolf:morse-coder
+//Toasty
 
 package xyz.tcreopargh.textconverter;
 
@@ -67,6 +68,8 @@ import com.google.googlejavaformat.java.Formatter;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.Constant;
 import com.takwolf.morsecoder.MorseCoder;
+
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -372,11 +375,11 @@ public class MainActivity extends AppCompatActivity
                 default:
             }
             if (clip.length() > 512000) {
-                Toast.makeText(MainActivity.this, "内容过长，无法复制到剪贴板！", Toast.LENGTH_LONG).show();
+                Toasty.error(MainActivity.this, "内容过长，无法复制到剪贴板！", Toast.LENGTH_LONG, true).show();
             } else {
                 mClipData = ClipData.newPlainText("TextConverter", clip);
                 clipboardManager.setPrimaryClip(mClipData);
-                Toast.makeText(MainActivity.this, "复制成功！", Toast.LENGTH_LONG).show();
+                Toasty.success(MainActivity.this, "复制成功！", Toast.LENGTH_LONG, true).show();
             }
         } else if (id == R.id.action_reverse_io) {
             switch (currentShowingLayout) {
@@ -514,17 +517,17 @@ public class MainActivity extends AppCompatActivity
                                     doUseRegexCheckbox.setChecked(true);
                                     break;
                                 case R.id.textShuffleLayout:
-                                    Toast.makeText(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG).show();
+                                    Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
                                     break;
                                 case R.id.textSearchLayout:
                                     searchTarget.setText(preset[0]);
                                     doUseRegexSearchCheckbox.setChecked(true);
                                     break;
                                 case R.id.textEncryptLayout:
-                                    Toast.makeText(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG).show();
+                                    Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
                                     break;
                                 case R.id.textMoreLayout:
-                                    Toast.makeText(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG).show();
+                                    Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
                                     break;
                                 default:
                             }
@@ -541,6 +544,14 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (id == R.id.action_write_file) {
             String outputString = "";
+            boolean doUseFilePicker = true;
+            if(replaceInput.getText().toString().length()>500*1024
+                    ||shuffleInput.getText().toString().length()>500*1024
+                    ||searchInput.getText().toString().length()>500*1024
+                    ||moreInput.getText().toString().length()>500*1024
+                    ||encryptInput.getText().toString().length()>500*1024) {
+                doUseFilePicker = false;
+            }
             switch (getCurrentShowingLayoutId()) {
                 case R.id.textReplaceLayout:
                     outputString = replaceOutput.getText().toString();
@@ -559,7 +570,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 default:
             }
-            if (outputString.length() < 500 * 1024) {
+            if (outputString.length() < 500 * 1024 && doUseFilePicker) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(MainActivity.this,
@@ -643,7 +654,7 @@ public class MainActivity extends AppCompatActivity
                             try {
                                 if (which == 0) {
                                     doCapsSensitive[which] = isChecked;
-                                    Toast.makeText(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT).show();
+                                    Toasty.success(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT, true).show();
                                 } else if (which == 1) {
                                     if (isChecked) {
                                         replaceInput.setTextAppearance(R.style.MyMonospace);
@@ -678,7 +689,7 @@ public class MainActivity extends AppCompatActivity
                                         moreOutput.setTextAppearance(R.style.MyRegular);
                                         doCapsSensitive[which] = false;
                                     }
-                                    Toast.makeText(MainActivity.this, "设置成功！", Toast.LENGTH_LONG).show();
+                                    Toasty.success(MainActivity.this, "设置成功！", Toast.LENGTH_LONG, true).show();
                                 }
                                 SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -686,7 +697,7 @@ public class MainActivity extends AppCompatActivity
                                 editor.putBoolean("doUseMonospaced", doCapsSensitive[1]);
                                 editor.apply();
                             } catch (Exception e) {
-                                Toast.makeText(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_SHORT).show();
+                                Toasty.error(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_SHORT, true).show();
                             }
                         }
                     })
@@ -994,7 +1005,7 @@ public class MainActivity extends AppCompatActivity
                     String findTarget = searchTarget.getText().toString();
                     String findSrc = searchInput.getText().toString();
                     if (findTarget.isEmpty() || findSrc.isEmpty()) {
-                        Toast.makeText(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG).show();
+                        Toasty.error(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG, true).show();
                         return;
                     }
                     boolean doUseRegexInSearch = doUseRegexSearchCheckbox.isChecked();
@@ -1073,7 +1084,7 @@ public class MainActivity extends AppCompatActivity
                     StringBuilder searchResult = new StringBuilder();
                     String findSrc = searchInput.getText().toString();
                     if (findTarget.isEmpty() || findSrc.isEmpty()) {
-                        Toast.makeText(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG).show();
+                        Toasty.error(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG, true).show();
                         return;
                     }
                     boolean doUseRegexInSearch = doUseRegexSearchCheckbox.isChecked();
@@ -1259,7 +1270,7 @@ public class MainActivity extends AppCompatActivity
                             caseSwitchStatus = ALL_LOWER;
                     }
                     moreOutput.setText(caseOutput.toString(), TextView.BufferType.EDITABLE);
-                    Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+                    Toasty.info(MainActivity.this, toastMessage, Toast.LENGTH_SHORT, true).show();
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
@@ -1570,7 +1581,7 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (requestCode == REQUESTCODE_WRITE) {
                 if (path.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "未选定目标文件夹！", Toast.LENGTH_LONG).show();
+                    Toasty.warning(MainActivity.this, "未选定目标文件夹！", Toast.LENGTH_LONG, true).show();
                     return;
                 }
                 String outputString = "";
@@ -1598,10 +1609,10 @@ public class MainActivity extends AppCompatActivity
                 Date date = new Date();
                 filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
                 writeSDFile(filename.toString(), outputString);
-                Toast.makeText(MainActivity.this, "文件已保存为: " + filename, Toast.LENGTH_LONG).show();
+                Toasty.success(MainActivity.this, "文件已保存为: " + filename, Toast.LENGTH_LONG, true).show();
             }
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG).show();
+            Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG, true).show();
         }
     }
 
@@ -1646,21 +1657,21 @@ public class MainActivity extends AppCompatActivity
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     getFile();
                 } else {
-                    Toast.makeText(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                    Toasty.warning(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG, true).show();
                 }
                 break;
             case 2:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     getStoreLocation();
                 } else {
-                    Toast.makeText(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                    Toasty.warning(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG, true).show();
                 }
                 break;
             case 3:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     storeDirectly();
                 } else {
-                    Toast.makeText(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG).show();
+                    Toasty.warning(MainActivity.this, "您拒绝了文件访问权限，因此本功能无法运行。", Toast.LENGTH_LONG, true).show();
                 }
                 break;
             default:
@@ -1673,13 +1684,15 @@ public class MainActivity extends AppCompatActivity
         if (!destDir.exists()) {
             boolean doMkdirSuccess = destDir.mkdirs();
             if (!doMkdirSuccess) {
-                Toast.makeText(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG).show();
+                Toasty.error(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG, true).show();
                 pathTemp = Environment.getExternalStorageDirectory().getAbsolutePath();
             }
         }
         new LFilePicker()
                 .withActivity(MainActivity.this)
+                .withBackgroundColor("#03a9f4")
                 .withRequestCode(REQUESTCODE_WRITE)
+                .withTitle("选择目标文件夹")
                 .withChooseMode(false)
                 .withStartPath(pathTemp)
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
@@ -1694,7 +1707,7 @@ public class MainActivity extends AppCompatActivity
             if (!destDir.exists()) {
                 boolean doMkdirSuccess = destDir.mkdirs();
                 if (!doMkdirSuccess) {
-                    Toast.makeText(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG).show();
+                    Toasty.error(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG, true).show();
                     return;
                 }
             }
@@ -1723,9 +1736,9 @@ public class MainActivity extends AppCompatActivity
             Date date = new Date();
             filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
             writeSDFile(filename.toString(), outputString);
-            Toast.makeText(MainActivity.this, "文件过大，因此将直接保存。\n文件已保存为: " + filename, Toast.LENGTH_LONG).show();
+            Toasty.info(MainActivity.this, "文件过大，因此将直接保存。\n文件已保存为: " + filename, Toast.LENGTH_LONG, true).show();
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG).show();
+            Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG, true).show();
         } finally {
             path = "";
         }
@@ -1741,8 +1754,10 @@ public class MainActivity extends AppCompatActivity
         path = "";
         new LFilePicker()
                 .withActivity(MainActivity.this)
+                .withBackgroundColor("#03a9f4")
                 .withRequestCode(REQUESTCODE_READ)
                 .withMutilyMode(false)
+                .withTitle("选择文件")
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .withIsGreater(false)
