@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">文本转换</string>
+    <string name="tc_app_name">文本转换</string>
     <string name="navigation_drawer_open">打开抽屉</string>
     <string name="navigation_drawer_close">关闭抽屉</string>
     <string name="nav_header_subtitle">一个简单易用的小工具</string>
