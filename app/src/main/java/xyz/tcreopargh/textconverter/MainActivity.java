@@ -1456,6 +1456,7 @@ public class MainActivity extends AppCompatActivity
                     morseCodeInput = morseCodeInput.replace(' ', '/').replace('\\', '/')
                             .replace('\n', '/').replace('\r', '/')
                             .replace('*', '.').replace('·', '.')
+                            .replace('•', '.').replace('●', '.')
                             .replace('_', '-').replace('—', '-');
                     MorseCoder morseCoder = new MorseCoder();
                     moreOutput.setText(morseCoder.decode(morseCodeInput), TextView.BufferType.EDITABLE);
@@ -1464,9 +1465,10 @@ public class MainActivity extends AppCompatActivity
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
                         try {
-                            String morseCodeInput = moreInput.getText().toString();
+                            String morseCodeInput1 = moreInput.getText().toString();
+                            morseCodeInput1 = morseCodeInput1.replace('\n', ' ');
                             MorseCoder morseCoder = new MorseCoder();
-                            moreOutput.setText(morseCoder.encode(morseCodeInput), TextView.BufferType.EDITABLE);
+                            moreOutput.setText(morseCoder.encode(morseCodeInput1), TextView.BufferType.EDITABLE);
                             moreOutput.clearFocus();
                             moreInput.clearFocus();
                         } catch (Exception e1) {
@@ -1484,11 +1486,18 @@ public class MainActivity extends AppCompatActivity
             case R.id.formatJson:
                 try {
                     String uglyJson = moreInput.getText().toString();
-                    moreOutput.setText(jsonFormatter(uglyJson), TextView.BufferType.EDITABLE);
+                    String formattedJson = jsonFormatter(uglyJson);
+                    if (!formattedJson.equals("null")) {
+                        moreOutput.setText(formattedJson, TextView.BufferType.EDITABLE);
+                    } else {
+                        moreOutput.setText("", TextView.BufferType.EDITABLE);
+                    }
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             default:
@@ -1749,7 +1758,7 @@ public class MainActivity extends AppCompatActivity
             Date date = new Date();
             filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
             writeSDFile(filename.toString(), outputString);
-            Toasty.info(MainActivity.this, "文件过大，因此将直接保存。\n文件已保存为: " + filename, Toast.LENGTH_LONG, true).show();
+            Toasty.info(MainActivity.this, "文本过长，因此将直接保存。\n文件已保存为: " + filename, Toast.LENGTH_LONG, true).show();
         } catch (Exception e) {
             Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG, true).show();
         } finally {
