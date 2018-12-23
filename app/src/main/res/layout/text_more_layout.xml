@@ -206,12 +206,12 @@
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/fromMorseCode"
+            android:id="@+id/formatJson"
             style="@android:style/Widget.Material.Button.Colored"
             android:layout_width="0dp"
             android:layout_height="49dp"
             android:layout_weight="1"
-            android:text="@string/from_morse_code"
+            android:text="@string/format_json"
             android:textAllCaps="false"
             android:textSize="15sp" />
 

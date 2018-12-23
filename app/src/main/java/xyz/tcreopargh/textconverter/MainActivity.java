@@ -54,6 +54,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.Buffer;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -65,6 +66,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.googlejavaformat.java.Formatter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.Constant;
 import com.takwolf.morsecoder.MorseCoder;
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity
     CheckBox doPasswordVisible;
 
     EditText moreInput, moreOutput;
-    Button reverseText, addIndent, formatCode, addNumbers, customRandom, generateMD5, toBase64, fromBase64, toMorseCode, fromMorseCode;
+    Button reverseText, addIndent, formatCode, addNumbers, customRandom, generateMD5, toBase64, fromBase64, toMorseCode, formatJson;
 
     //EditText dataQuantity;
 
@@ -545,11 +550,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_write_file) {
             String outputString = "";
             boolean doUseFilePicker = true;
-            if(replaceInput.getText().toString().length()>500*1024
-                    ||shuffleInput.getText().toString().length()>500*1024
-                    ||searchInput.getText().toString().length()>500*1024
-                    ||moreInput.getText().toString().length()>500*1024
-                    ||encryptInput.getText().toString().length()>500*1024) {
+            if (replaceInput.getText().toString().length() > 500 * 1024
+                    || shuffleInput.getText().toString().length() > 500 * 1024
+                    || searchInput.getText().toString().length() > 500 * 1024
+                    || moreInput.getText().toString().length() > 500 * 1024
+                    || encryptInput.getText().toString().length() > 500 * 1024) {
                 doUseFilePicker = false;
             }
             switch (getCurrentShowingLayoutId()) {
@@ -764,7 +769,7 @@ public class MainActivity extends AppCompatActivity
         toBase64 = findViewById(R.id.toBase64);
         fromBase64 = findViewById(R.id.fromBase64);
         toMorseCode = findViewById(R.id.toMorseCode);
-        fromMorseCode = findViewById(R.id.fromMorseCode);
+        formatJson = findViewById(R.id.formatJson);
 
         generateReplacedText.setOnClickListener(this);
         shuffle.setOnClickListener(this);
@@ -785,7 +790,7 @@ public class MainActivity extends AppCompatActivity
         toBase64.setOnClickListener(this);
         fromBase64.setOnClickListener(this);
         toMorseCode.setOnClickListener(this);
-        fromMorseCode.setOnClickListener(this);
+        formatJson.setOnClickListener(this);
 
         //settingsView=View.inflate(this,R.layout.settings_layout,null);
     }
@@ -1448,19 +1453,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.toMorseCode:
                 try {
                     String morseCodeInput = moreInput.getText().toString();
-                    MorseCoder morseCoder = new MorseCoder();
-                    moreOutput.setText(morseCoder.encode(morseCodeInput), TextView.BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-            case R.id.fromMorseCode:
-                try {
-                    String morseCodeInput = moreInput.getText().toString();
                     morseCodeInput = morseCodeInput.replace(' ', '/').replace('\\', '/')
                             .replace('\n', '/').replace('\r', '/')
                             .replace('*', '.').replace('·', '.')
@@ -1471,12 +1463,32 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
-                        moreOutput.setText("输入内容不是合法的摩斯电码！", TextView.BufferType.EDITABLE);
+                        try {
+                            String morseCodeInput = moreInput.getText().toString();
+                            MorseCoder morseCoder = new MorseCoder();
+                            moreOutput.setText(morseCoder.encode(morseCodeInput), TextView.BufferType.EDITABLE);
+                            moreOutput.clearFocus();
+                            moreInput.clearFocus();
+                        } catch (Exception e1) {
+                            moreOutput.setText(getString(R.string.exception_occured) + e1.toString(), TextView.BufferType.EDITABLE);
+                            moreOutput.clearFocus();
+                            moreInput.clearFocus();
+                        }
                     } else {
                         moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
                     }
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
+                }
+                break;
+            case R.id.formatJson:
+                try {
+                    String uglyJson = moreInput.getText().toString();
+                    moreOutput.setText(jsonFormatter(uglyJson), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
+                } catch (Exception e) {
+                    moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
                 }
                 break;
             default:
@@ -1774,5 +1786,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             return ch;
         }
+    }
+
+    public static String jsonFormatter(String uglyJSONString) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(uglyJSONString);
+        return gson.toJson(je);
     }
 }

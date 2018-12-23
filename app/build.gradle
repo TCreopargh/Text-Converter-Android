@@ -6,8 +6,8 @@ android {
         applicationId "xyz.tcreopargh.textconverter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 32
-        versionName "1.7.1"
+        versionCode 33
+        versionName "1.7.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -35,6 +35,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.takwolf:morse-coder:0.0.3'
     implementation 'com.github.GrenderG:Toasty:1.3.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
     //noinspection GradleDependency
     implementation 'com.leon:lfilepickerlibrary:1.7.0'
     testImplementation 'junit:junit:4.12'
