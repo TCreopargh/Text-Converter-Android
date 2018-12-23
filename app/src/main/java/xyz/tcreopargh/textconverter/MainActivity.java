@@ -1688,6 +1688,7 @@ public class MainActivity extends AppCompatActivity
                 pathTemp = Environment.getExternalStorageDirectory().getAbsolutePath();
             }
         }
+        path = "";
         new LFilePicker()
                 .withActivity(MainActivity.this)
                 .withBackgroundColor("#03a9f4")
