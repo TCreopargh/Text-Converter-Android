@@ -805,8 +805,16 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                     replaceOutput.setText(textReplaceOutput, TextView.BufferType.EDITABLE);
+                    replaceInput.clearFocus();
+                    replaceOutput.clearFocus();
+                    replaceTo.clearFocus();
+                    targetSeq.clearFocus();
                 } catch (Exception e) {
                     replaceOutput.setText(e.toString(), TextView.BufferType.EDITABLE);
+                    replaceInput.clearFocus();
+                    replaceOutput.clearFocus();
+                    replaceTo.clearFocus();
+                    targetSeq.clearFocus();
                 }
                 break;
             case R.id.generateShuffleRand:
@@ -846,9 +854,13 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     }
-                    shuffleOutput.setText(outputBuilder.toString());
+                    shuffleOutput.setText(outputBuilder.toString(), TextView.BufferType.EDITABLE);
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 } catch (Exception e) {
                     shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 }
                 break;
             case R.id.shuffleReverse:
@@ -876,8 +888,12 @@ public class MainActivity extends AppCompatActivity
                         outputBuilder.append(elements[i]).append(spiltWithChar);
                     }
                     shuffleOutput.setText(outputBuilder.toString());
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 } catch (Exception e) {
                     shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 }
                 break;
             case R.id.sortByNumberValue:
@@ -921,12 +937,16 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                     shuffleOutput.setText(outputBuilder.toString());
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof NumberFormatException) {
                         shuffleOutput.setText("发生错误：所有元素必须是数字！" + e.toString());
                     } else {
                         shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
                     }
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 }
                 break;
             case R.id.sortByDictionaryIndex:
@@ -961,8 +981,12 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                     shuffleOutput.setText(outputBuilder.toString());
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 } catch (Exception e) {
                     shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    shuffleInput.clearFocus();
+                    shuffleOutput.clearFocus();
                 }
                 break;
             case R.id.searchNext:
@@ -1031,8 +1055,16 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.searchReset:
-                resetSearch();
-                searchOutput.setText("");
+                try {
+                    resetSearch();
+                    searchOutput.setText("");
+                } catch (Exception e) {
+                    searchOutput.setText(getString(R.string.exception_occured) + e.toString());
+                } finally {
+                    searchInput.clearFocus();
+                    searchOutput.clearFocus();
+                    searchTarget.clearFocus();
+                }
                 break;
             case R.id.searchAll:
                 resetSearch();
@@ -1085,8 +1117,14 @@ public class MainActivity extends AppCompatActivity
                         searchOutput.setText(searchResult.toString());
                     }
                     resetSearch();
+                    searchInput.clearFocus();
+                    searchOutput.clearFocus();
+                    searchTarget.clearFocus();
                 } catch (Exception e) {
                     searchOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    searchInput.clearFocus();
+                    searchOutput.clearFocus();
+                    searchTarget.clearFocus();
                 }
                 break;
             case R.id.encrypt:
@@ -1103,8 +1141,14 @@ public class MainActivity extends AppCompatActivity
                     String encryptResult;
                     encryptResult = AESUtils.getEnString(encryptSourceText, generatedKey);
                     encryptOutput.setText(encryptResult, TextView.BufferType.EDITABLE);
+                    encryptInput.clearFocus();
+                    encryptOutput.clearFocus();
+                    encryptKey.clearFocus();
                 } catch (Exception e) {
                     encryptOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    encryptInput.clearFocus();
+                    encryptOutput.clearFocus();
+                    encryptKey.clearFocus();
                 }
                 break;
             case R.id.decrypt:
@@ -1121,8 +1165,19 @@ public class MainActivity extends AppCompatActivity
                     String decryptResult;
                     decryptResult = AESUtils.getDeString(decryptSourceText, generatedKey);
                     encryptOutput.setText(decryptResult, TextView.BufferType.EDITABLE);
+                    encryptInput.clearFocus();
+                    encryptOutput.clearFocus();
+                    encryptKey.clearFocus();
                 } catch (Exception e) {
-                    encryptOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    if (e instanceof IllegalArgumentException) {
+                        encryptOutput.setText("输入内容不是加密后的密文！\n" +
+                                "本应用采用加盐加密，普通AES密文解密时会出现错误！", TextView.BufferType.EDITABLE);
+                    } else {
+                        encryptOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    }
+                    encryptInput.clearFocus();
+                    encryptOutput.clearFocus();
+                    encryptKey.clearFocus();
                 }
                 break;
             case R.id.textReverse:
@@ -1133,8 +1188,12 @@ public class MainActivity extends AppCompatActivity
                         reverseResult.append(reverseSrc.charAt(i));
                     }
                     moreOutput.setText(reverseResult.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.upperLowerCase:
@@ -1180,7 +1239,7 @@ public class MainActivity extends AppCompatActivity
                             break;
                         case SENTENCE_FIRST:
                             boolean sentenceBegin = true;
-                            final String endSentence = "\n\r\t?!.？。！…";
+                            final String endSentence = "\n\r\t?!.？。！…;；";
                             for (int i = 0; i < caseSrc.length(); i++) {
                                 if (sentenceBegin && ((caseSrc.charAt(i) >= 'a' && caseSrc.charAt(i) <= 'z') ||
                                         (caseSrc.charAt(i) >= 'A' && caseSrc.charAt(i) <= 'Z'))) {
@@ -1201,8 +1260,12 @@ public class MainActivity extends AppCompatActivity
                     }
                     moreOutput.setText(caseOutput.toString(), TextView.BufferType.EDITABLE);
                     Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.addNumbers:
@@ -1214,8 +1277,12 @@ public class MainActivity extends AppCompatActivity
                         addNumbersOutput.append(i).append('.').append(numberParagraphs[i - 1]).append('\n');
                     }
                     moreOutput.setText(addNumbersOutput, TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.formatCode:
@@ -1224,8 +1291,12 @@ public class MainActivity extends AppCompatActivity
                     Formatter formatter = new Formatter();
                     String formattedCode = formatter.formatSource(formatCodeSrc);
                     moreOutput.setText(formattedCode, TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.customRandom:
@@ -1307,6 +1378,8 @@ public class MainActivity extends AppCompatActivity
                                         }
                                     } finally {
                                         dialog.dismiss();
+                                        moreOutput.clearFocus();
+                                        moreInput.clearFocus();
                                     }
                                     //dataQuantityString[0] = dataQuantity.getText().toString();
                                     //Toast.makeText(MainActivity.this,dataQuantityString[0],Toast.LENGTH_LONG).show();
@@ -1314,6 +1387,8 @@ public class MainActivity extends AppCompatActivity
                             }).create().show();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.toMD5:
@@ -1321,8 +1396,12 @@ public class MainActivity extends AppCompatActivity
                     String md5Src = moreInput.getText().toString();
                     String md5 = getMD5(md5Src);
                     moreOutput.setText(md5, TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.toBase64:
@@ -1330,8 +1409,12 @@ public class MainActivity extends AppCompatActivity
                     String plainSrc = moreInput.getText().toString();
                     String base64 = Base64.encodeToString(plainSrc.getBytes(), Base64.DEFAULT);
                     moreOutput.setText(base64, TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.fromBase64:
@@ -1339,12 +1422,16 @@ public class MainActivity extends AppCompatActivity
                     String base64Input = moreInput.getText().toString();
                     String decodedStr = new String(Base64.decode(base64Input.getBytes(), Base64.DEFAULT));
                     moreOutput.setText(decodedStr, TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
                         moreOutput.setText("输入内容不是合法的Base64编码！", TextView.BufferType.EDITABLE);
                     } else {
                         moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
                     }
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.toMorseCode:
@@ -1352,25 +1439,33 @@ public class MainActivity extends AppCompatActivity
                     String morseCodeInput = moreInput.getText().toString();
                     MorseCoder morseCoder = new MorseCoder();
                     moreOutput.setText(morseCoder.encode(morseCodeInput), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             case R.id.fromMorseCode:
                 try {
                     String morseCodeInput = moreInput.getText().toString();
                     morseCodeInput = morseCodeInput.replace(' ', '/').replace('\\', '/')
-                            .replace('\n','/').replace('\r','/')
+                            .replace('\n', '/').replace('\r', '/')
                             .replace('*', '.').replace('·', '.')
                             .replace('_', '-').replace('—', '-');
                     MorseCoder morseCoder = new MorseCoder();
                     moreOutput.setText(morseCoder.decode(morseCodeInput), TextView.BufferType.EDITABLE);
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
                         moreOutput.setText("输入内容不是合法的摩斯电码！", TextView.BufferType.EDITABLE);
                     } else {
                         moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
                     }
+                    moreOutput.clearFocus();
+                    moreInput.clearFocus();
                 }
                 break;
             default:
@@ -1577,7 +1672,7 @@ public class MainActivity extends AppCompatActivity
         File destDir = new File(pathTemp);
         if (!destDir.exists()) {
             boolean doMkdirSuccess = destDir.mkdirs();
-            if(!doMkdirSuccess) {
+            if (!doMkdirSuccess) {
                 Toast.makeText(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG).show();
                 pathTemp = Environment.getExternalStorageDirectory().getAbsolutePath();
             }
@@ -1598,7 +1693,7 @@ public class MainActivity extends AppCompatActivity
             File destDir = new File(path);
             if (!destDir.exists()) {
                 boolean doMkdirSuccess = destDir.mkdirs();
-                if(!doMkdirSuccess) {
+                if (!doMkdirSuccess) {
                     Toast.makeText(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG).show();
                     return;
                 }
