@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 default:
             }
-            if (clip.length() > 512000) {
+            if (clip.length() > 500000) {
                 Toasty.error(MainActivity.this, "内容过长，无法复制到剪贴板！", Toast.LENGTH_LONG, true).show();
             } else {
                 mClipData = ClipData.newPlainText("TextConverter", clip);
@@ -550,11 +550,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_write_file) {
             String outputString = "";
             boolean doUseFilePicker = true;
-            if (replaceInput.getText().toString().length() > 500 * 1024
-                    || shuffleInput.getText().toString().length() > 500 * 1024
-                    || searchInput.getText().toString().length() > 500 * 1024
-                    || moreInput.getText().toString().length() > 500 * 1024
-                    || encryptInput.getText().toString().length() > 500 * 1024) {
+            if (replaceInput.getText().toString().length() > 250 * 1024
+                    || shuffleInput.getText().toString().length() > 250 * 1024
+                    || searchInput.getText().toString().length() > 250 * 1024
+                    || moreInput.getText().toString().length() > 250 * 1024
+                    || encryptInput.getText().toString().length() > 250 * 1024) {
                 doUseFilePicker = false;
             }
             switch (getCurrentShowingLayoutId()) {
@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 default:
             }
-            if (outputString.length() < 500 * 1024 && doUseFilePicker) {
+            if (outputString.length() < 250 * 1024 && doUseFilePicker) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(MainActivity.this,
