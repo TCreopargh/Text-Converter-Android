@@ -150,4 +150,5 @@
     <string name="from_morse_code">摩斯电码解码</string>
     <string name="switch_cases">切换大小写</string>
     <string name="format_json">JSON格式化</string>
+    <string name="char_count">字数统计</string>
 </resources>
