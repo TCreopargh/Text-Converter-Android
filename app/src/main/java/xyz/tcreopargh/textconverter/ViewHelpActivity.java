@@ -1,9 +1,9 @@
 package xyz.tcreopargh.textconverter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -29,14 +29,14 @@ public class ViewHelpActivity extends AppCompatActivity {
         viewHelp.loadUrl("http://tool.oschina.net/uploads/apidocs/jquery/regexp.html");
     }
 
-    public void returnHome(Context context) {
-       finish();
+    public void returnHome() {
+        finish();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                returnHome(this);
+                returnHome();
                 break;
         }
         return true;

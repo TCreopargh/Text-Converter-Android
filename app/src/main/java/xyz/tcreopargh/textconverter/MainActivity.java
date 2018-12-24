@@ -787,12 +787,16 @@ public class MainActivity extends AppCompatActivity
             textReplaceLayout.setVisibility(View.GONE);
             setTitle(R.string.more_handy_function);
         } else if (id == R.id.nav_share) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain")
-                    .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.action_share))
-                    .putExtra(Intent.EXTRA_TEXT, "我正在使用“文本转换”工具，你也来试试看吧！点击查看:https://blog.tcreopargh.xyz/archives/425")
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(Intent.createChooser(intent, getString(R.string.action_share)));
+            try {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain")
+                        .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.action_share))
+                        .putExtra(Intent.EXTRA_TEXT, "我正在使用“文本转换”工具，你也来试试看吧！点击查看:https://blog.tcreopargh.xyz/archives/425")
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(Intent.createChooser(intent, getString(R.string.action_share)));
+            } catch (Exception e) {
+                Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString()).show();
+            }
         } else if (id == R.id.nav_help) {
             Intent intent = new Intent(MainActivity.this, ViewHelpActivity.class);
             startActivity(intent);
