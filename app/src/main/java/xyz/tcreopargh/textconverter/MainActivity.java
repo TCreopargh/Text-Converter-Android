@@ -795,7 +795,7 @@ public class MainActivity extends AppCompatActivity
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(Intent.createChooser(intent, getString(R.string.action_share)));
             } catch (Exception e) {
-                Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString()).show();
+                Toasty.error(MainActivity.this, "没有应用能响应请求！", Toast.LENGTH_LONG).show();
             }
         } else if (id == R.id.nav_help) {
             Intent intent = new Intent(MainActivity.this, ViewHelpActivity.class);

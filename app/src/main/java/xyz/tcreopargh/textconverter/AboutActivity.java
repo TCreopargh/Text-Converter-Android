@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Objects;
 
@@ -48,7 +49,7 @@ public class AboutActivity extends AppCompatActivity {
                         .putExtra(Intent.EXTRA_TEXT, "请在此处附上您遇到问题的详细内容，最好能附上截图。感谢您的反馈。");
                 startActivity(intent);
             } catch (Exception e) {
-                Toasty.error(AboutActivity.this, getString(R.string.exception_occured) + e.toString()).show();
+                Toasty.error(AboutActivity.this, "请先安装邮件应用！", Toast.LENGTH_LONG).show();
             }
         });
     }
