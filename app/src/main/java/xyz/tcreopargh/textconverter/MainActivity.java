@@ -26,9 +26,6 @@ import android.os.Environment;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
@@ -75,7 +72,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.googlejavaformat.java.Formatter;
-import com.google.googlejavaformat.java.Main;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -85,7 +81,6 @@ import com.leon.lfilepickerlibrary.utils.Constant;
 import com.takwolf.morsecoder.MorseCoder;
 import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
-import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import de.mateware.snacky.Snacky;
@@ -144,7 +139,7 @@ public class MainActivity extends AppCompatActivity
     final int REQUESTCODE_READ = 1000;
     final int REQUESTCODE_WRITE = 2000;
 
-    final boolean doCapsSensitive[] = new boolean[]{false, false};
+    final boolean settingsBoolean[] = new boolean[]{false, false, false};
 
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
 
@@ -204,9 +199,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        doCapsSensitive[0] = sharedPreferences.getBoolean("doCapsSensitive", false);
-        doCapsSensitive[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
-        if (doCapsSensitive[1]) {
+        settingsBoolean[0] = sharedPreferences.getBoolean("settingsBoolean", false);
+        settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
+        settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
+        if (settingsBoolean[1]) {
             replaceInput.setTextAppearance(R.style.MyMonospace);
             replaceOutput.setTextAppearance(R.style.MyMonospace);
             replaceTo.setTextAppearance(R.style.MyMonospace);
@@ -237,58 +233,63 @@ public class MainActivity extends AppCompatActivity
             moreInput.setTextAppearance(R.style.MyRegular);
             moreOutput.setTextAppearance(R.style.MyRegular);
         }
-        ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData data = cm.getPrimaryClip();
-        assert data != null;
-        ClipData.Item item = data.getItemAt(0);
-        String content = item.getText().toString();
-        if (!content.isEmpty()) {
-            Snacky.builder()
-                    .setActivity(MainActivity.this)
-                    .setDuration(Snacky.LENGTH_LONG)
-                    .setText("您的剪贴板不为空，是否粘贴？")
-                    .setActionText("粘贴")
-                    .setActionClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (content.length() < 100 * 1024) {
-                                replaceInput.setText(content);
-                                searchInput.setText(content);
-                                shuffleInput.setText(content);
-                                encryptInput.setText(content);
-                                moreInput.setText(content);
-                                Snacky.builder()
-                                        .setActivity(MainActivity.this)
-                                        .setDuration(Snacky.LENGTH_SHORT)
-                                        .setText("操作成功")
-                                        .setActionText(R.string.undo)
-                                        .setActionClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                replaceInput.setText("");
-                                                searchInput.setText("");
-                                                shuffleInput.setText("");
-                                                encryptInput.setText("");
-                                                moreInput.setText("");
-                                            }
-                                        }).success()
-                                        .show();
-                            } else {
-                                Snacky.builder()
-                                        .setActivity(MainActivity.this)
-                                        .setDuration(Snacky.LENGTH_LONG)
-                                        .setText("操作失败：剪贴板内容过长")
-                                        .setActionText(R.string.confirm)
-                                        .setActionClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                            }
-                                        }).error()
-                                        .show();
+
+        try {
+            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            ClipData data = cm.getPrimaryClip();
+            assert data != null;
+            ClipData.Item item = data.getItemAt(0);
+            String content = item.getText().toString();
+            if (!content.isEmpty()) {
+                Snacky.builder()
+                        .setActivity(MainActivity.this)
+                        .setDuration(Snacky.LENGTH_LONG)
+                        .setText("您的剪贴板不为空，是否粘贴？")
+                        .setActionText("粘贴")
+                        .setActionClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (content.length() < 100 * 1024) {
+                                    replaceInput.setText(content);
+                                    searchInput.setText(content);
+                                    shuffleInput.setText(content);
+                                    encryptInput.setText(content);
+                                    moreInput.setText(content);
+                                    Snacky.builder()
+                                            .setActivity(MainActivity.this)
+                                            .setDuration(Snacky.LENGTH_SHORT)
+                                            .setText("操作成功")
+                                            .setActionText(R.string.undo)
+                                            .setActionClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    replaceInput.setText("");
+                                                    searchInput.setText("");
+                                                    shuffleInput.setText("");
+                                                    encryptInput.setText("");
+                                                    moreInput.setText("");
+                                                }
+                                            }).success()
+                                            .show();
+                                } else {
+                                    Snacky.builder()
+                                            .setActivity(MainActivity.this)
+                                            .setDuration(Snacky.LENGTH_LONG)
+                                            .setText("操作失败：剪贴板内容过长")
+                                            .setActionText(R.string.confirm)
+                                            .setActionClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                }
+                                            }).error()
+                                            .show();
+                                }
                             }
-                        }
-                    }).info()
-                    .show();
+                        }).info()
+                        .show();
+            }
+        } catch (Exception ignored) {
+
         }
 
         doUseRegexSearchCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -355,6 +356,7 @@ public class MainActivity extends AppCompatActivity
                 resetSearch();
             }
         });
+
         searchTarget.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -371,6 +373,7 @@ public class MainActivity extends AppCompatActivity
                 resetSearch();
             }
         });
+
         encryptKey.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -387,6 +390,7 @@ public class MainActivity extends AppCompatActivity
                 keyGenNeedToReset = true;
             }
         });
+
         doUseRegexCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -516,6 +520,7 @@ public class MainActivity extends AppCompatActivity
                             }).success()
                             .show();
                     break;
+
                 case R.id.textShuffleLayout:
                     String buffer2 = shuffleInput.getText().toString();
                     shuffleInput.setText(shuffleOutput.getText().toString(), TextView.BufferType.EDITABLE);
@@ -532,6 +537,7 @@ public class MainActivity extends AppCompatActivity
                             }).success()
                             .show();
                     break;
+
                 case R.id.textSearchLayout:
                     String buffer3 = searchInput.getText().toString();
                     searchInput.setText(searchOutput.getText().toString(), TextView.BufferType.EDITABLE);
@@ -548,6 +554,7 @@ public class MainActivity extends AppCompatActivity
                             }).success()
                             .show();
                     break;
+
                 case R.id.textEncryptLayout:
                     String buffer4 = encryptInput.getText().toString();
                     encryptInput.setText(encryptOutput.getText().toString(), TextView.BufferType.EDITABLE);
@@ -564,6 +571,7 @@ public class MainActivity extends AppCompatActivity
                             }).success()
                             .show();
                     break;
+
                 case R.id.textMoreLayout:
                     String buffer5 = moreInput.getText().toString();
                     moreInput.setText(moreOutput.getText().toString(), TextView.BufferType.EDITABLE);
@@ -613,6 +621,7 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }).success().show();
                     break;
+
                 case R.id.textShuffleLayout:
                     final String bufferShuffleInput = shuffleInput.getText().toString();
                     final String bufferShuffleOutput = shuffleOutput.getText().toString();
@@ -634,6 +643,7 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }).success().show();
                     break;
+
                 case R.id.textSearchLayout:
                     final String bufferSearchInput = searchInput.getText().toString();
                     final String bufferSearchOutput = searchOutput.getText().toString();
@@ -659,6 +669,7 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }).success().show();
                     break;
+
                 case R.id.textEncryptLayout:
                     final String bufferEncryptInput = encryptInput.getText().toString();
                     final String bufferEncryptOutput = encryptOutput.getText().toString();
@@ -683,6 +694,7 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }).success().show();
                     break;
+
                 case R.id.textMoreLayout:
                     final String bufferMoreInput = moreInput.getText().toString();
                     final String bufferMoreOutput = moreOutput.getText().toString();
@@ -719,20 +731,25 @@ public class MainActivity extends AppCompatActivity
                                     doUseRegexCheckbox.setChecked(true);
                                     Toasty.success(MainActivity.this, "载入成功", Toast.LENGTH_LONG, true).show();
                                     break;
+
                                 case R.id.textShuffleLayout:
                                     Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
                                     break;
+
                                 case R.id.textSearchLayout:
                                     searchTarget.setText(preset[0]);
                                     doUseRegexSearchCheckbox.setChecked(true);
                                     Toasty.success(MainActivity.this, "载入成功", Toast.LENGTH_LONG, true).show();
                                     break;
+
                                 case R.id.textEncryptLayout:
                                     Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
                                     break;
+
                                 case R.id.textMoreLayout:
                                     Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
                                     break;
+
                                 default:
                             }
 
@@ -771,18 +788,23 @@ public class MainActivity extends AppCompatActivity
                 case R.id.textReplaceLayout:
                     outputString = replaceOutput.getText().toString();
                     break;
+
                 case R.id.textSearchLayout:
                     outputString = searchOutput.getText().toString();
                     break;
+
                 case R.id.textShuffleLayout:
                     outputString = shuffleOutput.getText().toString();
                     break;
+
                 case R.id.textEncryptLayout:
                     outputString = encryptOutput.getText().toString();
                     break;
+
                 case R.id.textMoreLayout:
                     outputString = moreOutput.getText().toString();
                     break;
+
                 default:
             }
             if (outputString.length() < 250 * 1024 && doUseFilePicker) {
@@ -810,22 +832,27 @@ public class MainActivity extends AppCompatActivity
                     inStr = replaceInput.getText().toString();
                     outStr = replaceOutput.getText().toString();
                     break;
+
                 case R.id.textSearchLayout:
                     inStr = searchInput.getText().toString();
                     outStr = searchOutput.getText().toString();
                     break;
+
                 case R.id.textShuffleLayout:
                     inStr = shuffleInput.getText().toString();
                     outStr = shuffleOutput.getText().toString();
                     break;
+
                 case R.id.textEncryptLayout:
                     inStr = encryptInput.getText().toString();
                     outStr = encryptOutput.getText().toString();
                     break;
+
                 case R.id.textMoreLayout:
                     inStr = moreInput.getText().toString();
                     outStr = moreOutput.getText().toString();
                     break;
+
                 default:
             }
             int inLen = inStr.length();
@@ -892,16 +919,16 @@ public class MainActivity extends AppCompatActivity
             lovelyChoiceDialog.setTopColorRes(R.color.settingsGrey)
                     .setTitle(R.string.settings)
                     .setIcon(R.drawable.baselinesettings_white)
-                    .setItemsMultiChoice(new String[]{"区分大小写", "设置输入框为等宽字体"}, doCapsSensitive, new LovelyChoiceDialog.OnItemsSelectedListener<String>() {
+                    .setItemsMultiChoice(new String[]{"区分大小写", "设置输入框为等宽字体", "摩斯电码使用小写输出"}, settingsBoolean, new LovelyChoiceDialog.OnItemsSelectedListener<String>() {
                         @Override
                         public void onItemsSelected(List<Integer> positions, List<String> items) {
                             try {
                                 if (positions.contains(0)) {
-                                    doCapsSensitive[0] = true;
-                                    Toasty.success(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT, true).show();
+                                    settingsBoolean[0] = true;
+                                    //Toasty.success(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT, true).show();
                                 } else {
-                                    doCapsSensitive[0] = false;
-                                    Toasty.success(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT, true).show();
+                                    settingsBoolean[0] = false;
+                                    //Toasty.success(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT, true).show();
                                 }
                                 if (positions.contains(1)) {
                                     replaceInput.setTextAppearance(R.style.MyMonospace);
@@ -918,7 +945,7 @@ public class MainActivity extends AppCompatActivity
                                     encryptKey.setTextAppearance(R.style.MyMonospace);
                                     moreInput.setTextAppearance(R.style.MyMonospace);
                                     moreOutput.setTextAppearance(R.style.MyMonospace);
-                                    doCapsSensitive[1] = true;
+                                    settingsBoolean[1] = true;
                                 } else {
                                     replaceInput.setTextAppearance(R.style.MyRegular);
                                     replaceOutput.setTextAppearance(R.style.MyRegular);
@@ -934,84 +961,28 @@ public class MainActivity extends AppCompatActivity
                                     encryptKey.setTextAppearance(R.style.MyRegular);
                                     moreInput.setTextAppearance(R.style.MyRegular);
                                     moreOutput.setTextAppearance(R.style.MyRegular);
-                                    doCapsSensitive[1] = false;
+                                    settingsBoolean[1] = false;
+                                }
+                                if (positions.contains(2)) {
+                                    settingsBoolean[2] = true;
+                                } else {
+                                    settingsBoolean[2] = false;
                                 }
                                 Toasty.success(MainActivity.this, "设置成功！", Toast.LENGTH_LONG, true).show();
                                 SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putBoolean("doCapsSensitive", doCapsSensitive[0]);
-                                editor.putBoolean("doUseMonospaced", doCapsSensitive[1]);
+                                editor.putBoolean("settingsBoolean", settingsBoolean[0]);
+                                editor.putBoolean("doUseMonospaced", settingsBoolean[1]);
+                                editor.putBoolean("doLowerCaseMorseCode", settingsBoolean[2]);
                                 editor.apply();
                             } catch (Exception e) {
                                 Toasty.error(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_SHORT, true).show();
                             }
                         }
-                    }).setConfirmButtonText(R.string.confirm)
+                    }).setMessage("注意：区分大小写设置仅在替换、查找不使用正则表达式时有效")
+                    .setConfirmButtonText(R.string.confirm)
+                    .setConfirmButtonColor(R.color.colorAccent)
                     .create().show();
-            /*
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.settings)
-                    .setIcon(R.drawable.baselinesettings)
-                    //.setMessage("仅在不使用正则表达式时有效")
-                    .setMultiChoiceItems(new String[]{"区分大小写", "设置输入框为等宽字体"}, doCapsSensitive, new DialogInterface.OnMultiChoiceClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                            try {
-                                if (which == 0) {
-                                    doCapsSensitive[which] = isChecked;
-                                    Toasty.success(MainActivity.this, "设置成功，此项设置仅在不使用正则表达式时有效！", Toast.LENGTH_SHORT, true).show();
-                                } else if (which == 1) {
-                                    if (isChecked) {
-                                        replaceInput.setTextAppearance(R.style.MyMonospace);
-                                        replaceOutput.setTextAppearance(R.style.MyMonospace);
-                                        replaceTo.setTextAppearance(R.style.MyMonospace);
-                                        targetSeq.setTextAppearance(R.style.MyMonospace);
-                                        searchInput.setTextAppearance(R.style.MyMonospace);
-                                        searchOutput.setTextAppearance(R.style.MyMonospace);
-                                        searchTarget.setTextAppearance(R.style.MyMonospace);
-                                        shuffleInput.setTextAppearance(R.style.MyMonospace);
-                                        shuffleOutput.setTextAppearance(R.style.MyMonospace);
-                                        encryptInput.setTextAppearance(R.style.MyMonospace);
-                                        encryptOutput.setTextAppearance(R.style.MyMonospace);
-                                        encryptKey.setTextAppearance(R.style.MyMonospace);
-                                        moreInput.setTextAppearance(R.style.MyMonospace);
-                                        moreOutput.setTextAppearance(R.style.MyMonospace);
-                                        doCapsSensitive[which] = true;
-                                    } else {
-                                        replaceInput.setTextAppearance(R.style.MyRegular);
-                                        replaceOutput.setTextAppearance(R.style.MyRegular);
-                                        replaceTo.setTextAppearance(R.style.MyRegular);
-                                        targetSeq.setTextAppearance(R.style.MyRegular);
-                                        searchInput.setTextAppearance(R.style.MyRegular);
-                                        searchOutput.setTextAppearance(R.style.MyRegular);
-                                        searchTarget.setTextAppearance(R.style.MyRegular);
-                                        shuffleInput.setTextAppearance(R.style.MyRegular);
-                                        shuffleOutput.setTextAppearance(R.style.MyRegular);
-                                        encryptInput.setTextAppearance(R.style.MyRegular);
-                                        encryptOutput.setTextAppearance(R.style.MyRegular);
-                                        encryptKey.setTextAppearance(R.style.MyRegular);
-                                        moreInput.setTextAppearance(R.style.MyRegular);
-                                        moreOutput.setTextAppearance(R.style.MyRegular);
-                                        doCapsSensitive[which] = false;
-                                    }
-                                    Toasty.success(MainActivity.this, "设置成功！", Toast.LENGTH_LONG, true).show();
-                                }
-                                SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putBoolean("doCapsSensitive", doCapsSensitive[0]);
-                                editor.putBoolean("doUseMonospaced", doCapsSensitive[1]);
-                                editor.apply();
-                            } catch (Exception e) {
-                                Toasty.error(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_SHORT, true).show();
-                            }
-                        }
-                    })
-                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).create().show();*/
         } else if (id == R.id.nav_about) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);
@@ -1109,7 +1080,7 @@ public class MainActivity extends AppCompatActivity
                     if (doUseRegex) {
                         textReplaceOutput = textReplaceInput.replaceAll(replaceFromStr, replaceToStr);
                     } else {
-                        if (doCapsSensitive[0]) {
+                        if (settingsBoolean[0]) {
                             textReplaceOutput = textReplaceInput.replace(replaceFromStr, replaceToStr);
                         } else {
                             for (String key : fbsArr) {
@@ -1133,6 +1104,7 @@ public class MainActivity extends AppCompatActivity
                     targetSeq.clearFocus();
                 }
                 break;
+
             case R.id.generateShuffleRand:
                 try {
                     char spiltWithChar;
@@ -1179,6 +1151,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleOutput.clearFocus();
                 }
                 break;
+
             case R.id.shuffleReverse:
                 try {
                     char spiltWithChar;
@@ -1212,6 +1185,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleOutput.clearFocus();
                 }
                 break;
+
             case R.id.sortByNumberValue:
                 try {
                     char spiltWithChar;
@@ -1265,6 +1239,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleOutput.clearFocus();
                 }
                 break;
+
             case R.id.sortByDictionaryIndex:
                 try {
                     char spiltWithChar;
@@ -1305,6 +1280,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleOutput.clearFocus();
                 }
                 break;
+
             case R.id.searchNext:
                 try {
                     String findTarget = searchTarget.getText().toString();
@@ -1315,7 +1291,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     boolean doUseRegexInSearch = doUseRegexSearchCheckbox.isChecked();
                     if (!doUseRegexInSearch) {
-                        if (!doCapsSensitive[0]) {
+                        if (!settingsBoolean[0]) {
                             findTarget = findTarget.toLowerCase();
                             findSrc = findSrc.toLowerCase();
                         }
@@ -1370,6 +1346,7 @@ public class MainActivity extends AppCompatActivity
                     searchOutput.setText(getString(R.string.exception_occured) + e.toString());
                 }
                 break;
+
             case R.id.searchReset:
                 try {
                     resetSearch();
@@ -1382,6 +1359,7 @@ public class MainActivity extends AppCompatActivity
                     searchTarget.clearFocus();
                 }
                 break;
+
             case R.id.searchAll:
                 resetSearch();
                 try {
@@ -1395,7 +1373,7 @@ public class MainActivity extends AppCompatActivity
                     boolean doUseRegexInSearch = doUseRegexSearchCheckbox.isChecked();
                     if (!doUseRegexInSearch) {
                         String tempFindSrc = findSrc;
-                        if (!doCapsSensitive[0]) {
+                        if (!settingsBoolean[0]) {
                             findTarget = findTarget.toLowerCase();
                             findSrc = findSrc.toLowerCase();
                         }
@@ -1443,6 +1421,7 @@ public class MainActivity extends AppCompatActivity
                     searchTarget.clearFocus();
                 }
                 break;
+
             case R.id.encrypt:
                 try {
                     if (keyGenNeedToReset) {
@@ -1467,6 +1446,7 @@ public class MainActivity extends AppCompatActivity
                     encryptKey.clearFocus();
                 }
                 break;
+
             case R.id.decrypt:
                 try {
                     if (keyGenNeedToReset) {
@@ -1496,6 +1476,7 @@ public class MainActivity extends AppCompatActivity
                     encryptKey.clearFocus();
                 }
                 break;
+
             case R.id.textReverse:
                 try {
                     String reverseSrc = moreInput.getText().toString();
@@ -1512,6 +1493,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.upperLowerCase:
                 try {
                     String caseSrc = moreInput.getText().toString();
@@ -1584,6 +1566,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.addNumbers:
                 try {
                     String addNumbersSrc = moreInput.getText().toString();
@@ -1601,6 +1584,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.formatCode:
                 try {
                     String formatCodeSrc = moreInput.getText().toString();
@@ -1615,6 +1599,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.customRandom:
                 try {
                     final String[] dataQuantityString = {"1"};
@@ -1708,91 +1693,13 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 }
                             }).create().show();
-                            /*
-                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                            .setNeutralButton("查看示例", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    moreInput.setText("生成随机时间：{0,23}:{0,59}\n");
-                                    dialog.dismiss();
-                                }
-                            })
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        final EditText dataQuantity = dialogView.findViewById(R.id.dataQuantity);
-                                        dataQuantityString[0] = dataQuantity.getText().toString();
-                                        if (dataQuantityString[0].isEmpty()) {
-                                            dataQuantityString[0] = "1";
-                                        }
-
-                                        int quantity = Integer.parseInt(dataQuantityString[0]);
-                                        StringBuilder finalOutputBuilder = new StringBuilder();
-                                        int min = 0, max = 0;
-                                        String format = moreInput.getText().toString();
-                                        for (int q = 0; q < quantity; q++) {
-                                            StringBuilder tempOutput = new StringBuilder();
-                                            for (int i = 0; i < format.length(); i++) {
-                                                if (i < format.length() - 1 && format.charAt(i) == '{' && format.charAt(i + 1) == '{') {
-                                                    i++;
-                                                    tempOutput.append('{');
-                                                    continue;
-                                                }
-                                                if (format.charAt(i) == '{') {
-                                                    int length = 0;
-                                                    for (int j = 1; i + j < format.length(); j++) {
-                                                        if (format.charAt(i + j) == ',' || format.charAt(i + j) == '，') {
-                                                            min = Integer.parseInt(format.substring(i + 1, i + j));
-                                                            for (int k = 1; i + j + k < format.length(); k++) {
-                                                                if (format.charAt(i + j + k) == '}') {
-                                                                    max = Integer.parseInt(format.substring(i + j + 1, i + j + k));
-                                                                    length = j + k;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            break;
-                                                        }
-                                                    }
-                                                    Random random = new Random();
-                                                    int randNum = random.nextInt(max - min + 1) + min;
-                                                    tempOutput.append(String.valueOf(randNum));
-                                                    i += length;
-                                                } else {
-                                                    tempOutput.append(format.charAt(i));
-                                                }
-                                            }
-                                            finalOutputBuilder.append(tempOutput.toString());
-                                        }
-                                        moreOutput.setText(finalOutputBuilder.toString(), TextView.BufferType.EDITABLE);
-                                    } catch (Exception e) {
-                                        if (e instanceof NumberFormatException) {
-                                            moreOutput.setText("输入格式错误：" + e.toString(), TextView.BufferType.EDITABLE);
-                                        } else if (e instanceof IllegalArgumentException) {
-                                            moreOutput.setText("参数错误，随机数的上界必须大于下界！", TextView.BufferType.EDITABLE);
-                                        } else {
-                                            moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
-                                        }
-                                    } finally {
-                                        dialog.dismiss();
-                                        moreOutput.clearFocus();
-                                        moreInput.clearFocus();
-                                    }
-                                    //dataQuantityString[0] = dataQuantity.getText().toString();
-                                    //Toast.makeText(MainActivity.this,dataQuantityString[0],Toast.LENGTH_LONG).show();
-                                }
-                            }).create().show();*/
                 } catch (Exception e) {
                     moreOutput.setText(getString(R.string.exception_occured) + e.toString(), TextView.BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.toMD5:
                 try {
                     String md5Src = moreInput.getText().toString();
@@ -1806,6 +1713,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.toBase64:
                 try {
                     String plainSrc = moreInput.getText().toString();
@@ -1819,6 +1727,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.fromBase64:
                 try {
                     String base64Input = moreInput.getText().toString();
@@ -1836,6 +1745,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.toMorseCode:
                 try {
                     String morseCodeInput = moreInput.getText().toString();
@@ -1845,7 +1755,11 @@ public class MainActivity extends AppCompatActivity
                             .replace('•', '.').replace('●', '.')
                             .replace('_', '-').replace('—', '-');
                     MorseCoder morseCoder = new MorseCoder();
-                    moreOutput.setText(morseCoder.decode(morseCodeInput), TextView.BufferType.EDITABLE);
+                    String decodeStr = morseCoder.decode(morseCodeInput);
+                    if (settingsBoolean[2]) {
+                        decodeStr = decodeStr.toLowerCase();
+                    }
+                    moreOutput.setText(decodeStr, TextView.BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
@@ -1869,6 +1783,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             case R.id.formatJson:
                 try {
                     String uglyJson = moreInput.getText().toString();
@@ -1886,6 +1801,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.clearFocus();
                 }
                 break;
+
             default:
         }
     }
@@ -1972,18 +1888,23 @@ public class MainActivity extends AppCompatActivity
                     case R.id.textReplaceLayout:
                         replaceInput.setText(getFileContent, TextView.BufferType.EDITABLE);
                         break;
+
                     case R.id.textSearchLayout:
                         searchInput.setText(getFileContent, TextView.BufferType.EDITABLE);
                         break;
+
                     case R.id.textShuffleLayout:
                         shuffleInput.setText(getFileContent, TextView.BufferType.EDITABLE);
                         break;
+
                     case R.id.textEncryptLayout:
                         encryptInput.setText(getFileContent, TextView.BufferType.EDITABLE);
                         break;
+
                     case R.id.textMoreLayout:
                         moreInput.setText(getFileContent, TextView.BufferType.EDITABLE);
                         break;
+
                     default:
                 }
             } else if (requestCode == REQUESTCODE_WRITE) {
@@ -1996,18 +1917,23 @@ public class MainActivity extends AppCompatActivity
                     case R.id.textReplaceLayout:
                         outputString = replaceOutput.getText().toString();
                         break;
+
                     case R.id.textSearchLayout:
                         outputString = searchOutput.getText().toString();
                         break;
+
                     case R.id.textShuffleLayout:
                         outputString = shuffleOutput.getText().toString();
                         break;
+
                     case R.id.textEncryptLayout:
                         outputString = encryptOutput.getText().toString();
                         break;
+
                     case R.id.textMoreLayout:
                         outputString = moreOutput.getText().toString();
                         break;
+
                     default:
                 }
                 StringBuilder filename = new StringBuilder(path);
@@ -2124,18 +2050,23 @@ public class MainActivity extends AppCompatActivity
                 case R.id.textReplaceLayout:
                     outputString = replaceOutput.getText().toString();
                     break;
+
                 case R.id.textSearchLayout:
                     outputString = searchOutput.getText().toString();
                     break;
+
                 case R.id.textShuffleLayout:
                     outputString = shuffleOutput.getText().toString();
                     break;
+
                 case R.id.textEncryptLayout:
                     outputString = encryptOutput.getText().toString();
                     break;
+
                 case R.id.textMoreLayout:
                     outputString = moreOutput.getText().toString();
                     break;
+
                 default:
             }
             StringBuilder filename = new StringBuilder(path);
