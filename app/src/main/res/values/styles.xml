@@ -12,18 +12,21 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="MyMonospace">
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">18sp</item>
         <item name="android:typeface">monospace</item>
         <item name="android:fontFamily">monospace</item>
     </style>
+
     <style name="MyRegular">
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">18sp</item>
         <item name="android:typeface">sans</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
