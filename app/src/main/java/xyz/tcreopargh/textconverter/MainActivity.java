@@ -1389,13 +1389,25 @@ public class MainActivity extends AppCompatActivity
                         .setNegativeButtonColor(getColor(R.color.colorAccent))
                         .setNegativeButton("恢复默认", v16 -> {
                             try {
+                                String tempSalt = salt;
                                 salt = defaultSalt;
                                 keyGenNeedToReset = true;
                                 SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("salt", salt);
                                 editor.apply();
-                                Toasty.success(MainActivity.this, "已恢复", Toast.LENGTH_LONG).show();
+                                Snacky.builder()
+                                        .setActivity(MainActivity.this)
+                                        .setDuration(Snacky.LENGTH_LONG)
+                                        .setText("已恢复")
+                                        .setActionText(R.string.undo)
+                                        .setActionClickListener(v1 -> {
+                                            salt = tempSalt;
+                                            SharedPreferences sharedPreferences1 = getSharedPreferences("settings", MODE_PRIVATE);
+                                            SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                                            editor1.putString("salt", tempSalt);
+                                            editor1.apply();
+                                        }).success().show();
                             } catch (Exception e) {
                                 Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG).show();
                             } finally {
