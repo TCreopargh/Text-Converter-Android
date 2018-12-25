@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity
             "[\\u2E80-\\u9FFF]+"
     };
 
-    final String defaultSalt = "TCreopargh_is_handsome";
+    final String defaultSalt = "Powered by TCreopargh!";
     String salt = defaultSalt;
 
     @Override
@@ -1314,7 +1314,8 @@ public class MainActivity extends AppCompatActivity
                             encryptOutput.setText(getString(R.string.key_empty), TextView.BufferType.EDITABLE);
                             return;
                         }
-                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), salt);
+                        String saltBase64 = Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
+                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), saltBase64);
                         keyGenNeedToReset = false;
                     }
                     String encryptSourceText = encryptInput.getText().toString();
@@ -1339,7 +1340,8 @@ public class MainActivity extends AppCompatActivity
                             encryptOutput.setText(getString(R.string.key_empty), TextView.BufferType.EDITABLE);
                             return;
                         }
-                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), salt);
+                        String saltBase64 = Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
+                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), saltBase64);
                         keyGenNeedToReset = false;
                     }
                     String decryptSourceText = encryptInput.getText().toString();
@@ -1380,7 +1382,6 @@ public class MainActivity extends AppCompatActivity
                             } else {
                                 v15.setTextAppearance(R.style.MyRegular);
                             }
-                            v15.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                             v15.setText(salt, TextView.BufferType.EDITABLE);
                             v15.clearFocus();
                         })
@@ -1404,12 +1405,8 @@ public class MainActivity extends AppCompatActivity
                         })
                         .setConfirmButton(R.string.confirm, text -> {
                             try {
-                                final String regex = "^(?!_)(?!.*?_$)[a-zA-Z0-9_]+$";
                                 if (text.isEmpty()) {
                                     Toasty.error(MainActivity.this, "盐值不能为空！", Toast.LENGTH_LONG).show();
-                                } else if (!Pattern.matches(regex, text) || text.length() % 4 != 0) {
-                                    Toasty.error(MainActivity.this, "盐值包含非法字符！\n" +
-                                            "盐值只能含有数字、字母和下划线，且不能以下划线开头和结尾！盐值的长度必须为4的倍数！", Toast.LENGTH_LONG).show();
                                 } else {
                                     salt = text;
                                     keyGenNeedToReset = true;
