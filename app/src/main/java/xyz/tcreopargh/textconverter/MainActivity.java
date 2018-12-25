@@ -859,7 +859,7 @@ public class MainActivity extends AppCompatActivity
                             editor.putBoolean("doLowerCaseMorseCode", settingsBoolean[2]);
                             editor.apply();
                         } catch (Exception e) {
-                            Toasty.error(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_SHORT, true).show();
+                            Toasty.error(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_LONG, true).show();
                         }
                     }).setMessage("注意：区分大小写设置仅在替换、查找不使用正则表达式时有效")
                     .setConfirmButtonColor(getColor(R.color.colorAccent))
