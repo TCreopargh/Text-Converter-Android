@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -80,6 +81,7 @@ import com.takwolf.morsecoder.MorseCoder;
 import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity
     EditText searchInput, searchOutput, searchTarget;
     CheckBox doUseRegexSearchCheckbox;
 
-    Button encrypt, decrypt;
+    Button encrypt, decrypt, setSalt;
     EditText encryptInput, encryptOutput, encryptKey;
     CheckBox doPasswordVisible;
 
@@ -150,6 +152,7 @@ public class MainActivity extends AppCompatActivity
             "代码注释",
             "汉字"
     };
+
     final String presetsValue[] = new String[]{
             "#?([a-f0-9]{6}|[a-f0-9]{3})",
             "[a-z\\d]+(\\.[a-z\\d]+)*@([\\da-z](-[\\da-z])?)+(\\.{1,2}[a-z]+)+",
@@ -162,6 +165,9 @@ public class MainActivity extends AppCompatActivity
             "(?<!http:|\\S)//.*",
             "[\\u2E80-\\u9FFF]+"
     };
+
+    final String defaultSalt = "TCreopargh_is_handsome";
+    String salt = defaultSalt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +203,7 @@ public class MainActivity extends AppCompatActivity
         settingsBoolean[0] = sharedPreferences.getBoolean("settingsBoolean", false);
         settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
         settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
+        salt = sharedPreferences.getString("salt", defaultSalt);
         if (settingsBoolean[1]) {
             replaceInput.setTextAppearance(R.style.MyMonospace);
             replaceOutput.setTextAppearance(R.style.MyMonospace);
@@ -353,7 +360,7 @@ public class MainActivity extends AppCompatActivity
                 regexCautionIsShown = true;
                 LovelyStandardDialog lovelyStandardDialog =
                         new LovelyStandardDialog(MainActivity.this, LovelyStandardDialog.ButtonLayout.HORIZONTAL);
-                lovelyStandardDialog.setIcon(R.drawable.ic_warning_outline_white)
+                lovelyStandardDialog.setIcon(R.drawable.ic_warning_white_48dp)
                         .setTitle(R.string.caution)
                         .setTopColorRes(R.color.warningYellow)
                         .setPositiveButtonColorRes(R.color.colorAccent)
@@ -855,6 +862,7 @@ public class MainActivity extends AppCompatActivity
                             Toasty.error(MainActivity.this, "设置失败！错误信息：" + e.toString(), Toast.LENGTH_SHORT, true).show();
                         }
                     }).setMessage("注意：区分大小写设置仅在替换、查找不使用正则表达式时有效")
+                    .setConfirmButtonColor(getColor(R.color.colorAccent))
                     .setConfirmButtonText(R.string.confirm)
                     .create().show();
         } else if (id == R.id.nav_about) {
@@ -899,6 +907,7 @@ public class MainActivity extends AppCompatActivity
         encryptInput = findViewById(R.id.encryptInput);
         encryptKey = findViewById(R.id.encryptKey);
         encrypt = findViewById(R.id.encrypt);
+        setSalt = findViewById(R.id.setSalt);
         doPasswordVisible = findViewById(R.id.doPasswordVisible);
         decrypt = findViewById(R.id.decrypt);
 
@@ -925,6 +934,7 @@ public class MainActivity extends AppCompatActivity
         searchReset.setOnClickListener(this);
         searchAll.setOnClickListener(this);
         encrypt.setOnClickListener(this);
+        setSalt.setOnClickListener(this);
         decrypt.setOnClickListener(this);
         reverseText.setOnClickListener(this);
         addIndent.setOnClickListener(this);
@@ -1225,6 +1235,7 @@ public class MainActivity extends AppCompatActivity
                 try {
                     resetSearch();
                     searchOutput.setText("");
+                    Toasty.success(MainActivity.this, "已重置", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     searchOutput.setText(getString(R.string.exception_occured) + e.toString());
                 } finally {
@@ -1303,7 +1314,7 @@ public class MainActivity extends AppCompatActivity
                             encryptOutput.setText(getString(R.string.key_empty), TextView.BufferType.EDITABLE);
                             return;
                         }
-                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), "TCreopargh_is_handsome");
+                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), salt);
                         keyGenNeedToReset = false;
                     }
                     String encryptSourceText = encryptInput.getText().toString();
@@ -1328,7 +1339,7 @@ public class MainActivity extends AppCompatActivity
                             encryptOutput.setText(getString(R.string.key_empty), TextView.BufferType.EDITABLE);
                             return;
                         }
-                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), "TCreopargh_is_handsome");
+                        generatedKey = AESUtils.generateKey(encryptKey.getText().toString(), salt);
                         keyGenNeedToReset = false;
                     }
                     String decryptSourceText = encryptInput.getText().toString();
@@ -1349,6 +1360,71 @@ public class MainActivity extends AppCompatActivity
                     encryptOutput.clearFocus();
                     encryptKey.clearFocus();
                 }
+                break;
+            case R.id.setSalt:
+                LovelyTextInputDialog lovelyTextInputDialog = new LovelyTextInputDialog(this);
+                lovelyTextInputDialog.setTopColorRes(R.color.safeGreen)
+                        .setIcon(R.drawable.ic_lock_white)
+                        .setTitle("AES加盐")
+                        .setMessage("盐（Salt），在密码学中，是指在散列之前将散列内容（例如：密码）的任意固定位置插入特定的字符串。" +
+                                "这个在散列中加入字符串的方式称为“加盐”。" +
+                                "其作用是让加盐后的散列结果和没有加盐的结果不相同，在不同的应用情景中，这个处理可以增加额外的安全性。\n" +
+                                "注意：解密时需要盐和密码都对应才能够正确解密！")
+                        .configureView(v14 -> {
+                            v14.setFocusableInTouchMode(true);
+                            v14.setFocusable(true);
+                        })
+                        .configureEditText(v15 -> {
+                            if (settingsBoolean[1]) {
+                                v15.setTextAppearance(R.style.MyMonospace);
+                            } else {
+                                v15.setTextAppearance(R.style.MyRegular);
+                            }
+                            v15.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            v15.setText(salt, TextView.BufferType.EDITABLE);
+                            v15.clearFocus();
+                        })
+                        .setConfirmButtonColor(getColor(R.color.colorAccent))
+                        .setNegativeButtonColor(getColor(R.color.colorAccent))
+                        .setNegativeButton("恢复默认", v16 -> {
+                            try {
+                                salt = defaultSalt;
+                                keyGenNeedToReset = true;
+                                SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("salt", salt);
+                                editor.apply();
+                                Toasty.success(MainActivity.this, "已恢复", Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+                                Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG).show();
+                            } finally {
+                                lovelyTextInputDialog.dismiss();
+                            }
+
+                        })
+                        .setConfirmButton(R.string.confirm, text -> {
+                            try {
+                                final String regex = "^(?!_)(?!.*?_$)[a-zA-Z0-9_]+$";
+                                if (text.isEmpty()) {
+                                    Toasty.error(MainActivity.this, "盐值不能为空！", Toast.LENGTH_LONG).show();
+                                } else if (!Pattern.matches(regex, text) || text.length() % 4 != 0) {
+                                    Toasty.error(MainActivity.this, "盐值包含非法字符！\n" +
+                                            "盐值只能含有数字、字母和下划线，且不能以下划线开头和结尾！盐值的长度必须为4的倍数！", Toast.LENGTH_LONG).show();
+                                } else {
+                                    salt = text;
+                                    keyGenNeedToReset = true;
+                                    SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("salt", salt);
+                                    editor.apply();
+                                    Toasty.success(MainActivity.this, "设置成功！", Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                Toasty.error(MainActivity.this, getString(R.string.exception_occured) + e.toString(), Toast.LENGTH_LONG).show();
+                            } finally {
+                                lovelyTextInputDialog.dismiss();
+                            }
+                        }).show();
                 break;
 
             case R.id.textReverse:

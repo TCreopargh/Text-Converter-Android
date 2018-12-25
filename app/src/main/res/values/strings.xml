@@ -151,4 +151,6 @@
     <string name="switch_cases">切换大小写</string>
     <string name="format_json">JSON格式化</string>
     <string name="char_count">字数统计</string>
+    <string name="set_salt">设置盐值</string>
+    <string name="star">为我评分</string>
 </resources>

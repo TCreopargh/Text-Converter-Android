@@ -6,4 +6,5 @@
     <color name="colorAllWhite">#ffffff</color>
     <color name="warningYellow">#fbc02d</color>
     <color name="settingsGrey">#546e7a</color>
+    <color name="safeGreen">#4caf50</color>
 </resources>

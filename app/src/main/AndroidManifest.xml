@@ -32,7 +32,8 @@
             android:label="@string/view_help" />
         <activity
             android:name=".AboutActivity"
-            android:label="@string/about" />
+            android:label="@string/about"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
