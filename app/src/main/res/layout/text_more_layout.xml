@@ -11,42 +11,42 @@
         android:id="@+id/moreInput"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/input_source_text"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/moreOutput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <EditText
         android:id="@+id/moreOutput"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/output"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/LinearLayout1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/moreInput"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <LinearLayout
         android:id="@+id/LinearLayout1"
@@ -68,7 +68,7 @@
             android:layout_weight="1"
             android:text="@string/string_reverse"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/upperLowerCase"
@@ -78,7 +78,7 @@
             android:layout_weight="1"
             android:text="@string/switch_cases"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
     </LinearLayout>
 
@@ -102,7 +102,7 @@
             android:layout_weight="1"
             android:text="@string/add_numbers"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/formatCode"
@@ -112,7 +112,7 @@
             android:layout_weight="1"
             android:text="@string/format_java_code"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
     </LinearLayout>
 
@@ -136,7 +136,7 @@
             android:layout_weight="1"
             android:text="@string/custom_random"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/toMD5"
@@ -146,7 +146,7 @@
             android:layout_weight="1"
             android:text="@string/generate_md5"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
     </LinearLayout>
 
@@ -154,9 +154,9 @@
         android:id="@+id/LinearLayout6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="0dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/LinearLayout5"
@@ -172,7 +172,7 @@
             android:layout_weight="1"
             android:text="@string/to_base_64"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/fromBase64"
@@ -182,7 +182,7 @@
             android:layout_weight="1"
             android:text="@string/from_base_64"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
     </LinearLayout>
 
@@ -190,9 +190,9 @@
         android:id="@+id/LinearLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -207,7 +207,7 @@
             android:layout_weight="1"
             android:text="@string/to_morse_code"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/formatJson"
@@ -217,7 +217,7 @@
             android:layout_weight="1"
             android:text="@string/format_json"
             android:textAllCaps="false"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
     </LinearLayout>
 

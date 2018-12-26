@@ -17,27 +17,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="83dp"
         android:layout_height="86dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/tc_app_name"
         android:src="@drawable/ic_launcher_round"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar1" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar1"/>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:text="@string/tc_app_name"
@@ -45,92 +45,92 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"/>
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/app_discription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"/>
 
     <TextView
         android:id="@+id/appVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/error_loading_version"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3"/>
 
     <TextView
         android:id="@+id/developer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/developer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appVersion" />
+        app:layout_constraintTop_toBottomOf="@+id/appVersion"/>
 
     <Button
         android:id="@+id/update"
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="180dp"
         android:layout_height="49dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/github_address"
         android:textAllCaps="false"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/developer" />
+        app:layout_constraintTop_toBottomOf="@+id/developer"/>
 
     <Button
         android:id="@+id/viewMyWebsite"
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="180dp"
         android:layout_height="49dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/visit_my_website"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/update" />
+        app:layout_constraintTop_toBottomOf="@+id/update"/>
 
     <Button
         android:id="@+id/sendFeedBack"
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="180dp"
         android:layout_height="49dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/send_feedback"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewMyWebsite" />
+        app:layout_constraintTop_toBottomOf="@+id/viewMyWebsite"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

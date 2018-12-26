@@ -11,29 +11,29 @@
         android:id="@+id/replaceOutput"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/output"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/generateReplacedText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/doUseRegex"
-        app:layout_constraintVertical_weight="3" />
+        app:layout_constraintVertical_weight="3"/>
 
     <EditText
         android:id="@+id/replaceTo"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="7dp"
         android:layout_marginTop="4dp"
+        android:layout_marginStart="7dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/replace_to"
@@ -45,34 +45,34 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/targetSeq"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <EditText
         android:id="@+id/replaceInput"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/input_source_text"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/targetSeq"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="4" />
+        app:layout_constraintVertical_weight="4"/>
 
     <EditText
         android:id="@+id/targetSeq"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/replace_from"
@@ -84,14 +84,14 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/replaceInput"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <CheckBox
         android:id="@+id/doUseRegex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="end|center"
         android:text="@string/use_regex"
@@ -101,19 +101,19 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/replaceTo"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <Button
         android:id="@+id/generateReplacedText"
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="140dp"
         android:layout_height="49dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/replace"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

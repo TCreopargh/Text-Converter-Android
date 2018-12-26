@@ -12,28 +12,28 @@
         android:id="@+id/searchInput"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/input_source_text"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/searchTargetText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="4" />
+        app:layout_constraintVertical_weight="4"/>
 
     <EditText
         android:id="@+id/searchTargetText"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/input_search_hint"
@@ -45,14 +45,14 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchInput"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <CheckBox
         android:id="@+id/doUseRegexInSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="end|center"
         android:text="@string/use_regex"
@@ -62,7 +62,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchTargetText"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <EditText
         android:id="@+id/searchOutput"
@@ -73,15 +73,15 @@
         android:ems="10"
         android:hint="@string/search_result"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/doUseRegexInSearch"
-        app:layout_constraintVertical_weight="2" />
+        app:layout_constraintVertical_weight="2"/>
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -100,7 +100,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/reset"
-            android:textSize="13sp" />
+            android:textSize="13sp"/>
 
         <Button
             android:id="@+id/searchAll"
@@ -109,7 +109,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/search_all"
-            android:textSize="13sp" />
+            android:textSize="13sp"/>
 
         <Button
             android:id="@+id/searchNext"
@@ -118,7 +118,7 @@
             android:layout_height="49dp"
             android:layout_weight="1"
             android:text="@string/search_next"
-            android:textSize="13sp" />
+            android:textSize="13sp"/>
 
     </LinearLayout>
 

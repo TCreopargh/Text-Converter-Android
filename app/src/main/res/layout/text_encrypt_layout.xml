@@ -11,28 +11,28 @@
         android:id="@+id/encryptInput"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/input_source_text"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/encryptKey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="3" />
+        app:layout_constraintVertical_weight="3"/>
 
     <EditText
         android:id="@+id/encryptKey"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/input_password"
@@ -42,36 +42,36 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/encryptInput"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <EditText
         android:id="@+id/encryptOutput"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="@string/output"
         android:inputType="textMultiLine"
-        android:scrollbars="vertical"
         android:scrollHorizontally="false"
+        android:scrollbars="vertical"
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/doPasswordVisible"
-        app:layout_constraintVertical_weight="3" />
+        app:layout_constraintVertical_weight="3"/>
 
     <CheckBox
         android:id="@+id/doPasswordVisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:gravity="end|center"
         android:text="@string/password_visible"
         android:textSize="16sp"
@@ -80,15 +80,15 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/encryptKey"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_weight="1"/>
 
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,7 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/encrypt"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/setSalt"
@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/set_salt"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/decrypt"
@@ -120,6 +120,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/decrypt"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="xyz.tcreopargh.textconverter">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -19,21 +19,21 @@
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:label">
         <activity
-            android:name=".MainActivity"
             android:label="@string/tc_app_name"
+            android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".ViewHelpActivity"
-            android:label="@string/view_help" />
+            android:label="@string/view_help"
+            android:name=".ViewHelpActivity"/>
         <activity
-            android:name=".AboutActivity"
             android:label="@string/about"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
