@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 
 import androidx.appcompat.app.AppCompatActivity;
+import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
 
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,14 @@ import androidx.appcompat.widget.Toolbar;
 
 
 public class AboutActivity extends AppCompatActivity {
+
+    int clicks = 100;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Toasty.Config.reset();
+    }
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -39,8 +49,44 @@ public class AboutActivity extends AppCompatActivity {
         window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-
+        Toasty.Config.getInstance()
+                .setInfoColor(getColor(R.color.colorPrimary))
+                .apply();
         Toolbar toolbar = findViewById(R.id.toolbar1);
+        ImageView icon = findViewById(R.id.imageView2);
+        icon.setOnClickListener(v -> {
+            clicks--;
+            if (clicks <= 97 && clicks > 1) {
+
+                Toasty.info(AboutActivity.this, "还需" + clicks + "次点击即可解锁彩蛋！", Toast.LENGTH_SHORT).show();
+            } else if (clicks == 1) {
+                Snacky.builder()
+                        .setActivity(AboutActivity.this)
+                        .setText("点击右边的按钮即可进入困难模式")
+                        .setDuration(Snacky.LENGTH_LONG)
+                        .setActionText("点我")
+                        .setActionClickListener(v1 -> {
+                            Intent intent = new Intent();
+                            intent.putExtra("easter_egg", true);
+                            Snacky.builder()
+                                    .setActivity(AboutActivity.this)
+                                    .setDuration(Snacky.LENGTH_LONG)
+                                    .setText("已进入困难模式，请返回主界面查看")
+                                    .centerText()
+                                    .success().show();
+                            setResult(RESULT_OK, intent);
+                            clicks = 100;
+                        }).warning().show();
+            } else if (clicks == 0) {
+                Snacky.builder()
+                        .setActivity(AboutActivity.this)
+                        .setDuration(Snacky.LENGTH_LONG)
+                        .setText("哈哈哈，你完美错过了彩蛋！")
+                        .centerText()
+                        .error().show();
+                clicks = 100;
+            }
+        });
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

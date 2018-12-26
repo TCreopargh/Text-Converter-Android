@@ -35,6 +35,7 @@ import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -867,7 +868,7 @@ public class MainActivity extends AppCompatActivity
                     .create().show();
         } else if (id == R.id.nav_about) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 4);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -1831,6 +1832,11 @@ public class MainActivity extends AppCompatActivity
                     path = list.get(0);
                 } else if (requestCode == REQUESTCODE_WRITE) {
                     path = data.getStringExtra("path");
+                } else if (requestCode == 4) {
+                    boolean easterEgg = data.getBooleanExtra("easter_egg", false);
+                    if (easterEgg) {
+                        rotateAll();
+                    }
                 }
             }
             if (requestCode == REQUESTCODE_READ) {
@@ -2068,5 +2074,13 @@ public class MainActivity extends AppCompatActivity
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(uglyJSONString);
         return gson.toJson(je);
+    }
+
+    private void rotateAll() {
+        textReplaceLayout.setRotation(180);
+        textMoreLayout.setRotation(180);
+        textEncryptLayout.setRotation(180);
+        textShuffleLayout.setRotation(180);
+        textSearchLayout.setRotation(180);
     }
 }
