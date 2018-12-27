@@ -3,6 +3,8 @@ package xyz.tcreopargh.textconverter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -30,11 +32,17 @@ import androidx.appcompat.widget.Toolbar;
 public class AboutActivity extends AppCompatActivity {
 
     int clicks = 100;
+    boolean isSettingsReseted = false;
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Toasty.Config.reset();
+        if (isSettingsReseted) {
+            MainActivity.mainActivity.finish();
+            Intent intent = new Intent(AboutActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -172,6 +180,40 @@ public class AboutActivity extends AppCompatActivity {
                                     lovelyStandardDialog.dismiss();
                                 })
                         .setNegativeButton("下次吧", v -> lovelyStandardDialog.dismiss())
+                        .create()
+                        .show();
+                break;
+            case R.id.resetOptions:
+                LovelyStandardDialog lovelyStandardDialog1 =
+                        new LovelyStandardDialog(
+                                AboutActivity.this, LovelyStandardDialog.ButtonLayout.HORIZONTAL);
+                lovelyStandardDialog1
+                        .setTitle("重置设置")
+                        .setTopColorRes(R.color.colorAccent)
+                        .setIcon(R.drawable.ic_settings_backup_restore_white_48dp)
+                        .setMessage("是否要重置所有设置？此操作不可撤销。")
+                        .setButtonsColorRes(R.color.colorAccent)
+                        .setPositiveButton(
+                                "确定",
+                                v -> {
+                                    SharedPreferences sharedPreferences1 =
+                                            getSharedPreferences("settings", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences1.edit();
+                                    editor.clear();
+                                    boolean result = editor.commit();
+                                    if (result) {
+                                        Toasty.success(
+                                                        AboutActivity.this,
+                                                        "重置成功！",
+                                                        Toast.LENGTH_LONG)
+                                                .show();
+                                        isSettingsReseted = true;
+                                    } else {
+                                        Toasty.error(AboutActivity.this, "重置失败！", Toast.LENGTH_LONG)
+                                                .show();
+                                    }
+                                })
+                        .setNegativeButton("取消", v -> lovelyStandardDialog1.dismiss())
                         .create()
                         .show();
                 break;

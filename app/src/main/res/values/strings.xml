@@ -153,4 +153,6 @@
     <string name="char_count">字数统计</string>
     <string name="set_salt">设置盐值</string>
     <string name="star">为我评分</string>
+    <string name="reset_options">重置设置</string>
+    <string name="tick">tick</string>
 </resources>

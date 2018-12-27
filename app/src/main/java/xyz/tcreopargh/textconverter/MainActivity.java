@@ -23,6 +23,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 
+import android.widget.ImageView;
 import androidx.annotation.NonNull;
 
 import androidx.core.app.ActivityCompat;
@@ -37,6 +38,8 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.core.view.GravityCompat;
@@ -144,8 +147,13 @@ public class MainActivity extends AppCompatActivity
 
     String path = "";
 
+    ImageView tick;
+
     final int REQUESTCODE_READ = 1000;
     final int REQUESTCODE_WRITE = 2000;
+
+    @SuppressLint("StaticFieldLeak")
+    public static MainActivity mainActivity = null;
 
     final boolean settingsBoolean[] = new boolean[] {false, false, false, true};
 
@@ -172,6 +180,7 @@ public class MainActivity extends AppCompatActivity
 
     final String defaultSalt = "Powered by TCreopargh!";
     String salt = defaultSalt;
+    boolean isGuideShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +190,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         initView();
         setTitle(R.string.string_replace);
+        mainActivity = this;
 
         // Floating button, may be used later
         /*
@@ -213,6 +223,7 @@ public class MainActivity extends AppCompatActivity
         settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
         settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
         settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
+        isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
         salt = sharedPreferences.getString("salt", defaultSalt);
         setMultiLine(settingsBoolean[3]);
         if (settingsBoolean[1]) {
@@ -298,7 +309,74 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception ignored) {
 
         }
+        TapTargetSequence tapTargetSequence =
+                new TapTargetSequence(MainActivity.this)
+                        .targets(
+                                TapTarget.forToolbarNavigationIcon(
+                                                toolbar,
+                                                "点击这里打开菜单",
+                                                "《文本转换》是一款包含多种实用功能的文本处理应用，"
+                                                        + "菜单可在不同的功能界面进行切换。"
+                                                        + "点击这里以继续向导。")
+                                        .outerCircleColor(R.color.colorPrimary)
+                                        .outerCircleAlpha(0.90f)
+                                        .targetCircleColor(R.color.colorAllWhite)
+                                        .titleTextColor(R.color.colorAllWhite)
+                                        .dimColor(R.color.colorAllBlack)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .tintTarget(true)
+                                        .id(1),
+                                TapTarget.forToolbarOverflow(
+                                                toolbar,
+                                                "这里包含了更多功能",
+                                                "可以从这个菜单进行读取/存储文件、复制到剪贴板、统计字数等操作。")
+                                        .outerCircleColor(R.color.colorAccent)
+                                        .outerCircleAlpha(0.90f)
+                                        .targetCircleColor(R.color.colorAllWhite)
+                                        .titleTextColor(R.color.colorAllWhite)
+                                        .dimColor(R.color.colorAllBlack)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .tintTarget(true)
+                                        .id(2),
+                                TapTarget.forView(tick, "开始使用", "您已经完成了设置向导，点击旁边的按钮，开始使用吧!")
+                                        .outerCircleColor(R.color.safeGreen)
+                                        .outerCircleAlpha(0.90f)
+                                        .targetCircleColor(R.color.colorAllWhite)
+                                        .titleTextColor(R.color.colorAllWhite)
+                                        .dimColor(R.color.colorAllBlack)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .tintTarget(true)
+                                        .id(3))
+                        .listener(
+                                new TapTargetSequence.Listener() {
+                                    @Override
+                                    public void onSequenceFinish() {
+                                        tick.setVisibility(View.GONE);
+                                        SharedPreferences sharedPreferences1 =
+                                                getSharedPreferences("settings", MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences1.edit();
+                                        isGuideShown = true;
+                                        editor.putBoolean("isGuideShown", true);
+                                        editor.apply();
+                                    }
 
+                                    @Override
+                                    public void onSequenceStep(
+                                            TapTarget lastTarget, boolean targetClicked) {
+                                        if (lastTarget.id() == 2) {
+                                            tick.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onSequenceCanceled(TapTarget lastTarget) {}
+                                });
+        if (!isGuideShown) {
+            tapTargetSequence.start();
+        }
         doUseRegexSearchCheckbox.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
                     resetSearch();
@@ -1074,6 +1152,8 @@ public class MainActivity extends AppCompatActivity
         fromBase64 = findViewById(R.id.fromBase64);
         toMorseCode = findViewById(R.id.toMorseCode);
         formatJson = findViewById(R.id.formatJson);
+
+        tick = findViewById(R.id.tick);
 
         generateReplacedText.setOnClickListener(this);
         shuffle.setOnClickListener(this);

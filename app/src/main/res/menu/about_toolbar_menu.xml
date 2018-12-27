@@ -5,5 +5,10 @@
         android:id="@+id/star"
         android:icon="@drawable/ic_star_border_white_24dp"
         android:title="@string/star"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/resetOptions"
+        android:icon="@drawable/ic_settings_backup_restore_white_24dp"
+        android:title="@string/reset_options"
+        app:showAsAction="ifRoom"/>
 </menu>
