@@ -195,42 +195,6 @@ public class AboutActivity extends AppCompatActivity {
                         .create()
                         .show();
                 break;
-                /*
-            case R.id.resetOptions:
-                LovelyStandardDialog lovelyStandardDialog1 =
-                        new LovelyStandardDialog(
-                                AboutActivity.this, LovelyStandardDialog.ButtonLayout.HORIZONTAL);
-                lovelyStandardDialog1
-                        .setTitle("重置设置")
-                        .setTopColorRes(R.color.colorAccent)
-                        .setIcon(R.drawable.ic_settings_backup_restore_white_48dp)
-                        .setMessage("是否要重置所有设置？此操作不可撤销。")
-                        .setButtonsColorRes(R.color.colorAccent)
-                        .setPositiveButton(
-                                "确定",
-                                v -> {
-                                    SharedPreferences sharedPreferences1 =
-                                            getSharedPreferences("settings", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences1.edit();
-                                    editor.clear();
-                                    boolean result = editor.commit();
-                                    if (result) {
-                                        Toasty.success(
-                                                        AboutActivity.this,
-                                                        "重置成功！",
-                                                        Toast.LENGTH_LONG)
-                                                .show();
-                                        isSettingsReseted = true;
-                                    } else {
-                                        Toasty.error(AboutActivity.this, "重置失败！", Toast.LENGTH_LONG)
-                                                .show();
-                                    }
-                                })
-                        .setNegativeButton("取消", v -> lovelyStandardDialog1.dismiss())
-                        .create()
-                        .show();
-                break;
-                */
             case android.R.id.home:
                 returnHome();
                 break;
