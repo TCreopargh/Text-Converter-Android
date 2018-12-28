@@ -80,7 +80,6 @@ import com.google.gson.JsonParser;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.Constant;
 import com.takwolf.morsecoder.MorseCoder;
-import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
@@ -218,45 +217,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        settingsBoolean[0] = sharedPreferences.getBoolean("settingsBoolean", false);
-        settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
-        settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
-        settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
-        isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
-        salt = sharedPreferences.getString("salt", defaultSalt);
-        setMultiLine(settingsBoolean[3]);
-        if (settingsBoolean[1]) {
-            replaceInput.setTextAppearance(R.style.MyMonospace);
-            replaceOutput.setTextAppearance(R.style.MyMonospace);
-            replaceTo.setTextAppearance(R.style.MyMonospace);
-            targetSeq.setTextAppearance(R.style.MyMonospace);
-            searchInput.setTextAppearance(R.style.MyMonospace);
-            searchOutput.setTextAppearance(R.style.MyMonospace);
-            searchTarget.setTextAppearance(R.style.MyMonospace);
-            shuffleInput.setTextAppearance(R.style.MyMonospace);
-            shuffleOutput.setTextAppearance(R.style.MyMonospace);
-            encryptInput.setTextAppearance(R.style.MyMonospace);
-            encryptOutput.setTextAppearance(R.style.MyMonospace);
-            encryptKey.setTextAppearance(R.style.MyMonospace);
-            moreInput.setTextAppearance(R.style.MyMonospace);
-            moreOutput.setTextAppearance(R.style.MyMonospace);
-        } else {
-            replaceInput.setTextAppearance(R.style.MyRegular);
-            replaceOutput.setTextAppearance(R.style.MyRegular);
-            replaceTo.setTextAppearance(R.style.MyRegular);
-            targetSeq.setTextAppearance(R.style.MyRegular);
-            searchInput.setTextAppearance(R.style.MyRegular);
-            searchOutput.setTextAppearance(R.style.MyRegular);
-            searchTarget.setTextAppearance(R.style.MyRegular);
-            shuffleInput.setTextAppearance(R.style.MyRegular);
-            shuffleOutput.setTextAppearance(R.style.MyRegular);
-            encryptInput.setTextAppearance(R.style.MyRegular);
-            encryptOutput.setTextAppearance(R.style.MyRegular);
-            encryptKey.setTextAppearance(R.style.MyRegular);
-            moreInput.setTextAppearance(R.style.MyRegular);
-            moreOutput.setTextAppearance(R.style.MyRegular);
-        }
+        loadSettings();
+
         try {
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             ClipData data = cm.getPrimaryClip();
@@ -1018,6 +980,7 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, ViewHelpActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
+            /*
             LovelyChoiceDialog lovelyChoiceDialog = new LovelyChoiceDialog(MainActivity.this);
             lovelyChoiceDialog
                     .setTopColorRes(R.color.settingsGrey)
@@ -1074,7 +1037,7 @@ public class MainActivity extends AppCompatActivity
                                     SharedPreferences sharedPreferences =
                                             getSharedPreferences("settings", MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putBoolean("settingsBoolean", settingsBoolean[0]);
+                                    editor.putBoolean("doCapsSensitive", settingsBoolean[0]);
                                     editor.putBoolean("doUseMonospaced", settingsBoolean[1]);
                                     editor.putBoolean("doLowerCaseMorseCode", settingsBoolean[2]);
                                     editor.putBoolean("doMultiLine", settingsBoolean[3]);
@@ -1093,6 +1056,82 @@ public class MainActivity extends AppCompatActivity
                     .setConfirmButtonText(R.string.confirm)
                     .create()
                     .show();
+                    */
+            /*
+            LovelyCustomDialog lovelyCustomDialog = new LovelyCustomDialog(MainActivity.this);
+            lovelyCustomDialog.setView(R.layout.settings_layout)
+                .setTopColorRes(R.color.settingsGrey)
+                .setTitle(R.string.settings)
+                .setIcon(R.drawable.baselinesettings_white)
+                .configureView(v -> {
+                    LinearLayout settingsItem0 = v.findViewById(R.id.settingsItem0);
+                    LinearLayout settingsItem1 = v.findViewById(R.id.settingsItem1);
+                    JellyToggleButton doCapsSensitive1 = v.findViewById(R.id.capsToggle);
+                    JellyToggleButton doUseMonospace1 = v.findViewById(R.id.monospaceToggle);
+                    doCapsSensitive1.setCheckedImmediately(settingsBoolean[0]);
+                    Button confirm = v.findViewById(R.id.settingsConfirm);
+                    settingsItem0.setOnClickListener(v1 -> {
+                        doCapsSensitive1.toggle();
+                    });
+                    settingsItem1.setOnClickListener(v2 -> {
+                        doUseMonospace1.toggle();
+                    });
+                    confirm.setOnClickListener(v3 -> {
+                        settingsBoolean[0] = doCapsSensitive1.isChecked();
+                        settingsBoolean[1] = doUseMonospace1.isChecked();
+                        if (settingsBoolean[1]) {
+                            replaceInput.setTextAppearance(R.style.MyMonospace);
+                            replaceOutput.setTextAppearance(R.style.MyMonospace);
+                            replaceTo.setTextAppearance(R.style.MyMonospace);
+                            targetSeq.setTextAppearance(R.style.MyMonospace);
+                            searchInput.setTextAppearance(R.style.MyMonospace);
+                            searchOutput.setTextAppearance(R.style.MyMonospace);
+                            searchTarget.setTextAppearance(R.style.MyMonospace);
+                            shuffleInput.setTextAppearance(R.style.MyMonospace);
+                            shuffleOutput.setTextAppearance(R.style.MyMonospace);
+                            encryptInput.setTextAppearance(R.style.MyMonospace);
+                            encryptOutput.setTextAppearance(R.style.MyMonospace);
+                            encryptKey.setTextAppearance(R.style.MyMonospace);
+                            moreInput.setTextAppearance(R.style.MyMonospace);
+                            moreOutput.setTextAppearance(R.style.MyMonospace);
+                            settingsBoolean[1] = true;
+                        } else {
+                            replaceInput.setTextAppearance(R.style.MyRegular);
+                            replaceOutput.setTextAppearance(R.style.MyRegular);
+                            replaceTo.setTextAppearance(R.style.MyRegular);
+                            targetSeq.setTextAppearance(R.style.MyRegular);
+                            searchInput.setTextAppearance(R.style.MyRegular);
+                            searchOutput.setTextAppearance(R.style.MyRegular);
+                            searchTarget.setTextAppearance(R.style.MyRegular);
+                            shuffleInput.setTextAppearance(R.style.MyRegular);
+                            shuffleOutput.setTextAppearance(R.style.MyRegular);
+                            encryptInput.setTextAppearance(R.style.MyRegular);
+                            encryptOutput.setTextAppearance(R.style.MyRegular);
+                            encryptKey.setTextAppearance(R.style.MyRegular);
+                            moreInput.setTextAppearance(R.style.MyRegular);
+                            moreOutput.setTextAppearance(R.style.MyRegular);
+                            settingsBoolean[1] = false;
+                        }
+                        lovelyCustomDialog.dismiss();
+                        SharedPreferences sharedPreferences =
+                            getSharedPreferences("settings", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("doCapsSensitive", settingsBoolean[0]);
+                        editor.putBoolean("doUseMonospaced", settingsBoolean[1]);
+                        editor.putBoolean("doLowerCaseMorseCode", settingsBoolean[2]);
+                        editor.putBoolean("doMultiLine", settingsBoolean[3]);
+                        editor.apply();
+                        Toasty.success(
+                            MainActivity.this,
+                            "设置成功！",
+                            Toast.LENGTH_LONG,
+                            true)
+                            .show();
+                    });
+                }).create().show();
+            */
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivityForResult(intent, 5);
         } else if (id == R.id.nav_about) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivityForResult(intent, 4);
@@ -2215,6 +2254,13 @@ public class MainActivity extends AppCompatActivity
                     if (easterEgg) {
                         rotateAll();
                     }
+                } else if (requestCode == 5) {
+                    boolean easterEggActivated =
+                            data != null && data.getBooleanExtra("easter_egg1", false);
+                    if (easterEggActivated) {
+                        rotateAll();
+                    }
+                    loadSettings();
                 }
             }
             if (requestCode == REQUESTCODE_READ) {
@@ -2501,6 +2547,15 @@ public class MainActivity extends AppCompatActivity
         textEncryptLayout.setRotation(180);
         textShuffleLayout.setRotation(180);
         textSearchLayout.setRotation(180);
+        Toasty.custom(
+            MainActivity.this,
+            ":-p",
+            R.drawable.ic_check_white_48dp,
+            getColor(R.color.colorAccent),
+            Toast.LENGTH_LONG,
+            false,
+            true)
+            .show();
     }
 
     private void setMultiLine(boolean whether) {
@@ -2519,5 +2574,47 @@ public class MainActivity extends AppCompatActivity
         encryptKey.setHorizontallyScrolling(whether);
         moreInput.setHorizontallyScrolling(whether);
         moreOutput.setHorizontallyScrolling(whether);
+    }
+
+    private void loadSettings() {
+        SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
+        settingsBoolean[0] = sharedPreferences.getBoolean("doCapsSensitive", false);
+        settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
+        settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
+        settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
+        isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
+        salt = sharedPreferences.getString("salt", defaultSalt);
+        setMultiLine(settingsBoolean[3]);
+        if (settingsBoolean[1]) {
+            replaceInput.setTextAppearance(R.style.MyMonospace);
+            replaceOutput.setTextAppearance(R.style.MyMonospace);
+            replaceTo.setTextAppearance(R.style.MyMonospace);
+            targetSeq.setTextAppearance(R.style.MyMonospace);
+            searchInput.setTextAppearance(R.style.MyMonospace);
+            searchOutput.setTextAppearance(R.style.MyMonospace);
+            searchTarget.setTextAppearance(R.style.MyMonospace);
+            shuffleInput.setTextAppearance(R.style.MyMonospace);
+            shuffleOutput.setTextAppearance(R.style.MyMonospace);
+            encryptInput.setTextAppearance(R.style.MyMonospace);
+            encryptOutput.setTextAppearance(R.style.MyMonospace);
+            encryptKey.setTextAppearance(R.style.MyMonospace);
+            moreInput.setTextAppearance(R.style.MyMonospace);
+            moreOutput.setTextAppearance(R.style.MyMonospace);
+        } else {
+            replaceInput.setTextAppearance(R.style.MyRegular);
+            replaceOutput.setTextAppearance(R.style.MyRegular);
+            replaceTo.setTextAppearance(R.style.MyRegular);
+            targetSeq.setTextAppearance(R.style.MyRegular);
+            searchInput.setTextAppearance(R.style.MyRegular);
+            searchOutput.setTextAppearance(R.style.MyRegular);
+            searchTarget.setTextAppearance(R.style.MyRegular);
+            shuffleInput.setTextAppearance(R.style.MyRegular);
+            shuffleOutput.setTextAppearance(R.style.MyRegular);
+            encryptInput.setTextAppearance(R.style.MyRegular);
+            encryptOutput.setTextAppearance(R.style.MyRegular);
+            encryptKey.setTextAppearance(R.style.MyRegular);
+            moreInput.setTextAppearance(R.style.MyRegular);
+            moreOutput.setTextAppearance(R.style.MyRegular);
+        }
     }
 }

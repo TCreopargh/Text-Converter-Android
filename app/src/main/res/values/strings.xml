@@ -103,7 +103,7 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="multi_select_list_preference_default_value" />
+    <string-array name="multi_select_list_preference_default_value"/>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
@@ -155,4 +155,7 @@
     <string name="star">为我评分</string>
     <string name="reset_options">重置设置</string>
     <string name="tick">tick</string>
+    <string name="set_monospace">设置输入框为等宽字体</string>
+    <string name="morse_lower">摩斯电码使用小写输出</string>
+    <string name="multi_line">自动换行</string>
 </resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:title="@string/settings">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="doCapsSensitive"
+            android:summary="此项设置仅在替换、查找不使用正则表达式时有效"
+            android:title="@string/uppercase_sensitive"
+            />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="doUseMonospaced"
+            android:summary="等宽字体更有利于代码阅读"
+            android:title="@string/set_monospace"
+            />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="doLowerCaseMorseCode"
+            android:summary="摩斯电码不区分大小写，这一选项将更改摩斯电码解码后的字母表现形式"
+            android:title="@string/morse_lower"
+            />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="doMultiLine"
+            android:summary="此项设置决定文字超过输入框边界时是否换行显示。如果此项关闭，请左右拖动以查看未显示出来的文字。"
+            android:title="@string/multi_line"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="其他">
+        <Preference
+            android:key="about"
+            android:summary="查看应用信息"
+            android:title="@string/about">
+        </Preference>
+        <Preference
+            android:key="resetSettings"
+            android:summary="恢复所有设置到默认状态"
+            android:title="重置设置"
+            />
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>

@@ -3,14 +3,12 @@ package xyz.tcreopargh.textconverter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
 
@@ -114,16 +112,30 @@ public class AboutActivity extends AppCompatActivity {
         Button viewMySite = findViewById(R.id.viewMyWebsite);
         update.setOnClickListener(
                 v -> {
+                    String url = "https://github.com/TCreopargh/Text-Converter-Android";
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    builder.setToolbarColor(0x2196f3);
+                    CustomTabsIntent customTabsIntent = builder.build();
+                    customTabsIntent.launchUrl(this, Uri.parse(url));
+                    /* //Old invoke
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(
                             Uri.parse("https://github.com/TCreopargh/Text-Converter-Android"));
                     startActivity(intent);
+                    */
                 });
         viewMySite.setOnClickListener(
                 v -> {
+                    String url = "https://tcreopargh.xyz";
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    builder.setToolbarColor(0x2196f3);
+                    CustomTabsIntent customTabsIntent = builder.build();
+                    customTabsIntent.launchUrl(this, Uri.parse(url));
+                    /*
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("https://tcreopargh.xyz"));
                     startActivity(intent);
+                    */
                 });
         sendFeedBack.setOnClickListener(
                 v -> {
@@ -183,6 +195,7 @@ public class AboutActivity extends AppCompatActivity {
                         .create()
                         .show();
                 break;
+                /*
             case R.id.resetOptions:
                 LovelyStandardDialog lovelyStandardDialog1 =
                         new LovelyStandardDialog(
@@ -217,6 +230,7 @@ public class AboutActivity extends AppCompatActivity {
                         .create()
                         .show();
                 break;
+                */
             case android.R.id.home:
                 returnHome();
                 break;

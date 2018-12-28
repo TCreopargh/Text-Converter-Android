@@ -6,8 +6,8 @@ android {
         applicationId "xyz.tcreopargh.textconverter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 41
-        versionName "2.3.0"
+        versionCode 42
+        versionName "3.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -40,6 +40,9 @@ dependencies {
     implementation 'com.github.matecode:Snacky:1.1.4'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.yarolegovich:lovely-dialog:1.1.0'
+    implementation 'com.android.support:customtabs:28.0.0'
+    implementation 'com.nightonke:jellytogglebutton:1.0.2'
+    implementation group: 'androidx.preference', name: 'preference', version: '1.1.0-alpha02'
     //noinspection GradleDependency
     implementation 'com.leon:lfilepickerlibrary:1.7.0'
     testImplementation 'junit:junit:4.12'
