@@ -22,41 +22,46 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
-
-import android.widget.ImageView;
-import androidx.annotation.NonNull;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
 import android.view.LayoutInflater;
-import android.view.View;
-
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.google.android.material.navigation.NavigationView;
+import com.google.googlejavaformat.java.Formatter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.leon.lfilepickerlibrary.LFilePicker;
+import com.leon.lfilepickerlibrary.utils.Constant;
+import com.takwolf.morsecoder.MorseCoder;
+import com.yarolegovich.lovelydialog.LovelyCustomDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import de.mateware.snacky.Snacky;
+import es.dmoral.toasty.Toasty;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -72,97 +77,28 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.googlejavaformat.java.Formatter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.leon.lfilepickerlibrary.LFilePicker;
-import com.leon.lfilepickerlibrary.utils.Constant;
-import com.takwolf.morsecoder.MorseCoder;
-import com.yarolegovich.lovelydialog.LovelyCustomDialog;
-import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
-
-import de.mateware.snacky.Snacky;
-import es.dmoral.toasty.Toasty;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    Button generateReplacedText;
-    EditText replaceInput, replaceOutput, targetSeq, replaceTo;
-    CheckBox doUseRegexCheckbox;
-    LinearLayout textReplaceLayout,
-            textShuffleLayout,
-            textSearchLayout,
-            textEncryptLayout,
-            textMoreLayout;
-    Button shuffle, sortByDictionaryIndex, sortByNumberValue, shuffleReverse;
-    EditText shuffleInput;
-    EditText shuffleOutput;
-    CheckBox noUseSpaces;
+    public static final String defaultSalt = "Powered by TCreopargh!";
+    public static boolean keyGenNeedToReset = true;
 
-    Button searchReset, searchNext, searchAll;
-    EditText searchInput, searchOutput, searchTarget;
-    CheckBox doUseRegexSearchCheckbox;
-
-    Button encrypt, decrypt, setSalt;
-    EditText encryptInput, encryptOutput, encryptKey;
-    CheckBox doPasswordVisible;
-
-    EditText moreInput, moreOutput;
-    Button reverseText,
-            addIndent,
-            formatCode,
-            addNumbers,
-            customRandom,
-            generateMD5,
-            toBase64,
-            fromBase64,
-            toMorseCode,
-            formatJson;
-
-    int currentSearchPos = 0;
-    int searchCount = -1;
-    int currentSearchCount = -1;
-    int begin = 0;
-
-    Pattern pattern;
-    Matcher matcher;
+    @SuppressLint("StaticFieldLeak")
+    public static MainActivity mainActivity = null;
 
     final int ALL_LOWER = 0;
     final int ALL_UPPER = 1;
     final int CASE_REVERSE = 2;
     final int FIRST_UPPER = 3;
     final int SENTENCE_FIRST = 4;
-    int caseSwitchStatus = ALL_LOWER;
-
-    boolean regexCautionIsShown = false;
-
-    String generatedKey = "";
-
-    boolean keyGenNeedToReset = true;
-
-    String path = "";
-
-    ImageView tick;
-
     final int REQUESTCODE_READ = 1000;
     final int REQUESTCODE_WRITE = 2000;
-
-    @SuppressLint("StaticFieldLeak")
-    public static MainActivity mainActivity = null;
-
     final boolean settingsBoolean[] = new boolean[] {false, false, false, true};
-
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
-
     final String presetsTitle[] =
             new String[] {
                 "十六进制数值", "电子邮箱", "URL", "IP地址", "整数", "常规数字", "HTML标签", "维基百科注释", "代码注释", "汉字"
             };
-
     final String presetsValue[] =
             new String[] {
                 "#?([a-f0-9]{6}|[a-f0-9]{3})",
@@ -176,10 +112,92 @@ public class MainActivity extends AppCompatActivity
                 "(?<!http:|\\S)//.*",
                 "[\\u2E80-\\u9FFF]+"
             };
-
-    final String defaultSalt = "Powered by TCreopargh!";
+    Button generateReplacedText;
+    EditText replaceInput, replaceOutput, targetSeq, replaceTo;
+    CheckBox doUseRegexCheckbox;
+    LinearLayout textReplaceLayout,
+            textShuffleLayout,
+            textSearchLayout,
+            textEncryptLayout,
+            textMoreLayout;
+    Button shuffle, sortByDictionaryIndex, sortByNumberValue, shuffleReverse;
+    EditText shuffleInput;
+    EditText shuffleOutput;
+    CheckBox noUseSpaces;
+    Button searchReset, searchNext, searchAll;
+    EditText searchInput, searchOutput, searchTarget;
+    CheckBox doUseRegexSearchCheckbox;
+    Button encrypt, decrypt;
+    EditText encryptInput, encryptOutput, encryptKey;
+    CheckBox doPasswordVisible;
+    EditText moreInput, moreOutput;
+    Button reverseText,
+            addIndent,
+            formatCode,
+            addNumbers,
+            customRandom,
+            generateMD5,
+            toBase64,
+            fromBase64,
+            toMorseCode,
+            formatJson;
+    int currentSearchPos = 0;
+    int searchCount = -1;
+    int currentSearchCount = -1;
+    int begin = 0;
+    Pattern pattern;
+    Matcher matcher;
+    int caseSwitchStatus = ALL_LOWER;
+    boolean regexCautionIsShown = false;
+    String generatedKey = "";
+    String path = "";
+    ImageView tick;
     String salt = defaultSalt;
     boolean isGuideShown = false;
+    String defaultPath = "";
+
+    public static int stringAppearCounter(String srcText, String findText) {
+        int count = 0;
+        int index = 0;
+        while ((index = srcText.indexOf(findText, index)) != -1) {
+            index = index + findText.length();
+            count++;
+        }
+        return count;
+    }
+
+    public static int regexAppearCounter(String srcText, String findText) {
+        int count = 0;
+        Pattern p = Pattern.compile(findText);
+        Matcher m = p.matcher(srcText);
+        while (m.find()) {
+            count++;
+        }
+        return count;
+    }
+
+    public static String getMD5(String plainText) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(plainText.getBytes("UTF8"));
+            byte s[] = md.digest();
+            StringBuilder result = new StringBuilder();
+            for (byte value : s) {
+                result.append(Integer.toHexString((0x000000FF & value) | 0xFFFFFF00).substring(6));
+            }
+            return result.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String jsonFormatter(String uglyJSONString) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(uglyJSONString);
+        return gson.toJson(je);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1024,7 +1042,6 @@ public class MainActivity extends AppCompatActivity
         encryptInput = findViewById(R.id.encryptInput);
         encryptKey = findViewById(R.id.encryptKey);
         encrypt = findViewById(R.id.encrypt);
-        setSalt = findViewById(R.id.setSalt);
         doPasswordVisible = findViewById(R.id.doPasswordVisible);
         decrypt = findViewById(R.id.decrypt);
 
@@ -1053,7 +1070,6 @@ public class MainActivity extends AppCompatActivity
         searchReset.setOnClickListener(this);
         searchAll.setOnClickListener(this);
         encrypt.setOnClickListener(this);
-        setSalt.setOnClickListener(this);
         decrypt.setOnClickListener(this);
         reverseText.setOnClickListener(this);
         addIndent.setOnClickListener(this);
@@ -1517,114 +1533,6 @@ public class MainActivity extends AppCompatActivity
                     encryptKey.clearFocus();
                 }
                 break;
-            case R.id.setSalt:
-                LovelyTextInputDialog lovelyTextInputDialog = new LovelyTextInputDialog(this);
-                lovelyTextInputDialog
-                        .setTopColorRes(R.color.safeGreen)
-                        .setIcon(R.drawable.ic_lock_white)
-                        .setTitle("AES加盐")
-                        .setMessage(
-                                "盐（Salt），在密码学中，是指在散列之前将散列内容（例如：密码）的任意固定位置插入特定的字符串。"
-                                        + "这个在散列中加入字符串的方式称为“加盐”。"
-                                        + "其作用是让加盐后的散列结果和没有加盐的结果不相同，在不同的应用情景中，这个处理可以增加额外的安全性。\n"
-                                        + "注意：解密时需要盐和密码都对应才能够正确解密！")
-                        .configureView(
-                                v14 -> {
-                                    v14.setFocusableInTouchMode(true);
-                                    v14.setFocusable(true);
-                                })
-                        .configureEditText(
-                                v15 -> {
-                                    if (settingsBoolean[1]) {
-                                        v15.setTextAppearance(R.style.MyMonospace);
-                                    } else {
-                                        v15.setTextAppearance(R.style.MyRegular);
-                                    }
-                                    v15.setText(salt, TextView.BufferType.EDITABLE);
-                                    v15.clearFocus();
-                                })
-                        .setConfirmButtonColor(getColor(R.color.colorAccent))
-                        .setNegativeButtonColor(getColor(R.color.colorAccent))
-                        .setNegativeButton(
-                                "恢复默认",
-                                v16 -> {
-                                    try {
-                                        String tempSalt = salt;
-                                        salt = defaultSalt;
-                                        keyGenNeedToReset = true;
-                                        SharedPreferences sharedPreferences =
-                                                getSharedPreferences("settings", MODE_PRIVATE);
-                                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                                        editor.putString("salt", salt);
-                                        editor.apply();
-                                        Snacky.builder()
-                                                .setActivity(MainActivity.this)
-                                                .setDuration(Snacky.LENGTH_LONG)
-                                                .setText("已恢复")
-                                                .setActionText(R.string.undo)
-                                                .setActionClickListener(
-                                                        v1 -> {
-                                                            salt = tempSalt;
-                                                            SharedPreferences sharedPreferences1 =
-                                                                    getSharedPreferences(
-                                                                            "settings",
-                                                                            MODE_PRIVATE);
-                                                            SharedPreferences.Editor editor1 =
-                                                                    sharedPreferences1.edit();
-                                                            editor1.putString("salt", tempSalt);
-                                                            editor1.apply();
-                                                        })
-                                                .success()
-                                                .show();
-                                    } catch (Exception e) {
-                                        Toasty.error(
-                                                        MainActivity.this,
-                                                        getString(R.string.exception_occured)
-                                                                + e.toString(),
-                                                        Toast.LENGTH_LONG)
-                                                .show();
-                                    } finally {
-                                        lovelyTextInputDialog.dismiss();
-                                    }
-                                })
-                        .setConfirmButton(
-                                R.string.confirm,
-                                text -> {
-                                    try {
-                                        if (text.isEmpty()) {
-                                            Toasty.error(
-                                                            MainActivity.this,
-                                                            "盐值不能为空！",
-                                                            Toast.LENGTH_LONG)
-                                                    .show();
-                                        } else {
-                                            salt = text;
-                                            keyGenNeedToReset = true;
-                                            SharedPreferences sharedPreferences =
-                                                    getSharedPreferences("settings", MODE_PRIVATE);
-                                            SharedPreferences.Editor editor =
-                                                    sharedPreferences.edit();
-                                            editor.putString("salt", salt);
-                                            editor.apply();
-                                            Toasty.success(
-                                                            MainActivity.this,
-                                                            "设置成功！",
-                                                            Toast.LENGTH_LONG)
-                                                    .show();
-                                        }
-                                    } catch (Exception e) {
-                                        Toasty.error(
-                                                        MainActivity.this,
-                                                        getString(R.string.exception_occured)
-                                                                + e.toString(),
-                                                        Toast.LENGTH_LONG)
-                                                .show();
-                                    } finally {
-                                        lovelyTextInputDialog.dismiss();
-                                    }
-                                })
-                        .show();
-                break;
 
             case R.id.textReverse:
                 try {
@@ -2040,26 +1948,6 @@ public class MainActivity extends AppCompatActivity
         return -1;
     }
 
-    public static int stringAppearCounter(String srcText, String findText) {
-        int count = 0;
-        int index = 0;
-        while ((index = srcText.indexOf(findText, index)) != -1) {
-            index = index + findText.length();
-            count++;
-        }
-        return count;
-    }
-
-    public static int regexAppearCounter(String srcText, String findText) {
-        int count = 0;
-        Pattern p = Pattern.compile(findText);
-        Matcher m = p.matcher(srcText);
-        while (m.find()) {
-            count++;
-        }
-        return count;
-    }
-
     private void resetSearch() {
         try {
             currentSearchPos = 0;
@@ -2070,22 +1958,6 @@ public class MainActivity extends AppCompatActivity
             matcher = pattern.matcher(searchInput.getText().toString());
         } catch (Exception ignored) {
         }
-    }
-
-    public static String getMD5(String plainText) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(plainText.getBytes("UTF8"));
-            byte s[] = md.digest();
-            StringBuilder result = new StringBuilder();
-            for (byte value : s) {
-                result.append(Integer.toHexString((0x000000FF & value) | 0xFFFFFF00).substring(6));
-            }
-            return result.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     @Override
@@ -2276,8 +2148,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getStoreLocation() {
-        String pathTemp =
-                Environment.getExternalStorageDirectory().getAbsolutePath() + "/TextConverter";
+        String pathTemp = defaultPath;
         File destDir = new File(pathTemp);
         if (!destDir.exists()) {
             boolean doMkdirSuccess = destDir.mkdirs();
@@ -2301,7 +2172,7 @@ public class MainActivity extends AppCompatActivity
 
     private void storeDirectly() {
         try {
-            path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/TextConverter";
+            path = defaultPath;
             File destDir = new File(path);
             if (!destDir.exists()) {
                 boolean doMkdirSuccess = destDir.mkdirs();
@@ -2384,13 +2255,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static String jsonFormatter(String uglyJSONString) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(uglyJSONString);
-        return gson.toJson(je);
-    }
-
     private void rotateAll() {
         textReplaceLayout.setRotation(180);
         textMoreLayout.setRotation(180);
@@ -2398,14 +2262,14 @@ public class MainActivity extends AppCompatActivity
         textShuffleLayout.setRotation(180);
         textSearchLayout.setRotation(180);
         Toasty.custom(
-            MainActivity.this,
-            ":-p",
-            R.drawable.ic_check_white_48dp,
-            getColor(R.color.colorAccent),
-            Toast.LENGTH_LONG,
-            false,
-            true)
-            .show();
+                        MainActivity.this,
+                        ":-p",
+                        R.drawable.ic_check_white_48dp,
+                        getColor(R.color.colorAccent),
+                        Toast.LENGTH_LONG,
+                        false,
+                        true)
+                .show();
     }
 
     private void setMultiLine(boolean whether) {
@@ -2434,6 +2298,11 @@ public class MainActivity extends AppCompatActivity
         settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
         isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
         salt = sharedPreferences.getString("salt", defaultSalt);
+        defaultPath =
+                sharedPreferences.getString(
+                        "default_path",
+                        Environment.getExternalStorageDirectory().getAbsolutePath()
+                                + "/TextConverter");
         setMultiLine(settingsBoolean[3]);
         if (settingsBoolean[1]) {
             replaceInput.setTextAppearance(R.style.MyMonospace);

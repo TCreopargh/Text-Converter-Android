@@ -34,6 +34,16 @@
             android:title="@string/multi_line"
             app:iconSpaceReserved="false"
             />
+        <Preference
+            android:key="saltItem"
+            android:summary="对AES加密功能设置盐值，点击以查看详情"
+            android:title="AES盐值"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            android:key="storePath"
+            android:summary="文件的存放默认路径和起始位置"
+            android:title="文件默认存放路径"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="其他"
@@ -43,10 +53,6 @@
             android:summary="查看应用信息"
             android:title="@string/about"
             app:iconSpaceReserved="false">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:targetClass="xyz.tcreopargh.textconverter.AboutActivity"
-                android:targetPackage="xyz.tcreopargh.textconverter"/>
         </Preference>
         <Preference
             android:key="resetSettings"

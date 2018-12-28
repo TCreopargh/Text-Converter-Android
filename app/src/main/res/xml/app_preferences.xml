@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    >
     <PreferenceCategory
         android:title="@string/settings">
 
@@ -29,6 +29,14 @@
             android:summary="此项设置决定文字超过输入框边界时是否换行显示。如果此项关闭，请左右拖动以查看未显示出来的文字。"
             android:title="@string/multi_line"
             />
+        <Preference
+            android:key="saltItem"
+            android:summary="对AES加密功能设置盐值，点击以查看详情"
+            android:title="AES盐值"/>
+        <Preference
+            android:key="storePath"
+            android:summary="文件的存放默认路径和起始位置"
+            android:title="文件默认存放路径"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="其他">
