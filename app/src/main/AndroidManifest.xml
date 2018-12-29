@@ -33,11 +33,11 @@
             android:name=".ViewHelpActivity"/>
         <activity
             android:label="@string/about"
-            android:name=".AboutActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".SettingsActivity"
-            android:theme="@style/AppTheme"
-            android:label="@string/settings">
+            android:name=".AboutActivity"/>
+        <activity
+            android:label="@string/settings"
+            android:name=".SettingsActivity"
+            android:theme="@style/AppTheme">
         </activity>
     </application>
 

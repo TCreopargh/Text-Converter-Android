@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/star"
-        android:icon="@drawable/ic_star_border_white_24dp"
-        android:title="@string/star"
-        app:showAsAction="ifRoom"/>
-</menu>
