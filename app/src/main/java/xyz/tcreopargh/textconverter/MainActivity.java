@@ -73,6 +73,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -155,6 +156,7 @@ public class MainActivity extends AppCompatActivity
     String salt = defaultSalt;
     boolean isGuideShown = false;
     String defaultPath = "";
+    int initialLayout = 0;
 
     public static int stringAppearCounter(String srcText, String findText) {
         int count = 0;
@@ -235,7 +237,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        loadSettings();
+        loadSettings(true);
 
         try {
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -1982,7 +1984,7 @@ public class MainActivity extends AppCompatActivity
                     if (easterEggActivated) {
                         rotateAll();
                     }
-                    loadSettings();
+                    loadSettings(false);
                 }
             }
             if (requestCode == REQUESTCODE_READ) {
@@ -2290,50 +2292,105 @@ public class MainActivity extends AppCompatActivity
         moreOutput.setHorizontallyScrolling(whether);
     }
 
-    private void loadSettings() {
-        SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        settingsBoolean[0] = sharedPreferences.getBoolean("doCapsSensitive", false);
-        settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
-        settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
-        settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
-        isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
-        salt = sharedPreferences.getString("salt", defaultSalt);
-        defaultPath =
-                sharedPreferences.getString(
-                        "default_path",
-                        Environment.getExternalStorageDirectory().getAbsolutePath()
-                                + "/TextConverter");
-        setMultiLine(settingsBoolean[3]);
-        if (settingsBoolean[1]) {
-            replaceInput.setTextAppearance(R.style.MyMonospace);
-            replaceOutput.setTextAppearance(R.style.MyMonospace);
-            replaceTo.setTextAppearance(R.style.MyMonospace);
-            targetSeq.setTextAppearance(R.style.MyMonospace);
-            searchInput.setTextAppearance(R.style.MyMonospace);
-            searchOutput.setTextAppearance(R.style.MyMonospace);
-            searchTarget.setTextAppearance(R.style.MyMonospace);
-            shuffleInput.setTextAppearance(R.style.MyMonospace);
-            shuffleOutput.setTextAppearance(R.style.MyMonospace);
-            encryptInput.setTextAppearance(R.style.MyMonospace);
-            encryptOutput.setTextAppearance(R.style.MyMonospace);
-            encryptKey.setTextAppearance(R.style.MyMonospace);
-            moreInput.setTextAppearance(R.style.MyMonospace);
-            moreOutput.setTextAppearance(R.style.MyMonospace);
-        } else {
-            replaceInput.setTextAppearance(R.style.MyRegular);
-            replaceOutput.setTextAppearance(R.style.MyRegular);
-            replaceTo.setTextAppearance(R.style.MyRegular);
-            targetSeq.setTextAppearance(R.style.MyRegular);
-            searchInput.setTextAppearance(R.style.MyRegular);
-            searchOutput.setTextAppearance(R.style.MyRegular);
-            searchTarget.setTextAppearance(R.style.MyRegular);
-            shuffleInput.setTextAppearance(R.style.MyRegular);
-            shuffleOutput.setTextAppearance(R.style.MyRegular);
-            encryptInput.setTextAppearance(R.style.MyRegular);
-            encryptOutput.setTextAppearance(R.style.MyRegular);
-            encryptKey.setTextAppearance(R.style.MyRegular);
-            moreInput.setTextAppearance(R.style.MyRegular);
-            moreOutput.setTextAppearance(R.style.MyRegular);
+    private void loadSettings(boolean doReloadLayout) {
+        try {
+            SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
+            settingsBoolean[0] = sharedPreferences.getBoolean("doCapsSensitive", false);
+            settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
+            settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
+            settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
+            isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
+            salt = sharedPreferences.getString("salt", defaultSalt);
+            initialLayout = Integer.parseInt(Objects.requireNonNull(sharedPreferences.getString("initialLayout", "0")));
+            defaultPath =
+                    sharedPreferences.getString(
+                            "default_path",
+                            Environment.getExternalStorageDirectory().getAbsolutePath()
+                                    + "/TextConverter");
+            setMultiLine(settingsBoolean[3]);
+            if (settingsBoolean[1]) {
+                replaceInput.setTextAppearance(R.style.MyMonospace);
+                replaceOutput.setTextAppearance(R.style.MyMonospace);
+                replaceTo.setTextAppearance(R.style.MyMonospace);
+                targetSeq.setTextAppearance(R.style.MyMonospace);
+                searchInput.setTextAppearance(R.style.MyMonospace);
+                searchOutput.setTextAppearance(R.style.MyMonospace);
+                searchTarget.setTextAppearance(R.style.MyMonospace);
+                shuffleInput.setTextAppearance(R.style.MyMonospace);
+                shuffleOutput.setTextAppearance(R.style.MyMonospace);
+                encryptInput.setTextAppearance(R.style.MyMonospace);
+                encryptOutput.setTextAppearance(R.style.MyMonospace);
+                encryptKey.setTextAppearance(R.style.MyMonospace);
+                moreInput.setTextAppearance(R.style.MyMonospace);
+                moreOutput.setTextAppearance(R.style.MyMonospace);
+            } else {
+                replaceInput.setTextAppearance(R.style.MyRegular);
+                replaceOutput.setTextAppearance(R.style.MyRegular);
+                replaceTo.setTextAppearance(R.style.MyRegular);
+                targetSeq.setTextAppearance(R.style.MyRegular);
+                searchInput.setTextAppearance(R.style.MyRegular);
+                searchOutput.setTextAppearance(R.style.MyRegular);
+                searchTarget.setTextAppearance(R.style.MyRegular);
+                shuffleInput.setTextAppearance(R.style.MyRegular);
+                shuffleOutput.setTextAppearance(R.style.MyRegular);
+                encryptInput.setTextAppearance(R.style.MyRegular);
+                encryptOutput.setTextAppearance(R.style.MyRegular);
+                encryptKey.setTextAppearance(R.style.MyRegular);
+                moreInput.setTextAppearance(R.style.MyRegular);
+                moreOutput.setTextAppearance(R.style.MyRegular);
+            }
+            if (doReloadLayout) {
+                switch (initialLayout) {
+                    case 0:
+                        textReplaceLayout.setVisibility(View.VISIBLE);
+                        textShuffleLayout.setVisibility(View.GONE);
+                        textSearchLayout.setVisibility(View.GONE);
+                        textEncryptLayout.setVisibility(View.GONE);
+                        textMoreLayout.setVisibility(View.GONE);
+                        setTitle(R.string.string_replace);
+                        break;
+
+                    case 1:
+                        textSearchLayout.setVisibility(View.VISIBLE);
+                        textShuffleLayout.setVisibility(View.GONE);
+                        textReplaceLayout.setVisibility(View.GONE);
+                        textEncryptLayout.setVisibility(View.GONE);
+                        textMoreLayout.setVisibility(View.GONE);
+                        setTitle(R.string.text_search);
+                        break;
+
+                    case 2:
+                        textShuffleLayout.setVisibility(View.VISIBLE);
+                        textReplaceLayout.setVisibility(View.GONE);
+                        textSearchLayout.setVisibility(View.GONE);
+                        textEncryptLayout.setVisibility(View.GONE);
+                        textMoreLayout.setVisibility(View.GONE);
+                        setTitle(R.string.string_shuffle_sort);
+                        break;
+
+                    case 3:
+                        textEncryptLayout.setVisibility(View.VISIBLE);
+                        textSearchLayout.setVisibility(View.GONE);
+                        textShuffleLayout.setVisibility(View.GONE);
+                        textReplaceLayout.setVisibility(View.GONE);
+                        textMoreLayout.setVisibility(View.GONE);
+                        setTitle(R.string.text_encrypt);
+                        break;
+
+                    case 4:
+                        textMoreLayout.setVisibility(View.VISIBLE);
+                        textEncryptLayout.setVisibility(View.GONE);
+                        textSearchLayout.setVisibility(View.GONE);
+                        textShuffleLayout.setVisibility(View.GONE);
+                        textReplaceLayout.setVisibility(View.GONE);
+                        setTitle(R.string.more_handy_function);
+                        break;
+
+                    default:
+                }
+            }
+        } catch (Exception e) {
+            Toasty.error(MainActivity.this, "设置载入失败！\n" + e.toString(), Toast.LENGTH_LONG).show();
         }
     }
 }

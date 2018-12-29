@@ -30,18 +30,6 @@ import androidx.appcompat.widget.Toolbar;
 public class AboutActivity extends AppCompatActivity {
 
     int clicks = 100;
-    boolean isSettingsReseted = false;
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Toasty.Config.reset();
-        if (isSettingsReseted) {
-            MainActivity.mainActivity.finish();
-            Intent intent = new Intent(AboutActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-    }
 
     @SuppressLint("SetTextI18n")
     @Override

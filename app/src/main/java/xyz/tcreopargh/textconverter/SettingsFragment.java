@@ -32,7 +32,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private MyListener myListener;
     private String defaultSalt = MainActivity.defaultSalt;
     private String salt = defaultSalt;
-    private Preference storePath;
+    private Preference storePath, initialLayout;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -76,6 +76,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Preference about = findPreference("about");
         Preference saltItem = findPreference("saltItem");
         storePath = findPreference("storePath");
+        initialLayout = findPreference("initialLayout");
         SharedPreferences sharedPreferences0 =
                 Objects.requireNonNull(getContext()).getSharedPreferences("settings", MODE_PRIVATE);
         String pathTemp =
@@ -83,6 +84,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         "default_path",
                         Environment.getExternalStorageDirectory().getAbsolutePath()
                                 + "/TextConverter");
+        loadInitLayout();
         storePath.setSummary("文件的存放默认路径和起始位置\n当前位置: " + pathTemp);
         salt =
                 Objects.requireNonNull(getContext())
@@ -287,6 +289,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
                     return true;
                 });
+        initialLayout.setOnPreferenceChangeListener(
+                (preference, newValue) -> {
+                    int layoutId = Integer.parseInt(newValue.toString());
+                    String[] array = getResources().getStringArray(R.array.layoutArray);
+                    initialLayout.setSummary("选择进入应用时首先显示的界面\n当前设置: " + array[layoutId]);
+                    return true;
+                });
     }
 
     private void getStoreLocation() {
@@ -321,6 +330,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .start();
+    }
+
+    private void loadInitLayout() {
+        try {
+            SharedPreferences sharedPreferences0 =
+                    Objects.requireNonNull(getContext())
+                            .getSharedPreferences("settings", MODE_PRIVATE);
+            int layoutId =
+                    Integer.parseInt(
+                            Objects.requireNonNull(
+                                    sharedPreferences0.getString("initialLayout", "0")));
+            String[] array = getResources().getStringArray(R.array.layoutArray);
+            initialLayout.setSummary("选择进入应用时首先显示的界面\n当前设置: " + array[layoutId]);
+        } catch (Exception ignored) {
+        }
     }
 
     public interface MyListener {

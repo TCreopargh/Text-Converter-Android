@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
-        android:title="@string/settings"
+        android:title="常规设置"
         app:iconSpaceReserved="false">
 
         <SwitchPreferenceCompat
@@ -43,6 +43,14 @@
             android:key="storePath"
             android:summary="文件的存放默认路径和起始位置"
             android:title="文件默认存放路径"
+            app:iconSpaceReserved="false"/>
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/layoutArray"
+            android:entryValues="@array/layoutValues"
+            android:key="initialLayout"
+            android:summary="选择进入应用时首先显示的界面"
+            android:title="初始界面"
             app:iconSpaceReserved="false"/>
     </PreferenceCategory>
     <PreferenceCategory

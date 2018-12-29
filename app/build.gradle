@@ -41,6 +41,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.yarolegovich:lovely-dialog:1.1.0'
     implementation 'com.android.support:customtabs:28.0.0'
+    implementation 'com.github.medyo:android-about-page:1.2.4'
     implementation group: 'androidx.preference', name: 'preference', version: '1.1.0-alpha02'
     //noinspection GradleDependency
     implementation 'com.leon:lfilepickerlibrary:1.7.0'
