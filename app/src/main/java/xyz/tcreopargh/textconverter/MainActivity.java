@@ -1,6 +1,10 @@
-// This app is developed by TCreopargh.
+//////////////////////////////////////////////////////////////////
+// Powered by TCreopargh. All rights reserved.
+// GitHub: https://github.com/TCreopargh/Text-Converter-Android
 // Site: https://tcreopargh.xyz
+//////////////////////////////////////////////////////////////////
 // External libraries:
+//////////////////////////////////////////////////////////////////
 // com.google.googlejavaformat
 // pinyin4j
 // AESUtils
@@ -9,7 +13,9 @@
 // Toasty
 // LovelyDialog
 // Snacky
-
+// com.github.medyo:android-about-page
+// com.google.code.gson
+//////////////////////////////////////////////////////////////////
 package xyz.tcreopargh.textconverter;
 
 import android.Manifest;
@@ -990,7 +996,8 @@ public class MainActivity extends AppCompatActivity
                         .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.action_share))
                         .putExtra(
                                 Intent.EXTRA_TEXT,
-                                "我正在使用“文本转换”工具，你也来试试看吧！点击查看:https://www.coolapk.com/apk/212564")
+                                "我正在使用“文本转换”工具，你也来试试看吧！\n"
+                                        + "点击查看: https://www.coolapk.com/apk/212564")
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(Intent.createChooser(intent, getString(R.string.action_share)));
             } catch (Exception e) {
@@ -2301,7 +2308,10 @@ public class MainActivity extends AppCompatActivity
             settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
             isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
             salt = sharedPreferences.getString("salt", defaultSalt);
-            initialLayout = Integer.parseInt(Objects.requireNonNull(sharedPreferences.getString("initialLayout", "0")));
+            initialLayout =
+                    Integer.parseInt(
+                            Objects.requireNonNull(
+                                    sharedPreferences.getString("initialLayout", "0")));
             defaultPath =
                     sharedPreferences.getString(
                             "default_path",

@@ -40,6 +40,12 @@ public class AboutActivity extends AppCompatActivity {
         return versionName;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Toasty.Config.reset();
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +56,7 @@ public class AboutActivity extends AppCompatActivity {
         LinearLayout aboutLayout = findViewById(R.id.aboutLayout);
         Element versionElement =
                 new Element()
-                        .setTitle("版本号：" + getAppVersionName(this))
+                        .setTitle("版本号: " + getAppVersionName(this))
                         .setOnClickListener(
                                 v -> {
                                     clicks--;
@@ -147,23 +153,27 @@ public class AboutActivity extends AppCompatActivity {
         View aboutView =
                 new AboutPage(this)
                         .isRTL(false)
-                        .setDescription("文本转换：好用轻便的文本高级转换工具")
+                        .setDescription("文本转换: 好用轻便的文本高级转换工具\n" + "项目编号: Text-Converter-Android")
                         .setImage(R.drawable.about_title)
                         .addGroup("应用信息")
                         .addItem(versionElement)
                         .addItem(
                                 new Element()
-                                        .setTitle("开发者：TCreopargh")
+                                        .setTitle("开发者: TCreopargh")
                                         .setOnClickListener(
-                                                v -> Toasty.custom(
-                                                                AboutActivity.this,
-                                                                "(づ￣ 3￣)づ💗",
-                                                                R.drawable.ic_check_white_48dp,
-                                                                getColor(R.color.colorAccent),
-                                                                Toast.LENGTH_SHORT,
-                                                                false,
-                                                                true)
-                                                        .show()))
+                                                v ->
+                                                        Toasty.custom(
+                                                                        AboutActivity.this,
+                                                                        "(づ￣ 3￣)づ💗",
+                                                                        R.drawable
+                                                                                .ic_check_white_48dp,
+                                                                        getColor(
+                                                                                R.color
+                                                                                        .colorAccent),
+                                                                        Toast.LENGTH_SHORT,
+                                                                        false,
+                                                                        true)
+                                                                .show()))
                         .addGroup("相关链接")
                         .addItem(viewRepo)
                         .addItem(viewMySiteElement)
