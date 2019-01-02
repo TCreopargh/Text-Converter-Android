@@ -152,7 +152,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     "盐（Salt），在密码学中，是指在散列之前将散列内容（例如：密码）的任意固定位置插入特定的字符串。"
                                             + "这个在散列中加入字符串的方式称为“加盐”。"
                                             + "其作用是让加盐后的散列结果和没有加盐的结果不相同，在不同的应用情景中，这个处理可以增加额外的安全性。\n"
-                                            + "注意：解密时需要盐和密码都对应才能够正确解密！")
+                                            + "注意：解密时需要盐和密码都对应才能够正确解密！\n"
+                                            + "此项留空则表示不对密码进行加盐处理！")
                             .configureView(
                                     v14 -> {
                                         v14.setFocusableInTouchMode(true);
@@ -160,6 +161,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     })
                             .configureEditText(
                                     v15 -> {
+                                        v15.setHint("留空则表示不对密码进行加盐处理");
                                         if (Objects.requireNonNull(getContext())
                                                 .getSharedPreferences("settings", MODE_PRIVATE)
                                                 .getBoolean("doUseMonospaced", false)) {
@@ -217,7 +219,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                             getContext()
                                                                             .getString(
                                                                                     R.string
-                                                                                            .exception_occured)
+                                                                                            .exception_occurred)
                                                                     + e.toString(),
                                                             Toast.LENGTH_LONG)
                                                     .show();
@@ -229,24 +231,24 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     R.string.confirm,
                                     text -> {
                                         try {
-                                            if (text.isEmpty()) {
-                                                Toasty.error(
+                                            salt = text;
+                                            MainActivity.keyGenNeedToReset = true;
+                                            SharedPreferences sharedPreferences =
+                                                    getContext()
+                                                            .getSharedPreferences(
+                                                                    "settings", MODE_PRIVATE);
+                                            SharedPreferences.Editor editor =
+                                                    sharedPreferences.edit();
+                                            editor.putString("salt", salt);
+                                            editor.apply();
+                                            if (salt.isEmpty()) {
+                                                Toasty.success(
                                                                 Objects.requireNonNull(
                                                                         getActivity()),
-                                                                "盐值不能为空！",
+                                                                "已设置为不对密码进行加盐！",
                                                                 Toast.LENGTH_LONG)
                                                         .show();
                                             } else {
-                                                salt = text;
-                                                MainActivity.keyGenNeedToReset = true;
-                                                SharedPreferences sharedPreferences =
-                                                        getContext()
-                                                                .getSharedPreferences(
-                                                                        "settings", MODE_PRIVATE);
-                                                SharedPreferences.Editor editor =
-                                                        sharedPreferences.edit();
-                                                editor.putString("salt", salt);
-                                                editor.apply();
                                                 Toasty.success(
                                                                 Objects.requireNonNull(
                                                                         getActivity()),
@@ -260,7 +262,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                             getContext()
                                                                             .getString(
                                                                                     R.string
-                                                                                            .exception_occured)
+                                                                                            .exception_occurred)
                                                                     + e.toString(),
                                                             Toast.LENGTH_LONG)
                                                     .show();

@@ -74,7 +74,7 @@ public class AESUtils {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (GeneralSecurityException e) {
-            return "密码错误！";
+            return "解密失败，可能是密码错误或输入了不正确的密文！";
         }
         return null;
     }

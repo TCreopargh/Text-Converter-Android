@@ -37,6 +37,7 @@
     <string name="text_search">字符串查找</string>
     <string name="reset">重置搜索结果</string>
     <string name="settings">设置</string>
+    <string name="failed_loading_shortcut">快捷方式菜单加载失败！</string>
     <string name="share">分享</string>
     <string name="load_presets">载入预设正则表达式</string>
     <string name="title_activity_view_help">ViewHelpActivity</string>
@@ -127,7 +128,7 @@
     <string name="developer">开发者：TCreopargh</string>
     <string name="visit_my_website">访问我的网站</string>
     <string name="update">检查更新/查看介绍</string>
-    <string name="exception_occured">发生异常：</string>
+    <string name="exception_occurred">发生异常：</string>
     <string name="key_empty">密钥不能为空！</string>
     <string name="string_reverse">字符串反转</string>
     <string name="add_spaces">分段并缩进</string>

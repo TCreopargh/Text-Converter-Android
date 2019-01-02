@@ -15,6 +15,7 @@
 // Snacky
 // com.github.medyo:android-about-page
 // com.google.code.gson
+// AESCrypt-Android
 //////////////////////////////////////////////////////////////////
 package xyz.tcreopargh.textconverter;
 
@@ -43,6 +44,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -63,6 +65,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.Constant;
+import com.scottyab.aescrypt.AESCrypt;
 import com.takwolf.morsecoder.MorseCoder;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
@@ -73,6 +76,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -163,6 +167,7 @@ public class MainActivity extends AppCompatActivity
     boolean isGuideShown = false;
     String defaultPath = "";
     int initialLayout = 0;
+    boolean alreadyLoadedShortcut = false;
 
     public static int stringAppearCounter(String srcText, String findText) {
         int count = 0;
@@ -1123,13 +1128,13 @@ public class MainActivity extends AppCompatActivity
                                             "(?i)" + replaceFromStr, replaceToStr);
                         }
                     }
-                    replaceOutput.setText(textReplaceOutput, TextView.BufferType.EDITABLE);
+                    replaceOutput.setText(textReplaceOutput, BufferType.EDITABLE);
                     replaceInput.clearFocus();
                     replaceOutput.clearFocus();
                     replaceTo.clearFocus();
                     targetSeq.clearFocus();
                 } catch (Exception e) {
-                    replaceOutput.setText(e.toString(), TextView.BufferType.EDITABLE);
+                    replaceOutput.setText(e.toString(), BufferType.EDITABLE);
                     replaceInput.clearFocus();
                     replaceOutput.clearFocus();
                     replaceTo.clearFocus();
@@ -1174,11 +1179,11 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     }
-                    shuffleOutput.setText(outputBuilder.toString(), TextView.BufferType.EDITABLE);
+                    shuffleOutput.setText(outputBuilder.toString(), BufferType.EDITABLE);
                     shuffleInput.clearFocus();
                     shuffleOutput.clearFocus();
                 } catch (Exception e) {
-                    shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString());
                     shuffleInput.clearFocus();
                     shuffleOutput.clearFocus();
                 }
@@ -1212,7 +1217,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleInput.clearFocus();
                     shuffleOutput.clearFocus();
                 } catch (Exception e) {
-                    shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString());
                     shuffleInput.clearFocus();
                     shuffleOutput.clearFocus();
                 }
@@ -1268,7 +1273,8 @@ public class MainActivity extends AppCompatActivity
                     if (e instanceof NumberFormatException) {
                         shuffleOutput.setText("发生错误：所有元素必须是数字！" + e.toString());
                     } else {
-                        shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                        shuffleOutput.setText(
+                                getString(R.string.exception_occurred) + e.toString());
                     }
                     shuffleInput.clearFocus();
                     shuffleOutput.clearFocus();
@@ -1310,7 +1316,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleInput.clearFocus();
                     shuffleOutput.clearFocus();
                 } catch (Exception e) {
-                    shuffleOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString());
                     shuffleInput.clearFocus();
                     shuffleOutput.clearFocus();
                 }
@@ -1337,7 +1343,7 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", TextView.BufferType.EDITABLE);
+                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
                         } else {
                             currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
                             if (currentSearchPos == -1) {
@@ -1365,7 +1371,7 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", TextView.BufferType.EDITABLE);
+                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
                         } else {
                             currentSearchCount++;
                             if (matcher.find()) {
@@ -1391,7 +1397,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 } catch (Exception e) {
-                    searchOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
                 }
                 break;
 
@@ -1401,7 +1407,7 @@ public class MainActivity extends AppCompatActivity
                     searchOutput.setText("");
                     Toasty.success(MainActivity.this, "已重置", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
-                    searchOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
                 } finally {
                     searchInput.clearFocus();
                     searchOutput.clearFocus();
@@ -1433,7 +1439,7 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", TextView.BufferType.EDITABLE);
+                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
                         } else {
                             for (int i = 0; i < searchCount; i++) {
                                 currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
@@ -1453,7 +1459,7 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", TextView.BufferType.EDITABLE);
+                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
                         } else {
                             currentSearchCount++;
                             while (matcher.find()) {
@@ -1470,7 +1476,7 @@ public class MainActivity extends AppCompatActivity
                     searchOutput.clearFocus();
                     searchTarget.clearFocus();
                 } catch (Exception e) {
-                    searchOutput.setText(getString(R.string.exception_occured) + e.toString());
+                    searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
                     searchInput.clearFocus();
                     searchOutput.clearFocus();
                     searchTarget.clearFocus();
@@ -1479,28 +1485,42 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.encrypt:
                 try {
-                    if (keyGenNeedToReset) {
+                    if (salt.isEmpty()) {
                         if (encryptKey.getText().toString().isEmpty()) {
                             encryptOutput.setText(
-                                    getString(R.string.key_empty), TextView.BufferType.EDITABLE);
+                                    getString(R.string.key_empty), BufferType.EDITABLE);
                             return;
                         }
-                        String saltBase64 = Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
-                        generatedKey =
-                                AESUtils.generateKey(encryptKey.getText().toString(), saltBase64);
-                        keyGenNeedToReset = false;
+                        String originText = encryptInput.getText().toString();
+                        String password = encryptKey.getText().toString();
+                        String encryptedText = AESCrypt.encrypt(password, originText);
+                        encryptOutput.setText(encryptedText, BufferType.EDITABLE);
+                    } else {
+                        if (keyGenNeedToReset) {
+                            if (encryptKey.getText().toString().isEmpty()) {
+                                encryptOutput.setText(
+                                        getString(R.string.key_empty), BufferType.EDITABLE);
+                                return;
+                            }
+                            String saltBase64 =
+                                    Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
+                            generatedKey =
+                                    AESUtils.generateKey(
+                                            encryptKey.getText().toString(), saltBase64);
+                            keyGenNeedToReset = false;
+                        }
+                        String encryptSourceText = encryptInput.getText().toString();
+                        String encryptResult;
+                        encryptResult = AESUtils.getEnString(encryptSourceText, generatedKey);
+                        encryptOutput.setText(encryptResult, BufferType.EDITABLE);
                     }
-                    String encryptSourceText = encryptInput.getText().toString();
-                    String encryptResult;
-                    encryptResult = AESUtils.getEnString(encryptSourceText, generatedKey);
-                    encryptOutput.setText(encryptResult, TextView.BufferType.EDITABLE);
                     encryptInput.clearFocus();
                     encryptOutput.clearFocus();
                     encryptKey.clearFocus();
                 } catch (Exception e) {
                     encryptOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     encryptInput.clearFocus();
                     encryptOutput.clearFocus();
                     encryptKey.clearFocus();
@@ -1509,33 +1529,49 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.decrypt:
                 try {
-                    if (keyGenNeedToReset) {
+                    if (salt.isEmpty()) {
                         if (encryptKey.getText().toString().isEmpty()) {
                             encryptOutput.setText(
-                                    getString(R.string.key_empty), TextView.BufferType.EDITABLE);
+                                    getString(R.string.key_empty), BufferType.EDITABLE);
                             return;
                         }
-                        String saltBase64 = Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
-                        generatedKey =
-                                AESUtils.generateKey(encryptKey.getText().toString(), saltBase64);
-                        keyGenNeedToReset = false;
+                        String encryptedMsg = encryptInput.getText().toString();
+                        String password = encryptKey.getText().toString();
+                        String decryptedText = AESCrypt.decrypt(password, encryptedMsg);
+                        encryptOutput.setText(decryptedText, BufferType.EDITABLE);
+                    } else {
+                        if (keyGenNeedToReset) {
+                            if (encryptKey.getText().toString().isEmpty()) {
+                                encryptOutput.setText(
+                                        getString(R.string.key_empty), BufferType.EDITABLE);
+                                return;
+                            }
+                            String saltBase64 =
+                                    Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
+                            generatedKey =
+                                    AESUtils.generateKey(
+                                            encryptKey.getText().toString(), saltBase64);
+                            keyGenNeedToReset = false;
+                        }
+                        String decryptSourceText = encryptInput.getText().toString();
+                        String decryptResult;
+                        decryptResult = AESUtils.getDeString(decryptSourceText, generatedKey);
+                        encryptOutput.setText(decryptResult, BufferType.EDITABLE);
                     }
-                    String decryptSourceText = encryptInput.getText().toString();
-                    String decryptResult;
-                    decryptResult = AESUtils.getDeString(decryptSourceText, generatedKey);
-                    encryptOutput.setText(decryptResult, TextView.BufferType.EDITABLE);
                     encryptInput.clearFocus();
                     encryptOutput.clearFocus();
                     encryptKey.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
                         encryptOutput.setText(
-                                "输入内容不是加密后的密文！\n" + "本应用采用加盐加密，普通AES密文解密时会出现错误！",
-                                TextView.BufferType.EDITABLE);
+                                "输入内容不是加密后的密文！\n" + "当前设置为采用加盐加密，普通AES密文解密时会出现错误！\n",
+                                BufferType.EDITABLE);
+                    } else if (e instanceof GeneralSecurityException) {
+                        encryptOutput.setText("解密失败，可能是密码错误或输入了不正确的密文！", BufferType.EDITABLE);
                     } else {
                         encryptOutput.setText(
-                                getString(R.string.exception_occured) + e.toString(),
-                                TextView.BufferType.EDITABLE);
+                                getString(R.string.exception_occurred) + e.toString(),
+                                BufferType.EDITABLE);
                     }
                     encryptInput.clearFocus();
                     encryptOutput.clearFocus();
@@ -1550,13 +1586,13 @@ public class MainActivity extends AppCompatActivity
                     for (int i = reverseSrc.length() - 1; i >= 0; i--) {
                         reverseResult.append(reverseSrc.charAt(i));
                     }
-                    moreOutput.setText(reverseResult.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.setText(reverseResult.toString(), BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -1633,14 +1669,14 @@ public class MainActivity extends AppCompatActivity
                         default:
                             caseSwitchStatus = ALL_LOWER;
                     }
-                    moreOutput.setText(caseOutput.toString(), TextView.BufferType.EDITABLE);
+                    moreOutput.setText(caseOutput.toString(), BufferType.EDITABLE);
                     Toasty.info(MainActivity.this, toastMessage, Toast.LENGTH_SHORT, true).show();
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -1658,13 +1694,13 @@ public class MainActivity extends AppCompatActivity
                                 .append(numberParagraphs[i - 1])
                                 .append('\n');
                     }
-                    moreOutput.setText(addNumbersOutput, TextView.BufferType.EDITABLE);
+                    moreOutput.setText(addNumbersOutput, BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -1675,13 +1711,13 @@ public class MainActivity extends AppCompatActivity
                     String formatCodeSrc = moreInput.getText().toString();
                     Formatter formatter = new Formatter();
                     String formattedCode = formatter.formatSource(formatCodeSrc);
-                    moreOutput.setText(formattedCode, TextView.BufferType.EDITABLE);
+                    moreOutput.setText(formattedCode, BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -1781,21 +1817,20 @@ public class MainActivity extends AppCompatActivity
                                             }
                                             moreOutput.setText(
                                                     finalOutputBuilder.toString(),
-                                                    TextView.BufferType.EDITABLE);
+                                                    BufferType.EDITABLE);
                                         } catch (Exception e) {
                                             if (e instanceof NumberFormatException) {
                                                 moreOutput.setText(
                                                         "输入格式错误：" + e.toString(),
-                                                        TextView.BufferType.EDITABLE);
+                                                        BufferType.EDITABLE);
                                             } else if (e instanceof IllegalArgumentException) {
                                                 moreOutput.setText(
-                                                        "参数错误，随机数的上界必须大于下界！",
-                                                        TextView.BufferType.EDITABLE);
+                                                        "参数错误，随机数的上界必须大于下界！", BufferType.EDITABLE);
                                             } else {
                                                 moreOutput.setText(
-                                                        getString(R.string.exception_occured)
+                                                        getString(R.string.exception_occurred)
                                                                 + e.toString(),
-                                                        TextView.BufferType.EDITABLE);
+                                                        BufferType.EDITABLE);
                                             }
                                         } finally {
                                             dialog.dismiss();
@@ -1807,8 +1842,8 @@ public class MainActivity extends AppCompatActivity
                             .show();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -1818,13 +1853,13 @@ public class MainActivity extends AppCompatActivity
                 try {
                     String md5Src = moreInput.getText().toString();
                     String md5 = getMD5(md5Src);
-                    moreOutput.setText(md5, TextView.BufferType.EDITABLE);
+                    moreOutput.setText(md5, BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -1834,13 +1869,13 @@ public class MainActivity extends AppCompatActivity
                 try {
                     String plainSrc = moreInput.getText().toString();
                     String base64 = Base64.encodeToString(plainSrc.getBytes(), Base64.DEFAULT);
-                    moreOutput.setText(base64, TextView.BufferType.EDITABLE);
+                    moreOutput.setText(base64, BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -1851,16 +1886,16 @@ public class MainActivity extends AppCompatActivity
                     String base64Input = moreInput.getText().toString();
                     String decodedStr =
                             new String(Base64.decode(base64Input.getBytes(), Base64.DEFAULT));
-                    moreOutput.setText(decodedStr, TextView.BufferType.EDITABLE);
+                    moreOutput.setText(decodedStr, BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
-                        moreOutput.setText("输入内容不是合法的Base64编码！", TextView.BufferType.EDITABLE);
+                        moreOutput.setText("输入内容不是合法的Base64编码！", BufferType.EDITABLE);
                     } else {
                         moreOutput.setText(
-                                getString(R.string.exception_occured) + e.toString(),
-                                TextView.BufferType.EDITABLE);
+                                getString(R.string.exception_occurred) + e.toString(),
+                                BufferType.EDITABLE);
                     }
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
@@ -1887,7 +1922,7 @@ public class MainActivity extends AppCompatActivity
                     if (settingsBoolean[2]) {
                         decodeStr = decodeStr.toLowerCase();
                     }
-                    moreOutput.setText(decodeStr, TextView.BufferType.EDITABLE);
+                    moreOutput.setText(decodeStr, BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
@@ -1897,21 +1932,20 @@ public class MainActivity extends AppCompatActivity
                             morseCodeInput1 = morseCodeInput1.replace('\n', ' ');
                             MorseCoder morseCoder = new MorseCoder();
                             moreOutput.setText(
-                                    morseCoder.encode(morseCodeInput1),
-                                    TextView.BufferType.EDITABLE);
+                                    morseCoder.encode(morseCodeInput1), BufferType.EDITABLE);
                             moreOutput.clearFocus();
                             moreInput.clearFocus();
                         } catch (Exception e1) {
                             moreOutput.setText(
-                                    getString(R.string.exception_occured) + e1.toString(),
-                                    TextView.BufferType.EDITABLE);
+                                    getString(R.string.exception_occurred) + e1.toString(),
+                                    BufferType.EDITABLE);
                             moreOutput.clearFocus();
                             moreInput.clearFocus();
                         }
                     } else {
                         moreOutput.setText(
-                                getString(R.string.exception_occured) + e.toString(),
-                                TextView.BufferType.EDITABLE);
+                                getString(R.string.exception_occurred) + e.toString(),
+                                BufferType.EDITABLE);
                     }
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
@@ -1923,16 +1957,16 @@ public class MainActivity extends AppCompatActivity
                     String uglyJson = moreInput.getText().toString();
                     String formattedJson = jsonFormatter(uglyJson);
                     if (!formattedJson.equals("null")) {
-                        moreOutput.setText(formattedJson, TextView.BufferType.EDITABLE);
+                        moreOutput.setText(formattedJson, BufferType.EDITABLE);
                     } else {
-                        moreOutput.setText("", TextView.BufferType.EDITABLE);
+                        moreOutput.setText("", BufferType.EDITABLE);
                     }
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 } catch (Exception e) {
                     moreOutput.setText(
-                            getString(R.string.exception_occured) + e.toString(),
-                            TextView.BufferType.EDITABLE);
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE);
                     moreOutput.clearFocus();
                     moreInput.clearFocus();
                 }
@@ -2061,7 +2095,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             Toasty.error(
                             MainActivity.this,
-                            getString(R.string.exception_occured) + e.toString(),
+                            getString(R.string.exception_occurred) + e.toString(),
                             Toast.LENGTH_LONG,
                             true)
                     .show();
@@ -2230,7 +2264,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             Toasty.error(
                             MainActivity.this,
-                            getString(R.string.exception_occured) + e.toString(),
+                            getString(R.string.exception_occurred) + e.toString(),
                             Toast.LENGTH_LONG,
                             true)
                     .show();
@@ -2401,6 +2435,66 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (Exception e) {
             Toasty.error(MainActivity.this, "设置载入失败！\n" + e.toString(), Toast.LENGTH_LONG).show();
+        }
+        try {
+            String shortcutData = getIntent().getDataString();
+            int showLayoutId = -1;
+            if (shortcutData != null && !alreadyLoadedShortcut) {
+                showLayoutId = Integer.parseInt(shortcutData);
+                alreadyLoadedShortcut = true;
+            }
+            switch (showLayoutId) {
+                case -1:
+                    break;
+
+                case 0:
+                    textReplaceLayout.setVisibility(View.VISIBLE);
+                    textShuffleLayout.setVisibility(View.GONE);
+                    textSearchLayout.setVisibility(View.GONE);
+                    textEncryptLayout.setVisibility(View.GONE);
+                    textMoreLayout.setVisibility(View.GONE);
+                    setTitle(R.string.string_replace);
+                    break;
+
+                case 1:
+                    textSearchLayout.setVisibility(View.VISIBLE);
+                    textShuffleLayout.setVisibility(View.GONE);
+                    textReplaceLayout.setVisibility(View.GONE);
+                    textEncryptLayout.setVisibility(View.GONE);
+                    textMoreLayout.setVisibility(View.GONE);
+                    setTitle(R.string.text_search);
+                    break;
+
+                case 2:
+                    textShuffleLayout.setVisibility(View.VISIBLE);
+                    textReplaceLayout.setVisibility(View.GONE);
+                    textSearchLayout.setVisibility(View.GONE);
+                    textEncryptLayout.setVisibility(View.GONE);
+                    textMoreLayout.setVisibility(View.GONE);
+                    setTitle(R.string.string_shuffle_sort);
+                    break;
+
+                case 3:
+                    textEncryptLayout.setVisibility(View.VISIBLE);
+                    textSearchLayout.setVisibility(View.GONE);
+                    textShuffleLayout.setVisibility(View.GONE);
+                    textReplaceLayout.setVisibility(View.GONE);
+                    textMoreLayout.setVisibility(View.GONE);
+                    setTitle(R.string.text_encrypt);
+                    break;
+
+                case 4:
+                    textMoreLayout.setVisibility(View.VISIBLE);
+                    textEncryptLayout.setVisibility(View.GONE);
+                    textSearchLayout.setVisibility(View.GONE);
+                    textShuffleLayout.setVisibility(View.GONE);
+                    textReplaceLayout.setVisibility(View.GONE);
+                    setTitle(R.string.more_handy_function);
+                    break;
+
+                default:
+            }
+        } catch (Exception ignored) {
         }
     }
 }

@@ -1,0 +1,74 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/baselinefindreplace_shortcut"
+        android:shortcutDisabledMessage="@string/failed_loading_shortcut"
+        android:shortcutId="shortcut0"
+        android:shortcutLongLabel="@string/string_replace"
+        android:shortcutShortLabel="@string/string_replace">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="0"
+            android:targetClass="xyz.tcreopargh.textconverter.MainActivity"
+            android:targetPackage="xyz.tcreopargh.textconverter"/>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/baselinesearch_shortcut"
+        android:shortcutDisabledMessage="@string/failed_loading_shortcut"
+        android:shortcutId="shortcut1"
+        android:shortcutLongLabel="@string/text_search"
+        android:shortcutShortLabel="@string/text_search">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="1"
+            android:targetClass="xyz.tcreopargh.textconverter.MainActivity"
+            android:targetPackage="xyz.tcreopargh.textconverter"/>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/baselineshuffle_shortcut"
+        android:shortcutDisabledMessage="@string/failed_loading_shortcut"
+        android:shortcutId="shortcut2"
+        android:shortcutLongLabel="@string/string_shuffle_sort"
+        android:shortcutShortLabel="@string/string_shuffle_sort">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="2"
+            android:targetClass="xyz.tcreopargh.textconverter.MainActivity"
+            android:targetPackage="xyz.tcreopargh.textconverter"/>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_lock_shortcut"
+        android:shortcutDisabledMessage="@string/failed_loading_shortcut"
+        android:shortcutId="shortcut3"
+        android:shortcutLongLabel="@string/text_encrypt"
+        android:shortcutShortLabel="@string/text_encrypt">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="3"
+            android:targetClass="xyz.tcreopargh.textconverter.MainActivity"
+            android:targetPackage="xyz.tcreopargh.textconverter"/>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    <!--
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/outline_more_horiz_24px_shortcut"
+        android:shortcutDisabledMessage="@string/failed_loading_shortcut"
+        android:shortcutId="shortcut4"
+        android:shortcutLongLabel="@string/more_handy_function"
+        android:shortcutShortLabel="@string/more_handy_function">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="4"
+            android:targetClass="xyz.tcreopargh.textconverter.MainActivity"
+            android:targetPackage="xyz.tcreopargh.textconverter"/>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    -->
+</shortcuts>
