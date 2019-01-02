@@ -1563,9 +1563,13 @@ public class MainActivity extends AppCompatActivity
                     encryptKey.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
-                        encryptOutput.setText(
-                                "输入内容不是加密后的密文！\n" + "当前设置为采用加盐加密，普通AES密文解密时会出现错误！\n",
-                                BufferType.EDITABLE);
+                        if (salt.isEmpty()) {
+                            encryptOutput.setText("输入内容不是加密后的密文！", BufferType.EDITABLE);
+                        } else {
+                            encryptOutput.setText(
+                                    "输入内容不是加密后的密文！\n" + "当前设置为采用加盐加密，普通AES密文解密时会出现错误！\n",
+                                    BufferType.EDITABLE);
+                        }
                     } else if (e instanceof GeneralSecurityException) {
                         encryptOutput.setText("解密失败，可能是密码错误或输入了不正确的密文！", BufferType.EDITABLE);
                     } else {
