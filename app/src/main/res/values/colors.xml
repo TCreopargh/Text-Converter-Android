@@ -2,10 +2,12 @@
 <resources>
     <color name="colorPrimary">#03a9f4</color>
     <color name="colorPrimaryDark">#007ac1</color>
-    <color name="colorAccent">#ef5350</color>
+    <color name="colorAccent">#ef5350</color>x
     <color name="colorAllWhite">#ffffff</color>
     <color name="warningYellow">#fbc02d</color>
     <color name="settingsGrey">#546e7a</color>
     <color name="safeGreen">#4caf50</color>
     <color name="colorAllBlack">#000000</color>
+    <color name="warningToast">#ffa900</color>
+    <color name="successToast">#388e3c</color>
 </resources>

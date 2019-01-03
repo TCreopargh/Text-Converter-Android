@@ -1,7 +1,7 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/baselinefindreplace_shortcut"
+        android:icon="@mipmap/ic_shortcut_replace_round"
         android:shortcutDisabledMessage="@string/failed_loading_shortcut"
         android:shortcutId="shortcut0"
         android:shortcutLongLabel="@string/string_replace"
@@ -15,7 +15,7 @@
     </shortcut>
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/baselinesearch_shortcut"
+        android:icon="@mipmap/ic_shortcut_search_round"
         android:shortcutDisabledMessage="@string/failed_loading_shortcut"
         android:shortcutId="shortcut1"
         android:shortcutLongLabel="@string/text_search"
@@ -29,7 +29,7 @@
     </shortcut>
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/baselineshuffle_shortcut"
+        android:icon="@mipmap/ic_shortcut_shuffle_round"
         android:shortcutDisabledMessage="@string/failed_loading_shortcut"
         android:shortcutId="shortcut2"
         android:shortcutLongLabel="@string/string_shuffle_sort"
@@ -43,7 +43,7 @@
     </shortcut>
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_lock_shortcut"
+        android:icon="@mipmap/ic_shortcut_lock_round"
         android:shortcutDisabledMessage="@string/failed_loading_shortcut"
         android:shortcutId="shortcut3"
         android:shortcutLongLabel="@string/text_encrypt"
@@ -55,10 +55,9 @@
             android:targetPackage="xyz.tcreopargh.textconverter"/>
         <categories android:name="android.shortcut.conversation"/>
     </shortcut>
-    <!--
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/outline_more_horiz_24px_shortcut"
+        android:icon="@mipmap/ic_shortcut_more_round"
         android:shortcutDisabledMessage="@string/failed_loading_shortcut"
         android:shortcutId="shortcut4"
         android:shortcutLongLabel="@string/more_handy_function"
@@ -70,5 +69,4 @@
             android:targetPackage="xyz.tcreopargh.textconverter"/>
         <categories android:name="android.shortcut.conversation"/>
     </shortcut>
-    -->
 </shortcuts>

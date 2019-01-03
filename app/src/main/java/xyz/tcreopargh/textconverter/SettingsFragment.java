@@ -242,18 +242,45 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                             editor.putString("salt", salt);
                                             editor.apply();
                                             if (salt.isEmpty()) {
+                                                /*
                                                 Toasty.success(
                                                                 Objects.requireNonNull(
                                                                         getActivity()),
                                                                 "已设置为不对密码进行加盐！",
                                                                 Toast.LENGTH_LONG)
                                                         .show();
+                                                        */
+                                                Toasty.custom(
+                                                                Objects.requireNonNull(
+                                                                        getActivity()),
+                                                                "已设置为不对密码进行加盐！",
+                                                                R.drawable.lock_open,
+                                                                getActivity()
+                                                                        .getColor(
+                                                                                R.color.warningToast),
+                                                                Toast.LENGTH_LONG,
+                                                                true,
+                                                                true)
+                                                        .show();
                                             } else {
+                                                /*
                                                 Toasty.success(
                                                                 Objects.requireNonNull(
                                                                         getActivity()),
                                                                 "设置成功！",
                                                                 Toast.LENGTH_LONG)
+                                                        .show();*/
+                                                Toasty.custom(
+                                                                Objects.requireNonNull(
+                                                                        getActivity()),
+                                                                "设置成功！",
+                                                                R.drawable.ic_lock,
+                                                                getActivity()
+                                                                        .getColor(
+                                                                                R.color.successToast),
+                                                                Toast.LENGTH_LONG,
+                                                                true,
+                                                                true)
                                                         .show();
                                             }
                                         } catch (Exception e) {
