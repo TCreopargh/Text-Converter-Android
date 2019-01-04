@@ -1118,7 +1118,6 @@ public class MainActivity extends AppCompatActivity
         toMorseCode.setOnClickListener(this);
         formatJson.setOnClickListener(this);
 
-        // settingsView=View.inflate(this,R.layout.settings_layout,null);
     }
 
     @SuppressLint("SetTextI18n")
@@ -2129,15 +2128,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void writeSDFile(String fileName, String write_str) throws IOException {
-
         File file = new File(fileName);
-
         FileOutputStream fos = new FileOutputStream(file);
-
         byte[] bytes = write_str.getBytes();
-
         fos.write(bytes);
-
         fos.close();
     }
 
