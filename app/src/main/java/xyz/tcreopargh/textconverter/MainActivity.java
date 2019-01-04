@@ -102,14 +102,19 @@ public class MainActivity extends AppCompatActivity
     final int CASE_REVERSE = 2;
     final int FIRST_UPPER = 3;
     final int SENTENCE_FIRST = 4;
+
     final int REQUESTCODE_READ = 1000;
     final int REQUESTCODE_WRITE = 2000;
+
     final boolean settingsBoolean[] = new boolean[] {false, false, false, true};
+
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
+
     final String presetsTitle[] =
             new String[] {
                 "十六进制数值", "电子邮箱", "URL", "IP地址", "整数", "常规数字", "HTML标签", "维基百科注释", "代码注释", "汉字"
             };
+
     final String presetsValue[] =
             new String[] {
                 "#?([a-f0-9]{6}|[a-f0-9]{3})",
@@ -123,24 +128,30 @@ public class MainActivity extends AppCompatActivity
                 "(?<!http:|\\S)//.*",
                 "[\\u2E80-\\u9FFF]+"
             };
-    Button generateReplacedText;
-    EditText replaceInput, replaceOutput, targetSeq, replaceTo;
-    CheckBox doUseRegexCheckbox;
+
     LinearLayout textReplaceLayout,
             textShuffleLayout,
             textSearchLayout,
             textEncryptLayout,
             textMoreLayout;
+
+    Button generateReplacedText;
+    EditText replaceInput, replaceOutput, targetSeq, replaceTo;
+    CheckBox doUseRegexCheckbox;
+
     Button shuffle, sortByDictionaryIndex, sortByNumberValue, shuffleReverse;
     EditText shuffleInput;
     EditText shuffleOutput;
     CheckBox noUseSpaces;
+
     Button searchReset, searchNext, searchAll;
     EditText searchInput, searchOutput, searchTarget;
     CheckBox doUseRegexSearchCheckbox;
+
     Button encrypt, decrypt;
     EditText encryptInput, encryptOutput, encryptKey;
     CheckBox doPasswordVisible;
+
     EditText moreInput, moreOutput;
     Button reverseText,
             addIndent,
@@ -152,22 +163,29 @@ public class MainActivity extends AppCompatActivity
             fromBase64,
             toMorseCode,
             formatJson;
+
     int currentSearchPos = 0;
     int searchCount = -1;
     int currentSearchCount = -1;
     int begin = 0;
+
     Pattern pattern;
+
     Matcher matcher;
     int caseSwitchStatus = ALL_LOWER;
-    boolean regexCautionIsShown = false;
+
     String generatedKey = "";
     String path = "";
-    ImageView tick;
-    String salt = defaultSalt;
-    boolean isGuideShown = false;
     String defaultPath = "";
+    String salt = defaultSalt;
+
+    ImageView tick;
+
     int initialLayout = 0;
+
     boolean alreadyLoadedShortcut = false;
+    boolean regexCautionIsShown = false;
+    boolean isGuideShown = false;
 
     public static int stringAppearCounter(String srcText, String findText) {
         int count = 0;
@@ -302,6 +320,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception ignored) {
 
         }
+
         TapTargetSequence tapTargetSequence =
                 new TapTargetSequence(MainActivity.this)
                         .targets(
@@ -367,9 +386,11 @@ public class MainActivity extends AppCompatActivity
                                     @Override
                                     public void onSequenceCanceled(TapTarget lastTarget) {}
                                 });
+
         if (!isGuideShown) {
             tapTargetSequence.start();
         }
+
         doUseRegexSearchCheckbox.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
                     resetSearch();
@@ -477,6 +498,7 @@ public class MainActivity extends AppCompatActivity
                                 .show();
                     }
                 });
+
         doPasswordVisible.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
                     if (isChecked) {
