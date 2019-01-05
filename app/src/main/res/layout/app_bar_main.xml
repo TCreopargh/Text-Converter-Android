@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/appBarMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -21,5 +22,18 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_main"/>
+
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/showMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:visibility="visible"
+        app:floating_background_color="@color/colorAccent"
+        app:floating_left_icon="@drawable/baselinedescription"
+        app:floating_title="@string/open_functions_menu"
+        app:floating_title_color="@color/colorAllWhite"
+        app:layout_behavior="ru.dimorinny.floatingtextbutton.behavior.SnackbarBehavior"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

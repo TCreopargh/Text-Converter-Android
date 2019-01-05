@@ -53,6 +53,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -92,6 +93,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -163,6 +165,8 @@ public class MainActivity extends AppCompatActivity
     EditText moreInput, moreOutput;
     Button openMoreMenu;
 
+    FloatingTextButton showMore;
+
     int currentSearchPos = 0;
     int searchCount = -1;
     int currentSearchCount = -1;
@@ -178,6 +182,8 @@ public class MainActivity extends AppCompatActivity
     String salt = defaultSalt;
 
     ImageView tick;
+
+    CoordinatorLayout mainContext;
 
     int initialLayout = 0;
 
@@ -268,6 +274,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mainContext = findViewById(R.id.appBarMain);
+
         loadSettings(true);
 
         adapter = new MyAdapter(MainActivity.this, R.layout.list_layout, itemsList);
@@ -281,7 +289,7 @@ public class MainActivity extends AppCompatActivity
             String content = item.getText().toString();
             if (!content.isEmpty()) {
                 Snacky.builder()
-                        .setActivity(MainActivity.this)
+                        .setView(mainContext)
                         .setDuration(Snacky.LENGTH_LONG)
                         .setText("您的剪贴板不为空，是否粘贴？")
                         .setActionText("粘贴")
@@ -294,7 +302,7 @@ public class MainActivity extends AppCompatActivity
                                         encryptInput.setText(content);
                                         moreInput.setText(content);
                                         Snacky.builder()
-                                                .setActivity(MainActivity.this)
+                                                .setView(mainContext)
                                                 .setDuration(Snacky.LENGTH_SHORT)
                                                 .setText("操作成功")
                                                 .setActionText(R.string.undo)
@@ -310,7 +318,7 @@ public class MainActivity extends AppCompatActivity
                                                 .show();
                                     } else {
                                         Snacky.builder()
-                                                .setActivity(MainActivity.this)
+                                                .setView(mainContext)
                                                 .setDuration(Snacky.LENGTH_LONG)
                                                 .setText("操作失败：剪贴板内容过长")
                                                 .setActionText(R.string.confirm)
@@ -514,6 +522,7 @@ public class MainActivity extends AppCompatActivity
                                 PasswordTransformationMethod.getInstance());
                     }
                 });
+        showMore.setOnClickListener(v -> onClick(showMore));
     }
 
     @Override
@@ -577,7 +586,7 @@ public class MainActivity extends AppCompatActivity
                     replaceInput.setText(
                             replaceOutput.getText().toString(), TextView.BufferType.EDITABLE);
                     Snacky.builder()
-                            .setActivity(MainActivity.this)
+                            .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
                             .setText("操作成功")
                             .setActionText(R.string.undo)
@@ -591,7 +600,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleInput.setText(
                             shuffleOutput.getText().toString(), TextView.BufferType.EDITABLE);
                     Snacky.builder()
-                            .setActivity(MainActivity.this)
+                            .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
                             .setText("操作成功")
                             .setActionText(R.string.undo)
@@ -605,7 +614,7 @@ public class MainActivity extends AppCompatActivity
                     searchInput.setText(
                             searchOutput.getText().toString(), TextView.BufferType.EDITABLE);
                     Snacky.builder()
-                            .setActivity(MainActivity.this)
+                            .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
                             .setText("操作成功")
                             .setActionText(R.string.undo)
@@ -619,7 +628,7 @@ public class MainActivity extends AppCompatActivity
                     encryptInput.setText(
                             encryptOutput.getText().toString(), TextView.BufferType.EDITABLE);
                     Snacky.builder()
-                            .setActivity(MainActivity.this)
+                            .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
                             .setText("操作成功")
                             .setActionText(R.string.undo)
@@ -633,7 +642,7 @@ public class MainActivity extends AppCompatActivity
                     moreInput.setText(
                             moreOutput.getText().toString(), TextView.BufferType.EDITABLE);
                     Snacky.builder()
-                            .setActivity(MainActivity.this)
+                            .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
                             .setText("操作成功")
                             .setActionText(R.string.undo)
@@ -644,7 +653,6 @@ public class MainActivity extends AppCompatActivity
                 default:
             }
         } else if (id == R.id.action_clear_all) {
-            DrawerLayout container = findViewById(R.id.drawer_layout);
             switch (currentShowingLayout) {
                 case R.id.textReplaceLayout:
                     final String bufferReplaceInput = replaceInput.getText().toString();
@@ -659,7 +667,7 @@ public class MainActivity extends AppCompatActivity
                     resetSearch();
                     doUseRegexCheckbox.setChecked(false);
                     Snacky.builder()
-                            .setView(container)
+                            .setView(mainContext)
                             .setText(R.string.cleared)
                             .setActionText(R.string.undo)
                             .setDuration(Snacky.LENGTH_LONG)
@@ -687,7 +695,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleOutput.setText("");
                     noUseSpaces.setChecked(false);
                     Snacky.builder()
-                            .setView(container)
+                            .setView(mainContext)
                             .setText(R.string.cleared)
                             .setActionText(R.string.undo)
                             .setDuration(Snacky.LENGTH_LONG)
@@ -715,7 +723,7 @@ public class MainActivity extends AppCompatActivity
                     doUseRegexSearchCheckbox.setChecked(false);
                     resetSearch();
                     Snacky.builder()
-                            .setView(container)
+                            .setView(mainContext)
                             .setText(R.string.cleared)
                             .setActionText(R.string.undo)
                             .setDuration(Snacky.LENGTH_LONG)
@@ -744,7 +752,7 @@ public class MainActivity extends AppCompatActivity
                     encryptKey.setText("");
                     doPasswordVisible.setChecked(false);
                     Snacky.builder()
-                            .setView(container)
+                            .setView(mainContext)
                             .setText(R.string.cleared)
                             .setActionText(R.string.undo)
                             .setDuration(Snacky.LENGTH_LONG)
@@ -768,7 +776,7 @@ public class MainActivity extends AppCompatActivity
                     moreOutput.setText("");
                     moreInput.setText("");
                     Snacky.builder()
-                            .setView(container)
+                            .setView(mainContext)
                             .setText(R.string.cleared)
                             .setActionText(R.string.undo)
                             .setDuration(Snacky.LENGTH_LONG)
@@ -991,6 +999,7 @@ public class MainActivity extends AppCompatActivity
             textSearchLayout.setVisibility(View.GONE);
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
+            showMore.setVisibility(View.GONE);
             setTitle(R.string.string_replace);
             // Handle the camera action
         } else if (id == R.id.nav_text_shuffle) {
@@ -999,6 +1008,7 @@ public class MainActivity extends AppCompatActivity
             textSearchLayout.setVisibility(View.GONE);
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
+            showMore.setVisibility(View.GONE);
             setTitle(R.string.string_shuffle_sort);
         } else if (id == R.id.nav_text_search) {
             textSearchLayout.setVisibility(View.VISIBLE);
@@ -1006,6 +1016,7 @@ public class MainActivity extends AppCompatActivity
             textReplaceLayout.setVisibility(View.GONE);
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
+            showMore.setVisibility(View.GONE);
             setTitle(R.string.text_search);
         } else if (id == R.id.nav_text_encrypt) {
             textEncryptLayout.setVisibility(View.VISIBLE);
@@ -1013,6 +1024,7 @@ public class MainActivity extends AppCompatActivity
             textShuffleLayout.setVisibility(View.GONE);
             textReplaceLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
+            showMore.setVisibility(View.GONE);
             setTitle(R.string.text_encrypt);
         } else if (id == R.id.nav_more_functions) {
             textMoreLayout.setVisibility(View.VISIBLE);
@@ -1020,6 +1032,7 @@ public class MainActivity extends AppCompatActivity
             textSearchLayout.setVisibility(View.GONE);
             textShuffleLayout.setVisibility(View.GONE);
             textReplaceLayout.setVisibility(View.GONE);
+            showMore.setVisibility(View.VISIBLE);
             setTitle(R.string.more_handy_function);
         } else if (id == R.id.nav_share) {
             try {
@@ -1092,6 +1105,8 @@ public class MainActivity extends AppCompatActivity
         openMoreMenu = findViewById(R.id.openMoreMenu);
 
         tick = findViewById(R.id.tick);
+
+        showMore = findViewById(R.id.showMore);
 
         generateReplacedText.setOnClickListener(this);
         shuffle.setOnClickListener(this);
@@ -1590,13 +1605,13 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
 
-            case R.id.openMoreMenu:
+            case R.id.showMore:
                 @SuppressLint("SetTextI18n")
                 DialogPlus dialogPlus =
                         DialogPlus.newDialog(this)
                                 .setAdapter(adapter)
                                 .setGravity(Gravity.BOTTOM)
-                                .setExpanded(true)
+                                .setExpanded(true, 900)
                                 .setCancelable(true)
                                 .setHeader(R.layout.dialog_header)
                                 .setOnItemClickListener(
@@ -2822,6 +2837,7 @@ public class MainActivity extends AppCompatActivity
                         textSearchLayout.setVisibility(View.GONE);
                         textEncryptLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
+                        showMore.setVisibility(View.GONE);
                         setTitle(R.string.string_replace);
                         break;
 
@@ -2831,6 +2847,7 @@ public class MainActivity extends AppCompatActivity
                         textReplaceLayout.setVisibility(View.GONE);
                         textEncryptLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
+                        showMore.setVisibility(View.GONE);
                         setTitle(R.string.text_search);
                         break;
 
@@ -2840,6 +2857,7 @@ public class MainActivity extends AppCompatActivity
                         textSearchLayout.setVisibility(View.GONE);
                         textEncryptLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
+                        showMore.setVisibility(View.GONE);
                         setTitle(R.string.string_shuffle_sort);
                         break;
 
@@ -2849,6 +2867,7 @@ public class MainActivity extends AppCompatActivity
                         textShuffleLayout.setVisibility(View.GONE);
                         textReplaceLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
+                        showMore.setVisibility(View.GONE);
                         setTitle(R.string.text_encrypt);
                         break;
 
@@ -2858,6 +2877,7 @@ public class MainActivity extends AppCompatActivity
                         textSearchLayout.setVisibility(View.GONE);
                         textShuffleLayout.setVisibility(View.GONE);
                         textReplaceLayout.setVisibility(View.GONE);
+                        showMore.setVisibility(View.VISIBLE);
                         setTitle(R.string.more_handy_function);
                         break;
 
@@ -2884,6 +2904,7 @@ public class MainActivity extends AppCompatActivity
                     textSearchLayout.setVisibility(View.GONE);
                     textEncryptLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
+                    showMore.setVisibility(View.GONE);
                     setTitle(R.string.string_replace);
                     break;
 
@@ -2893,6 +2914,7 @@ public class MainActivity extends AppCompatActivity
                     textReplaceLayout.setVisibility(View.GONE);
                     textEncryptLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
+                    showMore.setVisibility(View.GONE);
                     setTitle(R.string.text_search);
                     break;
 
@@ -2902,6 +2924,7 @@ public class MainActivity extends AppCompatActivity
                     textSearchLayout.setVisibility(View.GONE);
                     textEncryptLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
+                    showMore.setVisibility(View.GONE);
                     setTitle(R.string.string_shuffle_sort);
                     break;
 
@@ -2911,6 +2934,7 @@ public class MainActivity extends AppCompatActivity
                     textShuffleLayout.setVisibility(View.GONE);
                     textReplaceLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
+                    showMore.setVisibility(View.GONE);
                     setTitle(R.string.text_encrypt);
                     break;
 
@@ -2920,6 +2944,7 @@ public class MainActivity extends AppCompatActivity
                     textSearchLayout.setVisibility(View.GONE);
                     textShuffleLayout.setVisibility(View.GONE);
                     textReplaceLayout.setVisibility(View.GONE);
+                    showMore.setVisibility(View.VISIBLE);
                     setTitle(R.string.more_handy_function);
                     break;
 

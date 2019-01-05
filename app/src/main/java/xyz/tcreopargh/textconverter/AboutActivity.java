@@ -54,6 +54,9 @@ public class AboutActivity extends AppCompatActivity {
         Toasty.Config.getInstance().setInfoColor(getColor(R.color.colorPrimary)).apply();
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         LinearLayout aboutLayout = findViewById(R.id.aboutLayout);
+        final Toast[] toast = {
+            Toasty.info(AboutActivity.this, "还需" + clicks + "次点击即可解锁彩蛋！", Toast.LENGTH_SHORT)
+        };
         Element versionElement =
                 new Element()
                         .setTitle("版本号: " + getAppVersionName(this))
@@ -61,12 +64,12 @@ public class AboutActivity extends AppCompatActivity {
                                 v -> {
                                     clicks--;
                                     if (clicks <= 97 && clicks > 1) {
-
-                                        Toasty.info(
+                                        toast[0].cancel();
+                                        toast[0] =
+                                                Toasty.info(
                                                         AboutActivity.this,
-                                                        "还需" + clicks + "次点击即可解锁彩蛋！",
-                                                        Toast.LENGTH_SHORT)
-                                                .show();
+                                                        "还需" + clicks + "次点击即可解锁彩蛋！");
+                                        toast[0].show();
                                     } else if (clicks == 1) {
                                         Snacky.builder()
                                                 .setActivity(AboutActivity.this)
