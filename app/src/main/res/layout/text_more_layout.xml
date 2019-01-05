@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -41,184 +40,27 @@
         android:scrollHorizontally="false"
         android:scrollbars="vertical"
         android:singleLine="false"
-        app:layout_constraintBottom_toTopOf="@+id/LinearLayout1"
+        app:layout_constraintBottom_toTopOf="@+id/openMoreMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/moreInput"
         app:layout_constraintVertical_weight="1"/>
-
-    <LinearLayout
-        android:id="@+id/LinearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/LinearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/textReverse"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/string_reverse"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-        <Button
-            android:id="@+id/upperLowerCase"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/switch_cases"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/LinearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/LinearLayout3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/addNumbers"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/add_numbers"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-        <Button
-            android:id="@+id/formatCode"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/format_java_code"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/LinearLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/LinearLayout6"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/customRandom"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/custom_random"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-        <Button
-            android:id="@+id/toMD5"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/generate_md5"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/LinearLayout6"
+    <Button
+        android:id="@+id/openMoreMenu"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/LinearLayout5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/toBase64"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/to_base_64"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-        <Button
-            android:id="@+id/fromBase64"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/from_base_64"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/LinearLayout5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="@color/colorAccent"
+        android:text="@string/open_functions_menu"
+        android:textColor="@color/colorAllWhite"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/toMorseCode"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/to_morse_code"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-        <Button
-            android:id="@+id/formatJson"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:text="@string/format_json"
-            android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

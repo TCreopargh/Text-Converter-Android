@@ -147,7 +147,7 @@
     <string name="reverse_substring">颠倒子串顺序</string>
     <string name="replace">替换</string>
     <string name="send_feedback">发送反馈</string>
-    <string name="to_morse_code">摩斯电码编码/解码</string>
+    <string name="to_morse_code">摩尔斯电码编码/解码</string>
     <string name="from_morse_code">摩斯电码解码</string>
     <string name="switch_cases">切换大小写</string>
     <string name="format_json">JSON格式化</string>
@@ -159,4 +159,19 @@
     <string name="set_monospace">设置输入框为等宽字体</string>
     <string name="morse_lower">摩斯电码使用小写输出</string>
     <string name="multi_line">自动换行</string>
+    <string name="test">test</string>
+    <string name="reverse_disc">将字符串中的每个字符颠倒顺序</string>
+    <string name="choose_option">选择要进行的操作</string>
+    <string name="string_copy">字符串批量复制</string>
+    <string name="string_copy_disc">将字符串复制多份</string>
+    <string name="switch_caps_disc">设置字符串的大小写，有五种模式</string>
+    <string name="add_numbers_disc">遇到回车即分段，并为每段添加标号</string>
+    <string name="format_java_disc">输入一段Java代码并使其符合规范</string>
+    <string name="custom_random_disc">按照一定的格式生成随机数，点击以查看说明</string>
+    <string name="generate_md5_disc">生成文本的MD5摘要</string>
+    <string name="to_base64_disc">将文本转换为Base64编码</string>
+    <string name="from_base64_disc">将Base64编码转换为源文本</string>
+    <string name="morse_code_disc">若输入为合法的摩尔斯电码则将其解码，否则编码</string>
+    <string name="format_json_disc">输入一段Json文本，为其添加适当的缩进以便阅读</string>
+    <string name="open_functions_menu">打开功能菜单</string>
 </resources>

@@ -30,10 +30,12 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,10 +67,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.Constant;
+import com.orhanobut.dialogplus.DialogPlus;
 import com.scottyab.aescrypt.AESCrypt;
 import com.takwolf.morsecoder.MorseCoder;
 import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
 import java.io.File;
@@ -80,6 +84,7 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -114,6 +119,9 @@ public class MainActivity extends AppCompatActivity
             new String[] {
                 "十六进制数值", "电子邮箱", "URL", "IP地址", "整数", "常规数字", "HTML标签", "维基百科注释", "代码注释", "汉字"
             };
+
+    final String capsSwitchModes[] =
+            new String[] {"全部转为小写", "全部转为大写", "切换大小写", "单词首字母大写", "句子首字母大写"};
 
     final String presetsValue[] =
             new String[] {
@@ -153,16 +161,7 @@ public class MainActivity extends AppCompatActivity
     CheckBox doPasswordVisible;
 
     EditText moreInput, moreOutput;
-    Button reverseText,
-            addIndent,
-            formatCode,
-            addNumbers,
-            customRandom,
-            generateMD5,
-            toBase64,
-            fromBase64,
-            toMorseCode,
-            formatJson;
+    Button openMoreMenu;
 
     int currentSearchPos = 0;
     int searchCount = -1;
@@ -172,7 +171,6 @@ public class MainActivity extends AppCompatActivity
     Pattern pattern;
 
     Matcher matcher;
-    int caseSwitchStatus = ALL_LOWER;
 
     String generatedKey = "";
     String path = "";
@@ -186,6 +184,10 @@ public class MainActivity extends AppCompatActivity
     boolean alreadyLoadedShortcut = false;
     boolean regexCautionIsShown = false;
     boolean isGuideShown = false;
+
+    MyAdapter adapter;
+
+    private List<ListItems> itemsList = new ArrayList<>();
 
     public static int stringAppearCounter(String srcText, String findText) {
         int count = 0;
@@ -267,6 +269,9 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         loadSettings(true);
+
+        adapter = new MyAdapter(MainActivity.this, R.layout.list_layout, itemsList);
+        initList();
 
         try {
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -563,7 +568,7 @@ public class MainActivity extends AppCompatActivity
             } else {
                 ClipData mClipData = ClipData.newPlainText("TextConverter", clip);
                 clipboardManager.setPrimaryClip(mClipData);
-                Toasty.success(MainActivity.this, "复制成功！", Toast.LENGTH_LONG, true).show();
+                Toasty.success(MainActivity.this, "复制成功！", Toast.LENGTH_SHORT, true).show();
             }
         } else if (id == R.id.action_reverse_io) {
             switch (currentShowingLayout) {
@@ -797,7 +802,7 @@ public class MainActivity extends AppCompatActivity
                                         Toasty.success(
                                                         MainActivity.this,
                                                         "载入成功",
-                                                        Toast.LENGTH_LONG,
+                                                        Toast.LENGTH_SHORT,
                                                         true)
                                                 .show();
                                         break;
@@ -817,7 +822,7 @@ public class MainActivity extends AppCompatActivity
                                         Toasty.success(
                                                         MainActivity.this,
                                                         "载入成功",
-                                                        Toast.LENGTH_LONG,
+                                                        Toast.LENGTH_SHORT,
                                                         true)
                                                 .show();
                                         break;
@@ -1084,16 +1089,7 @@ public class MainActivity extends AppCompatActivity
         textMoreLayout = findViewById(R.id.textMoreLayout);
         moreInput = findViewById(R.id.moreInput);
         moreOutput = findViewById(R.id.moreOutput);
-        reverseText = findViewById(R.id.textReverse);
-        addIndent = findViewById(R.id.upperLowerCase);
-        addNumbers = findViewById(R.id.addNumbers);
-        formatCode = findViewById(R.id.formatCode);
-        customRandom = findViewById(R.id.customRandom);
-        generateMD5 = findViewById(R.id.toMD5);
-        toBase64 = findViewById(R.id.toBase64);
-        fromBase64 = findViewById(R.id.fromBase64);
-        toMorseCode = findViewById(R.id.toMorseCode);
-        formatJson = findViewById(R.id.formatJson);
+        openMoreMenu = findViewById(R.id.openMoreMenu);
 
         tick = findViewById(R.id.tick);
 
@@ -1107,17 +1103,7 @@ public class MainActivity extends AppCompatActivity
         searchAll.setOnClickListener(this);
         encrypt.setOnClickListener(this);
         decrypt.setOnClickListener(this);
-        reverseText.setOnClickListener(this);
-        addIndent.setOnClickListener(this);
-        addNumbers.setOnClickListener(this);
-        formatCode.setOnClickListener(this);
-        customRandom.setOnClickListener(this);
-        generateMD5.setOnClickListener(this);
-        toBase64.setOnClickListener(this);
-        fromBase64.setOnClickListener(this);
-        toMorseCode.setOnClickListener(this);
-        formatJson.setOnClickListener(this);
-
+        openMoreMenu.setOnClickListener(this);
     }
 
     @SuppressLint("SetTextI18n")
@@ -1604,397 +1590,822 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
 
-            case R.id.textReverse:
-                try {
-                    String reverseSrc = moreInput.getText().toString();
-                    StringBuilder reverseResult = new StringBuilder();
-                    for (int i = reverseSrc.length() - 1; i >= 0; i--) {
-                        reverseResult.append(reverseSrc.charAt(i));
-                    }
-                    moreOutput.setText(reverseResult.toString(), BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.upperLowerCase:
-                try {
-                    String caseSrc = moreInput.getText().toString();
-                    StringBuilder caseOutput = new StringBuilder();
-                    String toastMessage = "未知错误";
-                    switch (caseSwitchStatus) {
-                        case ALL_LOWER:
-                            caseOutput.append(caseSrc.toLowerCase());
-                            toastMessage = "全部转为小写，再次点击全部转为大写";
-                            caseSwitchStatus++;
-                            break;
-
-                        case ALL_UPPER:
-                            caseOutput.append(caseSrc.toUpperCase());
-                            toastMessage = "全部转为大写，再次点击切换大小写";
-                            caseSwitchStatus++;
-                            break;
-
-                        case CASE_REVERSE:
-                            for (int i = 0; i < caseSrc.length(); i++) {
-                                caseOutput.append(switchCase(caseSrc.charAt(i)));
-                            }
-                            toastMessage = "切换大小写，再次点击单词首字母大写";
-                            caseSwitchStatus++;
-                            break;
-
-                        case FIRST_UPPER:
-                            // String[] words = caseSrc.split("[
-                            // \n\r\t|!@#$%^&*(),./?><:\"《》，'。；‘：“—+=！￥…（）\\[\\]~\\\\]");
-                            final String symbols =
-                                    " \n\r\t|!@#$%^&*(),./?><:\"《》，'。；‘：“—+=！￥…（）[]~\\";
-                            boolean wordBegin = true;
-                            for (int i = 0; i < caseSrc.length(); i++) {
-                                if (wordBegin) {
-                                    caseOutput.append(Character.toUpperCase(caseSrc.charAt(i)));
-                                    wordBegin = false;
-                                } else {
-                                    caseOutput.append(Character.toLowerCase(caseSrc.charAt(i)));
-                                }
-                                if (symbols.contains(String.valueOf(caseSrc.charAt(i)))) {
-                                    wordBegin = true;
-                                }
-                            }
-                            toastMessage = "单词首字母大写，再次点击句子首字母大写";
-                            caseSwitchStatus++;
-                            break;
-
-                        case SENTENCE_FIRST:
-                            boolean sentenceBegin = true;
-                            final String endSentence = "\n\r\t?!.？。！…;；";
-                            for (int i = 0; i < caseSrc.length(); i++) {
-                                if (sentenceBegin
-                                        && ((caseSrc.charAt(i) >= 'a' && caseSrc.charAt(i) <= 'z')
-                                                || (caseSrc.charAt(i) >= 'A'
-                                                        && caseSrc.charAt(i) <= 'Z'))) {
-                                    caseOutput.append(Character.toUpperCase(caseSrc.charAt(i)));
-                                    sentenceBegin = false;
-                                } else {
-                                    caseOutput.append(Character.toLowerCase(caseSrc.charAt(i)));
-                                }
-                                if (endSentence.contains(String.valueOf(caseSrc.charAt(i)))) {
-                                    sentenceBegin = true;
-                                }
-                            }
-                            toastMessage = "句子首字母大写，再次点击全部转为小写";
-                            caseSwitchStatus = 0;
-                            break;
-
-                        default:
-                            caseSwitchStatus = ALL_LOWER;
-                    }
-                    moreOutput.setText(caseOutput.toString(), BufferType.EDITABLE);
-                    Toasty.info(MainActivity.this, toastMessage, Toast.LENGTH_SHORT, true).show();
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.addNumbers:
-                try {
-                    String addNumbersSrc = moreInput.getText().toString();
-                    String numberParagraphs[] = addNumbersSrc.split("\\cJ");
-                    StringBuilder addNumbersOutput = new StringBuilder();
-                    for (int i = 1; i <= numberParagraphs.length; i++) {
-                        addNumbersOutput
-                                .append(i)
-                                .append('.')
-                                .append(numberParagraphs[i - 1])
-                                .append('\n');
-                    }
-                    moreOutput.setText(addNumbersOutput, BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.formatCode:
-                try {
-                    String formatCodeSrc = moreInput.getText().toString();
-                    Formatter formatter = new Formatter();
-                    String formattedCode = formatter.formatSource(formatCodeSrc);
-                    moreOutput.setText(formattedCode, BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.customRandom:
-                try {
-                    final String[] dataQuantityString = {"1"};
-                    // final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                    final LovelyCustomDialog dialog = new LovelyCustomDialog(MainActivity.this);
-                    LayoutInflater layoutInflater = LayoutInflater.from(this);
-                    @SuppressLint("InflateParams")
-                    View dialogView = layoutInflater.inflate(R.layout.dialog_set_quantity, null);
-                    final EditText dataQuantity = dialogView.findViewById(R.id.dataQuantity);
-                    dialog.setMessage(R.string.format_instruction)
-                            .setView(dialogView)
-                            .setCancelable(false)
-                            .setTitle(R.string.custom_random)
-                            .setTopColorRes(R.color.colorAccent)
-                            .setIcon(R.drawable.ic_custom)
-                            .setListener(
-                                    R.id.viewInstance,
-                                    v13 -> {
-                                        moreInput.setText("生成随机时间：{0,23}:{0,59}\n");
-                                        dialog.dismiss();
-                                    })
-                            .setListener(R.id.cancelDialog, v12 -> dialog.dismiss())
-                            .setListener(
-                                    R.id.confirmDialog,
-                                    v1 -> {
-                                        try {
-                                            dataQuantityString[0] =
-                                                    dataQuantity.getText().toString();
-                                            if (dataQuantityString[0].isEmpty()) {
-                                                dataQuantityString[0] = "1";
-                                            }
-
-                                            int quantity = Integer.parseInt(dataQuantityString[0]);
-                                            StringBuilder finalOutputBuilder = new StringBuilder();
-                                            int min = 0, max = 0;
-                                            String format = moreInput.getText().toString();
-                                            for (int q = 0; q < quantity; q++) {
-                                                StringBuilder tempOutput = new StringBuilder();
-                                                for (int i = 0; i < format.length(); i++) {
-                                                    if (i < format.length() - 1
-                                                            && format.charAt(i) == '{'
-                                                            && format.charAt(i + 1) == '{') {
-                                                        i++;
-                                                        tempOutput.append('{');
-                                                        continue;
-                                                    }
-                                                    if (format.charAt(i) == '{') {
-                                                        int length = 0;
-                                                        for (int j = 1;
-                                                                i + j < format.length();
-                                                                j++) {
-                                                            if (format.charAt(i + j) == ','
-                                                                    || format.charAt(i + j)
-                                                                            == '，') {
-                                                                min =
-                                                                        Integer.parseInt(
-                                                                                format.substring(
-                                                                                        i + 1,
-                                                                                        i + j));
-                                                                for (int k = 1;
-                                                                        i + j + k < format.length();
-                                                                        k++) {
-                                                                    if (format.charAt(i + j + k)
-                                                                            == '}') {
-                                                                        max =
-                                                                                Integer.parseInt(
-                                                                                        format
-                                                                                                .substring(
-                                                                                                        i
-                                                                                                                + j
-                                                                                                                + 1,
-                                                                                                        i
-                                                                                                                + j
-                                                                                                                + k));
-                                                                        length = j + k;
-                                                                        break;
-                                                                    }
-                                                                }
-                                                                break;
-                                                            }
+            case R.id.openMoreMenu:
+                @SuppressLint("SetTextI18n")
+                DialogPlus dialogPlus =
+                        DialogPlus.newDialog(this)
+                                .setAdapter(adapter)
+                                .setGravity(Gravity.BOTTOM)
+                                .setExpanded(true)
+                                .setCancelable(true)
+                                .setHeader(R.layout.dialog_header)
+                                .setOnItemClickListener(
+                                        (dialog, item, view, position) -> {
+                                            switch (position) {
+                                                case 0: // reverse
+                                                    try {
+                                                        String reverseSrc =
+                                                                moreInput.getText().toString();
+                                                        StringBuilder reverseResult =
+                                                                new StringBuilder();
+                                                        for (int i = reverseSrc.length() - 1;
+                                                                i >= 0;
+                                                                i--) {
+                                                            reverseResult.append(
+                                                                    reverseSrc.charAt(i));
                                                         }
-                                                        Random random = new Random();
-                                                        int randNum =
-                                                                random.nextInt(max - min + 1) + min;
-                                                        tempOutput.append(String.valueOf(randNum));
-                                                        i += length;
-                                                    } else {
-                                                        tempOutput.append(format.charAt(i));
+                                                        moreOutput.setText(
+                                                                reverseResult.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
                                                     }
-                                                }
-                                                finalOutputBuilder.append(tempOutput.toString());
+                                                    break;
+
+                                                case 1: // copy
+                                                    LovelyTextInputDialog lovelyTextInputDialog =
+                                                            new LovelyTextInputDialog(
+                                                                    MainActivity.this);
+                                                    lovelyTextInputDialog
+                                                            .setTopColorRes(R.color.settingsGrey)
+                                                            .setIcon(
+                                                                    R.drawable
+                                                                            .ic_content_copy_black_24dp)
+                                                            .setTitle("输入复制份数")
+                                                            .setCancelable(true)
+                                                            .setMessage("请在下面输入您想要复制的份数")
+                                                            .configureView(
+                                                                    v14 -> {
+                                                                        v14.setFocusableInTouchMode(
+                                                                                true);
+                                                                        v14.setFocusable(true);
+                                                                    })
+                                                            .configureEditText(
+                                                                    v15 -> {
+                                                                        v15.setHint("输入复制份数");
+                                                                        v15.setInputType(
+                                                                                InputType
+                                                                                        .TYPE_CLASS_NUMBER);
+                                                                        if (getSharedPreferences(
+                                                                                        "settings",
+                                                                                        MODE_PRIVATE)
+                                                                                .getBoolean(
+                                                                                        "doUseMonospaced",
+                                                                                        false)) {
+                                                                            v15.setTextAppearance(
+                                                                                    R.style
+                                                                                            .MyMonospace);
+                                                                        } else {
+                                                                            v15.setTextAppearance(
+                                                                                    R.style
+                                                                                            .MyRegular);
+                                                                        }
+                                                                        v15.clearFocus();
+                                                                    })
+                                                            .setConfirmButtonColor(
+                                                                    getColor(R.color.colorAccent))
+                                                            .setConfirmButton(
+                                                                    R.string.confirm,
+                                                                    text -> {
+                                                                        try {
+                                                                            if (text.isEmpty()) {
+                                                                                Toasty.error(
+                                                                                                MainActivity
+                                                                                                        .this,
+                                                                                                "输入内容不能为空！",
+                                                                                                Toast
+                                                                                                        .LENGTH_LONG)
+                                                                                        .show();
+                                                                                return;
+                                                                            }
+                                                                            StringBuilder
+                                                                                    outputStr =
+                                                                                            new StringBuilder();
+                                                                            String inputStr =
+                                                                                    moreInput
+                                                                                            .getText()
+                                                                                            .toString();
+                                                                            int n =
+                                                                                    Integer
+                                                                                            .parseInt(
+                                                                                                    text);
+                                                                            for (int i = 0;
+                                                                                    i < n;
+                                                                                    i++) {
+                                                                                outputStr.append(
+                                                                                        inputStr);
+                                                                            }
+                                                                            moreOutput.setText(
+                                                                                    outputStr
+                                                                                            .toString(),
+                                                                                    BufferType
+                                                                                            .EDITABLE);
+                                                                        } catch (Exception e) {
+                                                                            Toasty.error(
+                                                                                            MainActivity
+                                                                                                    .this,
+                                                                                            getString(
+                                                                                                            R.string
+                                                                                                                    .exception_occurred)
+                                                                                                    + e
+                                                                                                            .toString(),
+                                                                                            Toast
+                                                                                                    .LENGTH_LONG)
+                                                                                    .show();
+                                                                        } finally {
+                                                                            moreInput.clearFocus();
+                                                                            moreOutput.clearFocus();
+                                                                        }
+                                                                    })
+                                                            .create()
+                                                            .show();
+
+                                                    break;
+
+                                                case 2: // caps switch
+                                                    try {
+                                                        final int[] mode = {0};
+                                                        AlertDialog.Builder alertDialog =
+                                                                new AlertDialog.Builder(
+                                                                        MainActivity.this);
+                                                        alertDialog
+                                                                .setTitle("选择模式")
+                                                                .setIcon(R.mipmap.ic_launcher)
+                                                                .setItems(
+                                                                        capsSwitchModes,
+                                                                        (dialog1, which) -> {
+                                                                            mode[0] = which;
+                                                                            String caseSrc =
+                                                                                    moreInput
+                                                                                            .getText()
+                                                                                            .toString();
+                                                                            StringBuilder
+                                                                                    caseOutput =
+                                                                                            new StringBuilder();
+                                                                            switch (mode[0]) {
+                                                                                case ALL_LOWER:
+                                                                                    caseOutput
+                                                                                            .append(
+                                                                                                    caseSrc
+                                                                                                            .toLowerCase());
+                                                                                    break;
+
+                                                                                case ALL_UPPER:
+                                                                                    caseOutput
+                                                                                            .append(
+                                                                                                    caseSrc
+                                                                                                            .toUpperCase());
+                                                                                    break;
+
+                                                                                case CASE_REVERSE:
+                                                                                    for (int i = 0;
+                                                                                            i
+                                                                                                    < caseSrc
+                                                                                                            .length();
+                                                                                            i++) {
+                                                                                        caseOutput
+                                                                                                .append(
+                                                                                                        switchCase(
+                                                                                                                caseSrc
+                                                                                                                        .charAt(
+                                                                                                                                i)));
+                                                                                    }
+                                                                                    break;
+
+                                                                                case FIRST_UPPER:
+                                                                                    // String[]
+                                                                                    // words =
+                                                                                    // caseSrc.split("[
+                                                                                    // \n\r\t|!@#$%^&*(),./?><:\"《》，'。；‘：“—+=！￥…（）\\[\\]~\\\\]");
+                                                                                    final String
+                                                                                            symbols =
+                                                                                                    " \n\r\t|!@#$%^&*(),./?><:\"《》，'。；‘：“—+=！￥…（）[]~\\";
+                                                                                    boolean
+                                                                                            wordBegin =
+                                                                                                    true;
+                                                                                    for (int i = 0;
+                                                                                            i
+                                                                                                    < caseSrc
+                                                                                                            .length();
+                                                                                            i++) {
+                                                                                        if (wordBegin) {
+                                                                                            caseOutput
+                                                                                                    .append(
+                                                                                                            Character
+                                                                                                                    .toUpperCase(
+                                                                                                                            caseSrc
+                                                                                                                                    .charAt(
+                                                                                                                                            i)));
+                                                                                            wordBegin =
+                                                                                                    false;
+                                                                                        } else {
+                                                                                            caseOutput
+                                                                                                    .append(
+                                                                                                            Character
+                                                                                                                    .toLowerCase(
+                                                                                                                            caseSrc
+                                                                                                                                    .charAt(
+                                                                                                                                            i)));
+                                                                                        }
+                                                                                        if (symbols
+                                                                                                .contains(
+                                                                                                        String
+                                                                                                                .valueOf(
+                                                                                                                        caseSrc
+                                                                                                                                .charAt(
+                                                                                                                                        i)))) {
+                                                                                            wordBegin =
+                                                                                                    true;
+                                                                                        }
+                                                                                    }
+
+                                                                                    break;
+
+                                                                                case SENTENCE_FIRST:
+                                                                                    boolean
+                                                                                            sentenceBegin =
+                                                                                                    true;
+                                                                                    final String
+                                                                                            endSentence =
+                                                                                                    "\n\r\t?!.？。！…;；";
+                                                                                    for (int i = 0;
+                                                                                            i
+                                                                                                    < caseSrc
+                                                                                                            .length();
+                                                                                            i++) {
+                                                                                        if (sentenceBegin
+                                                                                                && ((caseSrc
+                                                                                                                                .charAt(
+                                                                                                                                        i)
+                                                                                                                        >= 'a'
+                                                                                                                && caseSrc
+                                                                                                                                .charAt(
+                                                                                                                                        i)
+                                                                                                                        <= 'z')
+                                                                                                        || (caseSrc
+                                                                                                                                .charAt(
+                                                                                                                                        i)
+                                                                                                                        >= 'A'
+                                                                                                                && caseSrc
+                                                                                                                                .charAt(
+                                                                                                                                        i)
+                                                                                                                        <= 'Z'))) {
+                                                                                            caseOutput
+                                                                                                    .append(
+                                                                                                            Character
+                                                                                                                    .toUpperCase(
+                                                                                                                            caseSrc
+                                                                                                                                    .charAt(
+                                                                                                                                            i)));
+                                                                                            sentenceBegin =
+                                                                                                    false;
+                                                                                        } else {
+                                                                                            caseOutput
+                                                                                                    .append(
+                                                                                                            Character
+                                                                                                                    .toLowerCase(
+                                                                                                                            caseSrc
+                                                                                                                                    .charAt(
+                                                                                                                                            i)));
+                                                                                        }
+                                                                                        if (endSentence
+                                                                                                .contains(
+                                                                                                        String
+                                                                                                                .valueOf(
+                                                                                                                        caseSrc
+                                                                                                                                .charAt(
+                                                                                                                                        i)))) {
+                                                                                            sentenceBegin =
+                                                                                                    true;
+                                                                                        }
+                                                                                    }
+                                                                                    break;
+
+                                                                                default:
+                                                                            }
+                                                                            moreOutput.setText(
+                                                                                    caseOutput
+                                                                                            .toString(),
+                                                                                    BufferType
+                                                                                            .EDITABLE);
+                                                                            moreOutput.clearFocus();
+                                                                            moreInput.clearFocus();
+                                                                        })
+                                                                .create()
+                                                                .show();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 3: // add numbers
+                                                    try {
+                                                        String addNumbersSrc =
+                                                                moreInput.getText().toString();
+                                                        String numberParagraphs[] =
+                                                                addNumbersSrc.split("\\cJ");
+                                                        StringBuilder addNumbersOutput =
+                                                                new StringBuilder();
+                                                        for (int i = 1;
+                                                                i <= numberParagraphs.length;
+                                                                i++) {
+                                                            addNumbersOutput
+                                                                    .append(i)
+                                                                    .append('.')
+                                                                    .append(numberParagraphs[i - 1])
+                                                                    .append('\n');
+                                                        }
+                                                        moreOutput.setText(
+                                                                addNumbersOutput,
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 4: // format java code
+                                                    try {
+                                                        String formatCodeSrc =
+                                                                moreInput.getText().toString();
+                                                        Formatter formatter = new Formatter();
+                                                        String formattedCode =
+                                                                formatter.formatSource(
+                                                                        formatCodeSrc);
+                                                        moreOutput.setText(
+                                                                formattedCode, BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 5: // custom random
+                                                    try {
+                                                        final String[] dataQuantityString = {"1"};
+                                                        // final AlertDialog.Builder dialog
+                                                        // = new AlertDialog.Builder(this);
+                                                        final LovelyCustomDialog dialog1 =
+                                                                new LovelyCustomDialog(
+                                                                        MainActivity.this);
+                                                        LayoutInflater layoutInflater =
+                                                                LayoutInflater.from(
+                                                                        MainActivity.this);
+                                                        @SuppressLint("InflateParams")
+                                                        View dialogView =
+                                                                layoutInflater.inflate(
+                                                                        R.layout
+                                                                                .dialog_set_quantity,
+                                                                        null);
+                                                        final EditText dataQuantity =
+                                                                dialogView.findViewById(
+                                                                        R.id.dataQuantity);
+                                                        dialog1.setMessage(
+                                                                        R.string.format_instruction)
+                                                                .setView(dialogView)
+                                                                .setCancelable(false)
+                                                                .setTitle(R.string.custom_random)
+                                                                .setTopColorRes(R.color.colorAccent)
+                                                                .setIcon(R.drawable.ic_custom)
+                                                                .setListener(
+                                                                        R.id.viewInstance,
+                                                                        v13 -> {
+                                                                            moreInput.setText(
+                                                                                    "生成随机时间：{0,23}:{0,59}\n");
+                                                                            dialog1.dismiss();
+                                                                        })
+                                                                .setListener(
+                                                                        R.id.cancelDialog,
+                                                                        v12 -> dialog1.dismiss())
+                                                                .setListener(
+                                                                        R.id.confirmDialog,
+                                                                        v1 -> {
+                                                                            try {
+                                                                                dataQuantityString[
+                                                                                                0] =
+                                                                                        dataQuantity
+                                                                                                .getText()
+                                                                                                .toString();
+                                                                                if (dataQuantityString[
+                                                                                        0]
+                                                                                        .isEmpty()) {
+                                                                                    dataQuantityString[
+                                                                                                    0] =
+                                                                                            "1";
+                                                                                }
+
+                                                                                int quantity =
+                                                                                        Integer
+                                                                                                .parseInt(
+                                                                                                        dataQuantityString[
+                                                                                                                0]);
+                                                                                StringBuilder
+                                                                                        finalOutputBuilder =
+                                                                                                new StringBuilder();
+                                                                                int min = 0,
+                                                                                        max = 0;
+                                                                                String format =
+                                                                                        moreInput
+                                                                                                .getText()
+                                                                                                .toString();
+                                                                                for (int q = 0;
+                                                                                        q
+                                                                                                < quantity;
+                                                                                        q++) {
+                                                                                    StringBuilder
+                                                                                            tempOutput =
+                                                                                                    new StringBuilder();
+                                                                                    for (int i = 0;
+                                                                                            i
+                                                                                                    < format
+                                                                                                            .length();
+                                                                                            i++) {
+                                                                                        if (i
+                                                                                                        < format
+                                                                                                                        .length()
+                                                                                                                - 1
+                                                                                                && format
+                                                                                                                .charAt(
+                                                                                                                        i)
+                                                                                                        == '{'
+                                                                                                && format
+                                                                                                                .charAt(
+                                                                                                                        i
+                                                                                                                                + 1)
+                                                                                                        == '{') {
+                                                                                            i++;
+                                                                                            tempOutput
+                                                                                                    .append(
+                                                                                                            '{');
+                                                                                            continue;
+                                                                                        }
+                                                                                        if (format
+                                                                                                        .charAt(
+                                                                                                                i)
+                                                                                                == '{') {
+                                                                                            int
+                                                                                                    length =
+                                                                                                            0;
+                                                                                            for (int
+                                                                                                            j =
+                                                                                                                    1;
+                                                                                                    i
+                                                                                                                    + j
+                                                                                                            < format
+                                                                                                                    .length();
+                                                                                                    j++) {
+                                                                                                if (format
+                                                                                                                        .charAt(
+                                                                                                                                i
+                                                                                                                                        + j)
+                                                                                                                == ','
+                                                                                                        || format
+                                                                                                                        .charAt(
+                                                                                                                                i
+                                                                                                                                        + j)
+                                                                                                                == '，') {
+                                                                                                    min =
+                                                                                                            Integer
+                                                                                                                    .parseInt(
+                                                                                                                            format
+                                                                                                                                    .substring(
+                                                                                                                                            i
+                                                                                                                                                    + 1,
+                                                                                                                                            i
+                                                                                                                                                    + j));
+                                                                                                    for (int
+                                                                                                                    k =
+                                                                                                                            1;
+                                                                                                            i
+                                                                                                                            + j
+                                                                                                                            + k
+                                                                                                                    < format
+                                                                                                                            .length();
+                                                                                                            k++) {
+                                                                                                        if (format
+                                                                                                                        .charAt(
+                                                                                                                                i
+                                                                                                                                        + j
+                                                                                                                                        + k)
+                                                                                                                == '}') {
+                                                                                                            max =
+                                                                                                                    Integer
+                                                                                                                            .parseInt(
+                                                                                                                                    format
+                                                                                                                                            .substring(
+                                                                                                                                                    i
+                                                                                                                                                            + j
+                                                                                                                                                            + 1,
+                                                                                                                                                    i
+                                                                                                                                                            + j
+                                                                                                                                                            + k));
+                                                                                                            length =
+                                                                                                                    j
+                                                                                                                            + k;
+                                                                                                            break;
+                                                                                                        }
+                                                                                                    }
+                                                                                                    break;
+                                                                                                }
+                                                                                            }
+                                                                                            Random
+                                                                                                    random =
+                                                                                                            new Random();
+                                                                                            int
+                                                                                                    randNum =
+                                                                                                            random
+                                                                                                                            .nextInt(
+                                                                                                                                    max
+                                                                                                                                            - min
+                                                                                                                                            + 1)
+                                                                                                                    + min;
+                                                                                            tempOutput
+                                                                                                    .append(
+                                                                                                            String
+                                                                                                                    .valueOf(
+                                                                                                                            randNum));
+                                                                                            i +=
+                                                                                                    length;
+                                                                                        } else {
+                                                                                            tempOutput
+                                                                                                    .append(
+                                                                                                            format
+                                                                                                                    .charAt(
+                                                                                                                            i));
+                                                                                        }
+                                                                                    }
+                                                                                    finalOutputBuilder
+                                                                                            .append(
+                                                                                                    tempOutput
+                                                                                                            .toString());
+                                                                                }
+                                                                                moreOutput.setText(
+                                                                                        finalOutputBuilder
+                                                                                                .toString(),
+                                                                                        BufferType
+                                                                                                .EDITABLE);
+                                                                            } catch (Exception e) {
+                                                                                if (e
+                                                                                        instanceof
+                                                                                        NumberFormatException) {
+                                                                                    moreOutput
+                                                                                            .setText(
+                                                                                                    "输入格式错误："
+                                                                                                            + e
+                                                                                                                    .toString(),
+                                                                                                    BufferType
+                                                                                                            .EDITABLE);
+                                                                                } else if (e
+                                                                                        instanceof
+                                                                                        IllegalArgumentException) {
+                                                                                    moreOutput
+                                                                                            .setText(
+                                                                                                    "参数错误，随机数的上界必须大于下界！",
+                                                                                                    BufferType
+                                                                                                            .EDITABLE);
+                                                                                } else {
+                                                                                    moreOutput
+                                                                                            .setText(
+                                                                                                    getString(
+                                                                                                                    R.string
+                                                                                                                            .exception_occurred)
+                                                                                                            + e
+                                                                                                                    .toString(),
+                                                                                                    BufferType
+                                                                                                            .EDITABLE);
+                                                                                }
+                                                                            } finally {
+                                                                                dialog1.dismiss();
+                                                                                moreOutput
+                                                                                        .clearFocus();
+                                                                                moreInput
+                                                                                        .clearFocus();
+                                                                            }
+                                                                        })
+                                                                .create()
+                                                                .show();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 6: // generate MD5
+                                                    try {
+                                                        String md5Src =
+                                                                moreInput.getText().toString();
+                                                        String md5 = getMD5(md5Src);
+                                                        moreOutput.setText(
+                                                                md5, BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 7: // Base64 encode
+                                                    try {
+                                                        String plainSrc =
+                                                                moreInput.getText().toString();
+                                                        String base64 =
+                                                                Base64.encodeToString(
+                                                                        plainSrc.getBytes(),
+                                                                        Base64.DEFAULT);
+                                                        moreOutput.setText(
+                                                                base64, BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 8: // Base64 decode
+                                                    try {
+                                                        String base64Input =
+                                                                moreInput.getText().toString();
+                                                        String decodedStr =
+                                                                new String(
+                                                                        Base64.decode(
+                                                                                base64Input
+                                                                                        .getBytes(),
+                                                                                Base64.DEFAULT));
+                                                        moreOutput.setText(
+                                                                decodedStr, BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        if (e instanceof IllegalArgumentException) {
+                                                            moreOutput.setText(
+                                                                    "输入内容不是合法的Base64编码！",
+                                                                    BufferType.EDITABLE);
+                                                        } else {
+                                                            moreOutput.setText(
+                                                                    getString(
+                                                                                    R.string
+                                                                                            .exception_occurred)
+                                                                            + e.toString(),
+                                                                    BufferType.EDITABLE);
+                                                        }
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 9: // morse code
+                                                    try {
+                                                        String morseCodeInput =
+                                                                moreInput.getText().toString();
+                                                        morseCodeInput =
+                                                                morseCodeInput
+                                                                        .replace(' ', '/')
+                                                                        .replace('\\', '/')
+                                                                        .replace('\n', '/')
+                                                                        .replace('\r', '/')
+                                                                        .replace('*', '.')
+                                                                        .replace('·', '.')
+                                                                        .replace('•', '.')
+                                                                        .replace('●', '.')
+                                                                        .replace('_', '-')
+                                                                        .replace('—', '-');
+                                                        MorseCoder morseCoder = new MorseCoder();
+                                                        String decodeStr =
+                                                                morseCoder.decode(morseCodeInput);
+                                                        if (settingsBoolean[2]) {
+                                                            decodeStr = decodeStr.toLowerCase();
+                                                        }
+                                                        moreOutput.setText(
+                                                                decodeStr, BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        if (e instanceof IllegalArgumentException) {
+                                                            try {
+                                                                String morseCodeInput1 =
+                                                                        moreInput
+                                                                                .getText()
+                                                                                .toString();
+                                                                morseCodeInput1 =
+                                                                        morseCodeInput1.replace(
+                                                                                '\n', ' ');
+                                                                MorseCoder morseCoder =
+                                                                        new MorseCoder();
+                                                                moreOutput.setText(
+                                                                        morseCoder.encode(
+                                                                                morseCodeInput1),
+                                                                        BufferType.EDITABLE);
+                                                                moreOutput.clearFocus();
+                                                                moreInput.clearFocus();
+                                                            } catch (Exception e1) {
+                                                                moreOutput.setText(
+                                                                        getString(
+                                                                                        R.string
+                                                                                                .exception_occurred)
+                                                                                + e1.toString(),
+                                                                        BufferType.EDITABLE);
+                                                                moreOutput.clearFocus();
+                                                                moreInput.clearFocus();
+                                                            }
+                                                        } else {
+                                                            moreOutput.setText(
+                                                                    getString(
+                                                                                    R.string
+                                                                                            .exception_occurred)
+                                                                            + e.toString(),
+                                                                    BufferType.EDITABLE);
+                                                        }
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                case 10: // format JSON
+                                                    try {
+                                                        String uglyJson =
+                                                                moreInput.getText().toString();
+                                                        String formattedJson =
+                                                                jsonFormatter(uglyJson);
+                                                        if (!formattedJson.equals("null")) {
+                                                            moreOutput.setText(
+                                                                    formattedJson,
+                                                                    BufferType.EDITABLE);
+                                                        } else {
+                                                            moreOutput.setText(
+                                                                    "", BufferType.EDITABLE);
+                                                        }
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    } catch (Exception e) {
+                                                        moreOutput.setText(
+                                                                getString(
+                                                                                R.string
+                                                                                        .exception_occurred)
+                                                                        + e.toString(),
+                                                                BufferType.EDITABLE);
+                                                        moreOutput.clearFocus();
+                                                        moreInput.clearFocus();
+                                                    }
+                                                    break;
+
+                                                default:
                                             }
-                                            moreOutput.setText(
-                                                    finalOutputBuilder.toString(),
-                                                    BufferType.EDITABLE);
-                                        } catch (Exception e) {
-                                            if (e instanceof NumberFormatException) {
-                                                moreOutput.setText(
-                                                        "输入格式错误：" + e.toString(),
-                                                        BufferType.EDITABLE);
-                                            } else if (e instanceof IllegalArgumentException) {
-                                                moreOutput.setText(
-                                                        "参数错误，随机数的上界必须大于下界！", BufferType.EDITABLE);
-                                            } else {
-                                                moreOutput.setText(
-                                                        getString(R.string.exception_occurred)
-                                                                + e.toString(),
-                                                        BufferType.EDITABLE);
-                                            }
-                                        } finally {
                                             dialog.dismiss();
-                                            moreOutput.clearFocus();
-                                            moreInput.clearFocus();
-                                        }
-                                    })
-                            .create()
-                            .show();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.toMD5:
-                try {
-                    String md5Src = moreInput.getText().toString();
-                    String md5 = getMD5(md5Src);
-                    moreOutput.setText(md5, BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.toBase64:
-                try {
-                    String plainSrc = moreInput.getText().toString();
-                    String base64 = Base64.encodeToString(plainSrc.getBytes(), Base64.DEFAULT);
-                    moreOutput.setText(base64, BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.fromBase64:
-                try {
-                    String base64Input = moreInput.getText().toString();
-                    String decodedStr =
-                            new String(Base64.decode(base64Input.getBytes(), Base64.DEFAULT));
-                    moreOutput.setText(decodedStr, BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    if (e instanceof IllegalArgumentException) {
-                        moreOutput.setText("输入内容不是合法的Base64编码！", BufferType.EDITABLE);
-                    } else {
-                        moreOutput.setText(
-                                getString(R.string.exception_occurred) + e.toString(),
-                                BufferType.EDITABLE);
-                    }
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.toMorseCode:
-                try {
-                    String morseCodeInput = moreInput.getText().toString();
-                    morseCodeInput =
-                            morseCodeInput
-                                    .replace(' ', '/')
-                                    .replace('\\', '/')
-                                    .replace('\n', '/')
-                                    .replace('\r', '/')
-                                    .replace('*', '.')
-                                    .replace('·', '.')
-                                    .replace('•', '.')
-                                    .replace('●', '.')
-                                    .replace('_', '-')
-                                    .replace('—', '-');
-                    MorseCoder morseCoder = new MorseCoder();
-                    String decodeStr = morseCoder.decode(morseCodeInput);
-                    if (settingsBoolean[2]) {
-                        decodeStr = decodeStr.toLowerCase();
-                    }
-                    moreOutput.setText(decodeStr, BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    if (e instanceof IllegalArgumentException) {
-                        try {
-                            String morseCodeInput1 = moreInput.getText().toString();
-                            morseCodeInput1 = morseCodeInput1.replace('\n', ' ');
-                            MorseCoder morseCoder = new MorseCoder();
-                            moreOutput.setText(
-                                    morseCoder.encode(morseCodeInput1), BufferType.EDITABLE);
-                            moreOutput.clearFocus();
-                            moreInput.clearFocus();
-                        } catch (Exception e1) {
-                            moreOutput.setText(
-                                    getString(R.string.exception_occurred) + e1.toString(),
-                                    BufferType.EDITABLE);
-                            moreOutput.clearFocus();
-                            moreInput.clearFocus();
-                        }
-                    } else {
-                        moreOutput.setText(
-                                getString(R.string.exception_occurred) + e.toString(),
-                                BufferType.EDITABLE);
-                    }
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
-                break;
-
-            case R.id.formatJson:
-                try {
-                    String uglyJson = moreInput.getText().toString();
-                    String formattedJson = jsonFormatter(uglyJson);
-                    if (!formattedJson.equals("null")) {
-                        moreOutput.setText(formattedJson, BufferType.EDITABLE);
-                    } else {
-                        moreOutput.setText("", BufferType.EDITABLE);
-                    }
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                } catch (Exception e) {
-                    moreOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    moreOutput.clearFocus();
-                    moreInput.clearFocus();
-                }
+                                        })
+                                .create();
+                dialogPlus.show();
                 break;
 
             default:
@@ -2516,5 +2927,61 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (Exception ignored) {
         }
+    }
+
+    private void initList() {
+        // 0
+        ListItems reverseString =
+                new ListItems(getString(R.string.string_reverse), getString(R.string.reverse_disc));
+        itemsList.add(reverseString);
+        // 1
+        ListItems multiplyString =
+                new ListItems(
+                        getString(R.string.string_copy), getString(R.string.string_copy_disc));
+        itemsList.add(multiplyString);
+        // 2
+        ListItems switchCase =
+                new ListItems(
+                        getString(R.string.switch_cases), getString(R.string.switch_caps_disc));
+        itemsList.add(switchCase);
+        // 3
+        ListItems addNumbers =
+                new ListItems(
+                        getString(R.string.add_numbers), getString(R.string.add_numbers_disc));
+        itemsList.add(addNumbers);
+        // 4
+        ListItems formatJava =
+                new ListItems(
+                        getString(R.string.format_java_code), getString(R.string.format_java_disc));
+        itemsList.add(formatJava);
+        // 5
+        ListItems customRandom =
+                new ListItems(
+                        getString(R.string.custom_random), getString(R.string.custom_random_disc));
+        itemsList.add(customRandom);
+        // 6
+        ListItems generateMD5 =
+                new ListItems(
+                        getString(R.string.generate_md5), getString(R.string.generate_md5_disc));
+        itemsList.add(generateMD5);
+        // 7
+        ListItems base64encode =
+                new ListItems(getString(R.string.to_base_64), getString(R.string.to_base64_disc));
+        itemsList.add(base64encode);
+        // 8
+        ListItems base64decode =
+                new ListItems(
+                        getString(R.string.from_base_64), getString(R.string.from_base64_disc));
+        itemsList.add(base64decode);
+        // 9
+        ListItems morseCode =
+                new ListItems(
+                        getString(R.string.to_morse_code), getString(R.string.morse_code_disc));
+        itemsList.add(morseCode);
+        // 10
+        ListItems formatJson =
+                new ListItems(
+                        getString(R.string.format_json), getString(R.string.format_json_disc));
+        itemsList.add(formatJson);
     }
 }
