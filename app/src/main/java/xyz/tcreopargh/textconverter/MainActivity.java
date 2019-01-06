@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity
     EditText moreInput, moreOutput;
     Button openMoreMenu;
 
-    FloatingTextButton showMore;
+    FloatingTextButton moreFab;
 
     int currentSearchPos = 0;
     int searchCount = -1;
@@ -281,11 +281,11 @@ public class MainActivity extends AppCompatActivity
         adapter = new MyAdapter(MainActivity.this, R.layout.list_layout, itemsList);
         initList();
 
+
         try {
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             ClipData data = cm.getPrimaryClip();
-            assert data != null;
-            ClipData.Item item = data.getItemAt(0);
+            ClipData.Item item = Objects.requireNonNull(data).getItemAt(0);
             String content = item.getText().toString();
             if (!content.isEmpty()) {
                 Snacky.builder()
@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity
                                 PasswordTransformationMethod.getInstance());
                     }
                 });
-        showMore.setOnClickListener(v -> onClick(showMore));
+        moreFab.setOnClickListener(v -> onClick(moreFab));
     }
 
     @Override
@@ -999,7 +999,7 @@ public class MainActivity extends AppCompatActivity
             textSearchLayout.setVisibility(View.GONE);
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
-            showMore.setVisibility(View.GONE);
+            moreFab.setVisibility(View.INVISIBLE);
             setTitle(R.string.string_replace);
             // Handle the camera action
         } else if (id == R.id.nav_text_shuffle) {
@@ -1008,7 +1008,7 @@ public class MainActivity extends AppCompatActivity
             textSearchLayout.setVisibility(View.GONE);
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
-            showMore.setVisibility(View.GONE);
+            moreFab.setVisibility(View.INVISIBLE);
             setTitle(R.string.string_shuffle_sort);
         } else if (id == R.id.nav_text_search) {
             textSearchLayout.setVisibility(View.VISIBLE);
@@ -1016,7 +1016,7 @@ public class MainActivity extends AppCompatActivity
             textReplaceLayout.setVisibility(View.GONE);
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
-            showMore.setVisibility(View.GONE);
+            moreFab.setVisibility(View.INVISIBLE);
             setTitle(R.string.text_search);
         } else if (id == R.id.nav_text_encrypt) {
             textEncryptLayout.setVisibility(View.VISIBLE);
@@ -1024,7 +1024,7 @@ public class MainActivity extends AppCompatActivity
             textShuffleLayout.setVisibility(View.GONE);
             textReplaceLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
-            showMore.setVisibility(View.GONE);
+            moreFab.setVisibility(View.INVISIBLE);
             setTitle(R.string.text_encrypt);
         } else if (id == R.id.nav_more_functions) {
             textMoreLayout.setVisibility(View.VISIBLE);
@@ -1032,7 +1032,7 @@ public class MainActivity extends AppCompatActivity
             textSearchLayout.setVisibility(View.GONE);
             textShuffleLayout.setVisibility(View.GONE);
             textReplaceLayout.setVisibility(View.GONE);
-            showMore.setVisibility(View.VISIBLE);
+            moreFab.setVisibility(View.VISIBLE);
             setTitle(R.string.more_handy_function);
         } else if (id == R.id.nav_share) {
             try {
@@ -1106,7 +1106,7 @@ public class MainActivity extends AppCompatActivity
 
         tick = findViewById(R.id.tick);
 
-        showMore = findViewById(R.id.showMore);
+        moreFab = findViewById(R.id.showMore);
 
         generateReplacedText.setOnClickListener(this);
         shuffle.setOnClickListener(this);
@@ -2837,7 +2837,7 @@ public class MainActivity extends AppCompatActivity
                         textSearchLayout.setVisibility(View.GONE);
                         textEncryptLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
-                        showMore.setVisibility(View.GONE);
+                        moreFab.setVisibility(View.INVISIBLE);
                         setTitle(R.string.string_replace);
                         break;
 
@@ -2847,7 +2847,7 @@ public class MainActivity extends AppCompatActivity
                         textReplaceLayout.setVisibility(View.GONE);
                         textEncryptLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
-                        showMore.setVisibility(View.GONE);
+                        moreFab.setVisibility(View.INVISIBLE);
                         setTitle(R.string.text_search);
                         break;
 
@@ -2857,7 +2857,7 @@ public class MainActivity extends AppCompatActivity
                         textSearchLayout.setVisibility(View.GONE);
                         textEncryptLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
-                        showMore.setVisibility(View.GONE);
+                        moreFab.setVisibility(View.INVISIBLE);
                         setTitle(R.string.string_shuffle_sort);
                         break;
 
@@ -2867,7 +2867,7 @@ public class MainActivity extends AppCompatActivity
                         textShuffleLayout.setVisibility(View.GONE);
                         textReplaceLayout.setVisibility(View.GONE);
                         textMoreLayout.setVisibility(View.GONE);
-                        showMore.setVisibility(View.GONE);
+                        moreFab.setVisibility(View.INVISIBLE);
                         setTitle(R.string.text_encrypt);
                         break;
 
@@ -2877,7 +2877,7 @@ public class MainActivity extends AppCompatActivity
                         textSearchLayout.setVisibility(View.GONE);
                         textShuffleLayout.setVisibility(View.GONE);
                         textReplaceLayout.setVisibility(View.GONE);
-                        showMore.setVisibility(View.VISIBLE);
+                        moreFab.setVisibility(View.VISIBLE);
                         setTitle(R.string.more_handy_function);
                         break;
 
@@ -2904,7 +2904,7 @@ public class MainActivity extends AppCompatActivity
                     textSearchLayout.setVisibility(View.GONE);
                     textEncryptLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
-                    showMore.setVisibility(View.GONE);
+                    moreFab.setVisibility(View.INVISIBLE);
                     setTitle(R.string.string_replace);
                     break;
 
@@ -2914,7 +2914,7 @@ public class MainActivity extends AppCompatActivity
                     textReplaceLayout.setVisibility(View.GONE);
                     textEncryptLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
-                    showMore.setVisibility(View.GONE);
+                    moreFab.setVisibility(View.INVISIBLE);
                     setTitle(R.string.text_search);
                     break;
 
@@ -2924,7 +2924,7 @@ public class MainActivity extends AppCompatActivity
                     textSearchLayout.setVisibility(View.GONE);
                     textEncryptLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
-                    showMore.setVisibility(View.GONE);
+                    moreFab.setVisibility(View.INVISIBLE);
                     setTitle(R.string.string_shuffle_sort);
                     break;
 
@@ -2934,7 +2934,7 @@ public class MainActivity extends AppCompatActivity
                     textShuffleLayout.setVisibility(View.GONE);
                     textReplaceLayout.setVisibility(View.GONE);
                     textMoreLayout.setVisibility(View.GONE);
-                    showMore.setVisibility(View.GONE);
+                    moreFab.setVisibility(View.INVISIBLE);
                     setTitle(R.string.text_encrypt);
                     break;
 
@@ -2944,7 +2944,7 @@ public class MainActivity extends AppCompatActivity
                     textSearchLayout.setVisibility(View.GONE);
                     textShuffleLayout.setVisibility(View.GONE);
                     textReplaceLayout.setVisibility(View.GONE);
-                    showMore.setVisibility(View.VISIBLE);
+                    moreFab.setVisibility(View.VISIBLE);
                     setTitle(R.string.more_handy_function);
                     break;
 

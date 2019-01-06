@@ -29,7 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_gravity="center_horizontal|bottom"
-        android:visibility="visible"
         app:floating_background_color="@color/colorAccent"
         app:floating_left_icon="@drawable/baselinedescription"
         app:floating_title="@string/open_functions_menu"
