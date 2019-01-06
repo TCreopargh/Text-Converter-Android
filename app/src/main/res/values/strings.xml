@@ -176,4 +176,7 @@
     <string name="open_functions_menu">打开功能菜单</string>
     <string name="text_random">生成自定义随机文本</string>
     <string name="text_random_disc">随机抽取一条自定义的文本，可批量生成</string>
+    <string name="markdown_preview">Markdown预览</string>
+    <string name="get_source_code_from_url">获取网页源码</string>
+    <string name="enter_edit_mode">进入编辑模式</string>
 </resources>

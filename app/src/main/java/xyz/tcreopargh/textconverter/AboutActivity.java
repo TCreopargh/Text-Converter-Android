@@ -13,6 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
+import com.franmontiel.attributionpresenter.AttributionPresenter;
+import com.franmontiel.attributionpresenter.entities.Attribution;
+import com.franmontiel.attributionpresenter.entities.Library;
+import com.franmontiel.attributionpresenter.entities.License;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
@@ -223,7 +227,177 @@ public class AboutActivity extends AppCompatActivity {
                                                             .create()
                                                             .show();
                                                 }))
+                        .addItem(
+                                new Element()
+                                        .setTitle("开源许可")
+                                        .setIconDrawable(R.drawable.ic_account_balance_black_24dp)
+                                        .setAutoApplyIconTint(true)
+                                        .setOnClickListener(
+                                                v -> {
+                                                    AttributionPresenter attributionPresenter =
+                                                            new AttributionPresenter.Builder(this)
+                                                                    .addAttributions(Library.GSON)
+                                                                    .addAttributions(
+                                                                            new Attribution.Builder(
+                                                                                            "Google Java Format")
+                                                                                    .addCopyrightNotice(
+                                                                                            "")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2015 Google Inc.")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/google/google-java-format")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "DialogPlus")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2016 Orhan Obut")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/orhanobut/dialogplus")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "Java-MorseCoder")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2017 TakWolf")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/TakWolf/Java-MorseCoder")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "Toasty")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .LGPL_3)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/GrenderG/Toasty")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "TapTargetView")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2016 Keepsafe Software Inc.")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/KeepSafe/TapTargetView")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "Snacky")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2018 Mate Siede")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/matecode/Snacky")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "LovelyDialog")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2016 Yaroslav Shevchuk")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/yarolegovich/LovelyDialog")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "pinyin4j")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .GPL_2)
+                                                                                    .setWebsite(
+                                                                                            "https://sourceforge.net/projects/pinyin4j/")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "Floating Text Button")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/dimorinny/floating-text-button")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "AESCrypt")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright (c) 2014 Scott Alexander-Bown")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/scottyab/AESCrypt-Android")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "java-aes-crypto")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .MIT)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/tozny/java-aes-crypto")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "Android About Page")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright (c) 2016 Mehdi Sakout")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .MIT)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/medyo/android-about-page")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "MarkdownView")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2017-2018 tiagohm")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/tiagohm/MarkdownView")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "AttributionPresenter")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2017 Francisco José Montiel Navarro")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/franmontiel/AttributionPresenter")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "LFilePicker")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright (C) 2017 leonHua")
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/leonHua/LFilePicker")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "ion")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2013 Koushik Dutta (2013)")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/koush/ion")
+                                                                                    .build())
+                                                                    .build();
+                                                    attributionPresenter.showDialog(
+                                                            "开源许可");
+                                                }))
                         .create();
+
         aboutLayout.addView(aboutView);
     }
 

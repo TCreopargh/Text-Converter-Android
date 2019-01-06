@@ -16,11 +16,16 @@
 // com.github.medyo:android-about-page
 // com.google.code.gson
 // AESCrypt-Android
+// com.github.tiagohm.MarkdownView:library
+// com.orhanobut:dialogplus
+// com.koushikdutta.ion:ion
+// com.github.franmontiel:AttributionPresenter
 //////////////////////////////////////////////////////////////////
 package xyz.tcreopargh.textconverter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -37,6 +42,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +58,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -67,6 +74,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.koushikdutta.ion.Ion;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.Constant;
 import com.orhanobut.dialogplus.DialogPlus;
@@ -105,27 +113,22 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("StaticFieldLeak")
     public static MainActivity mainActivity = null;
 
+    public static String returnText = null;
     final int ALL_LOWER = 0;
     final int ALL_UPPER = 1;
     final int CASE_REVERSE = 2;
     final int FIRST_UPPER = 3;
     final int SENTENCE_FIRST = 4;
-
     final int REQUESTCODE_READ = 1000;
     final int REQUESTCODE_WRITE = 2000;
-
     final boolean settingsBoolean[] = new boolean[] {false, false, false, true};
-
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
-
     final String presetsTitle[] =
             new String[] {
                 "十六进制数值", "电子邮箱", "URL", "IP地址", "整数", "常规数字", "HTML标签", "维基百科注释", "代码注释", "汉字"
             };
-
     final String capsSwitchModes[] =
             new String[] {"全部转为小写", "全部转为大写", "切换大小写", "单词首字母大写", "句子首字母大写"};
-
     final String presetsValue[] =
             new String[] {
                 "#?([a-f0-9]{6}|[a-f0-9]{3})",
@@ -134,66 +137,53 @@ public class MainActivity extends AppCompatActivity
                 "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
                 "-?\\d+",
                 "(-?\\d+)(\\.\\d+)?",
-                "<([a-z]+)([^<]+)*(?:>(.*)<\\/\\1>|\\s+\\/>)",
+                "<(\"[^\"]*\"|'[^']*'|[^'\">])*>",
                 "\\[\\d+\\]",
                 "(?<!http:|\\S)//.*",
                 "[\\u2E80-\\u9FFF]+"
             };
-
     LinearLayout textReplaceLayout,
             textShuffleLayout,
             textSearchLayout,
             textEncryptLayout,
             textMoreLayout;
-
     Button generateReplacedText;
     EditText replaceInput, replaceOutput, targetSeq, replaceTo;
     CheckBox doUseRegexCheckbox;
-
     Button shuffle, sortByDictionaryIndex, sortByNumberValue, shuffleReverse;
     EditText shuffleInput;
     EditText shuffleOutput;
     CheckBox noUseSpaces;
-
     Button searchReset, searchNext, searchAll;
     EditText searchInput, searchOutput, searchTarget;
     CheckBox doUseRegexSearchCheckbox;
-
     Button encrypt, decrypt;
     EditText encryptInput, encryptOutput, encryptKey;
     CheckBox doPasswordVisible;
-
     EditText moreInput, moreOutput;
     Button openMoreMenu;
-
     FloatingTextButton moreFab;
-
     int currentSearchPos = 0;
     int searchCount = -1;
     int currentSearchCount = -1;
     int begin = 0;
-
     Pattern pattern;
-
     Matcher matcher;
-
     String generatedKey = "";
     String path = "";
     String defaultPath = "";
     String salt = defaultSalt;
-
+    DialogPlus dialogPlus;
     ImageView tick;
-
     CoordinatorLayout mainContext;
-
     int initialLayout = 0;
-
     boolean alreadyLoadedShortcut = false;
     boolean regexCautionIsShown = false;
     boolean isGuideShown = false;
-
     MyAdapter adapter;
-
+    String tempString = "";
+    boolean returnFromEditMode = false;
+    private long clickTime = 0L;
     private List<ListItems> itemsList = new ArrayList<>();
 
     public static int stringAppearCounter(String srcText, String findText) {
@@ -237,6 +227,45 @@ public class MainActivity extends AppCompatActivity
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(uglyJSONString);
         return gson.toJson(je);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String result;
+        if (returnFromEditMode) {
+            if (returnText != null) {
+                result = returnText;
+                returnText = null;
+            } else {
+                result = tempString;
+            }
+
+            if (result != null) {
+                switch (getCurrentShowingLayoutId()) {
+                    case R.id.textReplaceLayout:
+                        replaceInput.setText(result, BufferType.EDITABLE);
+
+                    case R.id.textSearchLayout:
+                        searchInput.setText(result, BufferType.EDITABLE);
+                        break;
+
+                    case R.id.textShuffleLayout:
+                        shuffleInput.setText(result, BufferType.EDITABLE);
+                        break;
+
+                    case R.id.textEncryptLayout:
+                        encryptInput.setText(result, BufferType.EDITABLE);
+                        break;
+
+                    case R.id.textMoreLayout:
+                        moreInput.setText(result, BufferType.EDITABLE);
+                        break;
+
+                    default:
+                }
+            }
+        }
     }
 
     @Override
@@ -532,7 +561,9 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (dialogPlus == null || !dialogPlus.isShowing()) {
+                exit();
+            }
         }
     }
 
@@ -984,8 +1015,132 @@ public class MainActivity extends AppCompatActivity
                             "输入区字符数: " + inLen + "\n输出区字符数: " + outLen,
                             Toast.LENGTH_LONG)
                     .show();
+        } else if (id == R.id.get_string_from_url) {
+            LovelyTextInputDialog inputDialog =
+                    new LovelyTextInputDialog(this)
+                            .setTitle("从网页获取源码")
+                            .setMessage("在下面填入网页Url，系统将从该网页获取源码并填入输入框")
+                            .setTopColorRes(R.color.colorAccent)
+                            .setCancelable(true)
+                            .setIcon(R.drawable.ic_public_white_24dp)
+                            .configureEditText(
+                                    v -> {
+                                        v.setTextColor(getColor(R.color.colorAllBlack));
+                                        v.setHint("如: www.google.com");
+                                        if (getSharedPreferences("settings", MODE_PRIVATE)
+                                                .getBoolean("doUseMonospaced", false)) {
+                                            v.setTextAppearance(R.style.MyMonospace);
+                                        } else {
+                                            v.setTextAppearance(R.style.MyRegular);
+                                        }
+                                        v.clearFocus();
+                                    })
+                            .setConfirmButton(
+                                    "确定",
+                                    text -> {
+                                        if (text.matches(
+                                                "https?://([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?")) {
+                                            getSourceCodeFromUrl(text);
+                                        } else {
+                                            text = "http://" + text;
+                                            if (text.matches(
+                                                    "https?://([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?")) {
+                                                getSourceCodeFromUrl(text);
+                                            } else {
+                                                Toasty.error(
+                                                                MainActivity.this,
+                                                                "输入内容不是合法的Url！",
+                                                                Toast.LENGTH_LONG)
+                                                        .show();
+                                            }
+                                        }
+                                    });
+            inputDialog.create().show();
+        } else if (id == R.id.edit_mode) {
+            String sendText = "";
+            switch (getCurrentShowingLayoutId()) {
+                case R.id.textReplaceLayout:
+                    sendText = replaceInput.getText().toString();
+                    replaceInput.setText("");
+                    break;
+
+                case R.id.textSearchLayout:
+                    sendText = searchInput.getText().toString();
+                    searchInput.setText("");
+                    break;
+
+                case R.id.textShuffleLayout:
+                    sendText = shuffleInput.getText().toString();
+                    shuffleInput.setText("");
+                    break;
+
+                case R.id.textEncryptLayout:
+                    sendText = encryptInput.getText().toString();
+                    encryptInput.setText("");
+                    break;
+
+                case R.id.textMoreLayout:
+                    sendText = moreInput.getText().toString();
+                    moreInput.setText("");
+                    break;
+            }
+            returnFromEditMode = true;
+            tempString = sendText;
+            TextEditActivity.text = sendText;
+            Intent intent = new Intent(MainActivity.this, TextEditActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getSourceCodeFromUrl(String text) {
+        final ProgressDialog progressDialog =
+                ProgressDialog.show(MainActivity.this, "请稍等", "正在连接...");
+        Ion.with(getApplicationContext())
+                .load(text)
+                .asString()
+                .setCallback(
+                        (e, result) -> {
+                            if (e == null && !result.isEmpty()) {
+                                switch (getCurrentShowingLayoutId()) {
+                                    case R.id.textReplaceLayout:
+                                        replaceInput.setText(result, BufferType.EDITABLE);
+
+                                    case R.id.textSearchLayout:
+                                        searchInput.setText(result, BufferType.EDITABLE);
+                                        break;
+
+                                    case R.id.textShuffleLayout:
+                                        shuffleInput.setText(result, BufferType.EDITABLE);
+                                        break;
+
+                                    case R.id.textEncryptLayout:
+                                        encryptInput.setText(result, BufferType.EDITABLE);
+                                        break;
+
+                                    case R.id.textMoreLayout:
+                                        moreInput.setText(result, BufferType.EDITABLE);
+                                        break;
+
+                                    default:
+                                }
+                                Toasty.success(MainActivity.this, "获取成功！", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                if (e == null) {
+                                    Toasty.error(MainActivity.this, "连接超时！", Toast.LENGTH_LONG)
+                                            .show();
+                                } else {
+                                    String errMsg = e.toString();
+                                    Toasty.error(
+                                                    MainActivity.this,
+                                                    getString(R.string.exception_occurred) + errMsg,
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                            }
+                            progressDialog.dismiss();
+                        });
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -1186,8 +1341,9 @@ public class MainActivity extends AppCompatActivity
                     for (int i = 0; i < elementCount; i++) {
                         elements = inputStr.split("[\n ]", elementCount);
                     }
+                    Random random = new Random();
                     for (int i = 0; i < elementCount; i++) {
-                        Random random = new Random();
+
                         int targetPos = random.nextInt(elementCount - i) + i;
                         String tempStr = elements[i];
                         elements[i] = elements[targetPos];
@@ -2196,15 +2352,18 @@ public class MainActivity extends AppCompatActivity
                 new ListItems(
                         getString(R.string.text_random), getString(R.string.text_random_disc));
         itemsList.add(textRandom);
+        // 12
+        ListItems markdownPreview = new ListItems("Markdown预览", "预览Markdown文本");
+        itemsList.add(markdownPreview);
     }
 
+    @SuppressLint("SetTextI18n")
     private void showFunctionsMenu() {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        @SuppressLint("SetTextI18n")
-        DialogPlus dialogPlus =
+        dialogPlus =
                 DialogPlus.newDialog(this)
                         .setAdapter(adapter)
                         .setGravity(Gravity.BOTTOM)
@@ -2324,8 +2483,8 @@ public class MainActivity extends AppCompatActivity
                                         case 2: // caps switch
                                             try {
                                                 final int[] mode = {0};
-                                                AlertDialog.Builder alertDialog =
-                                                        new AlertDialog.Builder(MainActivity.this);
+                                                Builder alertDialog =
+                                                        new Builder(MainActivity.this);
                                                 alertDialog
                                                         .setTitle("选择模式")
                                                         .setIcon(R.mipmap.ic_launcher)
@@ -2577,6 +2736,8 @@ public class MainActivity extends AppCompatActivity
                                                                 R.id.confirmDialog,
                                                                 v1 -> {
                                                                     try {
+                                                                        Random random =
+                                                                                new Random();
                                                                         dataQuantityString[0] =
                                                                                 dataQuantity
                                                                                         .getText()
@@ -2691,8 +2852,6 @@ public class MainActivity extends AppCompatActivity
                                                                                             break;
                                                                                         }
                                                                                     }
-                                                                                    Random random =
-                                                                                            new Random();
                                                                                     int randNum =
                                                                                             random
                                                                                                             .nextInt(
@@ -2962,11 +3121,10 @@ public class MainActivity extends AppCompatActivity
                                                                                             0]);
                                                                     StringBuilder output =
                                                                             new StringBuilder();
+                                                                    Random random = new Random();
                                                                     for (int i = 0;
                                                                             i < quantity;
                                                                             i++) {
-                                                                        Random random =
-                                                                                new Random();
                                                                         int id =
                                                                                 random.nextInt(
                                                                                         items.length);
@@ -2999,11 +3157,60 @@ public class MainActivity extends AppCompatActivity
 
                                             break;
 
+                                        case 12:
+                                            int totLen = 0;
+                                            totLen += replaceInput.getText().toString().length();
+                                            totLen += replaceOutput.getText().toString().length();
+                                            totLen += replaceTo.getText().toString().length();
+                                            totLen += targetSeq.getText().toString().length();
+                                            totLen += searchInput.getText().toString().length();
+                                            totLen += searchOutput.getText().toString().length();
+                                            totLen += searchTarget.getText().toString().length();
+                                            totLen += shuffleInput.getText().toString().length();
+                                            totLen += shuffleOutput.getText().toString().length();
+                                            totLen += encryptInput.getText().toString().length();
+                                            totLen += encryptOutput.getText().toString().length();
+                                            totLen += encryptKey.getText().toString().length();
+                                            totLen += moreInput.getText().toString().length();
+                                            totLen += moreOutput.getText().toString().length();
+
+                                            if (totLen < 250 * 1024) {
+                                                String mdText = moreInput.getText().toString();
+                                                Intent intent =
+                                                        new Intent(
+                                                                MainActivity.this,
+                                                                MarkdownPreviewActivity.class);
+                                                intent.putExtra("markdownText", mdText);
+                                                startActivity(intent);
+                                            }
+
+                                            break;
+
                                         default:
                                     }
                                     dialog.dismiss();
                                 })
                         .create();
         dialogPlus.show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 是否触发按键为back键
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    private void exit() {
+        if ((System.currentTimeMillis() - clickTime) > 2000) {
+            Toasty.info(MainActivity.this, "再按一次返回键退出程序", Toast.LENGTH_SHORT).show();
+            clickTime = System.currentTimeMillis();
+        } else {
+            finish();
+        }
     }
 }

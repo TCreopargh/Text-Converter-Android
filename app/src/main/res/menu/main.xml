@@ -17,9 +17,16 @@
         android:id="@+id/load_presets"
         android:title="@string/load_presets" />
     <item
+        android:id="@+id/get_string_from_url"
+        android:title="@string/get_source_code_from_url" />
+    <item
+        android:id="@+id/edit_mode"
+        android:title="@string/enter_edit_mode" />
+    <item
         android:id="@+id/action_char_count"
         android:title="@string/char_count" />
     <item
         android:id="@+id/action_clear_all"
         android:title="@string/clear_all" />
+
 </menu>

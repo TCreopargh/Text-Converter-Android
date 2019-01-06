@@ -6,8 +6,8 @@ android {
         applicationId "xyz.tcreopargh.textconverter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 54
-        versionName "4.0.0-Indev-5"
+        versionCode 55
+        versionName "4.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation group: 'com.google.googlejavaformat', name: 'google-java-format', version: '1.6'
+    implementation 'com.google.googlejavaformat:google-java-format:1.6'
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.orhanobut:dialogplus:1.11@aar'
@@ -45,9 +45,12 @@ dependencies {
     implementation 'com.android.support:customtabs:28.0.0'
     implementation 'com.scottyab:aescrypt:0.0.1'
     implementation 'com.github.medyo:android-about-page:1.2.4'
-    implementation group: 'androidx.preference', name: 'preference', version: '1.1.0-alpha02'
+    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
+    implementation 'com.github.franmontiel:AttributionPresenter:1.0.1'
+    implementation 'androidx.preference:preference:1.1.0-alpha02'
     //noinspection GradleDependency
     implementation 'com.leon:lfilepickerlibrary:1.7.0'
+    implementation 'com.koushikdutta.ion:ion:2.2.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
