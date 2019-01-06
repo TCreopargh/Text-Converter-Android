@@ -798,7 +798,7 @@ public class MainActivity extends AppCompatActivity
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog
                     .setTitle("选择预设值")
-                    .setIcon(R.mipmap.ic_launcher)
+                    .setIcon(R.mipmap.ic_launcher_round)
                     .setItems(
                             presetsTitle,
                             (dialog, which) -> {
@@ -1754,7 +1754,7 @@ public class MainActivity extends AppCompatActivity
                                                                         MainActivity.this);
                                                         alertDialog
                                                                 .setTitle("选择模式")
-                                                                .setIcon(R.mipmap.ic_launcher)
+                                                                .setIcon(R.mipmap.ic_launcher_round)
                                                                 .setItems(
                                                                         capsSwitchModes,
                                                                         (dialog1, which) -> {

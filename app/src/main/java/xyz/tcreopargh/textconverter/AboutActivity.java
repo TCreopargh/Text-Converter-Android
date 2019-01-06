@@ -157,7 +157,7 @@ public class AboutActivity extends AppCompatActivity {
                 new AboutPage(this)
                         .isRTL(false)
                         .setDescription("文本转换: 好用轻便的文本高级转换工具\n" + "项目编号: Text-Converter-Android")
-                        .setImage(R.drawable.about_title)
+                        .setImage(R.drawable.banner_new)
                         .addGroup("应用信息")
                         .addItem(versionElement)
                         .addItem(
