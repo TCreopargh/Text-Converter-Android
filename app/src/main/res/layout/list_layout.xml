@@ -22,4 +22,13 @@
         android:layout_gravity="start"
         android:scaleType="fitXY"
         android:text="@string/test"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:background="#dddddd" />
+
+
 </LinearLayout>

@@ -145,7 +145,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/E:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_content_copy_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/E:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_format_list_numbered_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -157,7 +157,7 @@
                           <map>
                             <entry key="color" value="ffffff" />
                             <entry key="height" value="48" />
-                            <entry key="outputName" value="ic_content_copy_black_24dp" />
+                            <entry key="outputName" value="ic_format_list_numbered_white_24dp" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\TCreopargh" />
                             <entry key="width" value="48" />

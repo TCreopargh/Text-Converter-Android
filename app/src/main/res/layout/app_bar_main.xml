@@ -30,7 +30,7 @@
         android:layout_marginBottom="8dp"
         android:layout_gravity="center_horizontal|bottom"
         app:floating_background_color="@color/colorAccent"
-        app:floating_left_icon="@drawable/baselinedescription"
+        app:floating_left_icon="@drawable/ic_add_white_24dp"
         app:floating_title="@string/open_functions_menu"
         app:floating_title_color="@color/colorAllWhite"
         app:layout_behavior="ru.dimorinny.floatingtextbutton.behavior.SnackbarBehavior"/>
