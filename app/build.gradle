@@ -51,6 +51,7 @@ dependencies {
     //noinspection GradleDependency
     implementation 'com.leon:lfilepickerlibrary:1.7.0'
     implementation 'com.koushikdutta.ion:ion:2.2.1'
+    implementation 'ren.qinc.edit:lib:0.0.5'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'

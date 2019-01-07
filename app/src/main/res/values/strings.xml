@@ -132,8 +132,8 @@
     <string name="key_empty">密钥不能为空！</string>
     <string name="string_reverse">字符串反转</string>
     <string name="add_spaces">分段并缩进</string>
-    <string name="more_handy_function">更多实用功能</string>
-    <string name="more_function">更多功能</string>
+    <string name="more_handy_function">实用工具箱</string>
+    <string name="more_function">其他选项</string>
     <string name="add_numbers">分段并添加标号</string>
     <string name="format_java_code">格式化Java代码</string>
     <string name="custom_random">自定义随机数</string>
@@ -179,4 +179,8 @@
     <string name="markdown_preview">Markdown预览</string>
     <string name="get_source_code_from_url">获取网页源码</string>
     <string name="enter_edit_mode">进入编辑模式</string>
+    <string name="edit_mode">编辑模式</string>
+    <string name="redo">反撤销</string>
+    <string name="edit_text_here">请在这里编辑文本</string>
+    <string name="what_is_this">这是什么?</string>
 </resources>

@@ -46,7 +46,8 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="66" />
+                                                <entry key="scalingPercent" value="56" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -57,10 +58,12 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="03a9f4" />
-                                      <entry key="foregroundImage" value="D:\Pictures\ic_launcher_final.png" />
-                                      <entry key="generateLegacyIcon" value="false" />
+                                      <entry key="backgroundColor" value="f5f5f5" />
+                                      <entry key="backgroundLayerName" value="ic_shortcut_background" />
+                                      <entry key="foregroundImage" value="D:\Download\ic_toolbox.xml" />
+                                      <entry key="foregroundLayerName" value="shortcut_more_foreground" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
+                                      <entry key="outputName" value="ic_shortcut_more" />
                                       <entry key="previewDensity" value="XXXHIGH" />
                                     </map>
                                   </option>
@@ -115,6 +118,7 @@
                                       <entry key="backgroundColor" value="03b1ff" />
                                       <entry key="iconShape" value="NONE" />
                                       <entry key="imageAsset" value="D:\Pictures\ic_launcher_final.png" />
+                                      <entry key="outputName" value="ic_" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -145,7 +149,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/E:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_account_balance_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/E:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_save_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -155,9 +159,12 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_account_balance_black_24dp" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="height" value="48" />
+                            <entry key="outputName" value="ic_save_white_48dp" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\TCreopargh" />
+                            <entry key="width" value="48" />
                           </map>
                         </option>
                       </PersistentState>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/editUndo"
+        android:icon="@drawable/ic_undo_white_24dp"
+        android:title="@string/undo"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/editRedo"
+        android:icon="@drawable/ic_redo_white_24dp"
+        android:title="@string/redo"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/editHelp"
+        android:icon="@drawable/baselinehelpoutline_white_small"
+        android:title="@string/what_is_this"
+        app:showAsAction="never"/>
+
+</menu>

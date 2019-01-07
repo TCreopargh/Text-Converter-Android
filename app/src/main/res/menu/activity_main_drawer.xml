@@ -22,7 +22,7 @@
             android:title="@string/text_encrypt" />
         <item
             android:id="@+id/nav_more_functions"
-            android:icon="@drawable/outline_more_horiz_24px"
+            android:icon="@drawable/ic_toolbox"
             android:title="@string/more_handy_function"/>
     </group>
 

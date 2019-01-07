@@ -5,7 +5,7 @@
         <item>字符串查找</item>
         <item>字符串打乱/排序</item>
         <item>AES加解密</item>
-        <item>更多实用功能</item>
+        <item>实用工具箱</item>
     </string-array>
 
     <string-array name="layoutValues"

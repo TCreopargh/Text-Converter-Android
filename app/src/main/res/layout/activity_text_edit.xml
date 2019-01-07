@@ -5,20 +5,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     tools:context=".TextEditActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/editModeToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:elevation="6dp"
+            android:theme="@style/ToolbarTheme"
+            app:titleTextColor="@color/colorAllWhite"
+            />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <EditText
         android:id="@+id/editor"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="start|top"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
         android:background="@android:color/transparent"
         android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/edit_text_here"
         android:inputType="textMultiLine"
         android:scrollHorizontally="false"
         android:scrollbars="vertical"
@@ -26,5 +44,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/appBarEdit"
+        tools:ignore="Autofill"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

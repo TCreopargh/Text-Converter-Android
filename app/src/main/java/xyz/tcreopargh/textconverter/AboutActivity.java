@@ -391,10 +391,17 @@ public class AboutActivity extends AppCompatActivity {
                                                                                                     .APACHE)
                                                                                     .setWebsite(
                                                                                             "https://github.com/koush/ion")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "AndroidEdit")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/qinci/AndroidEdit")
                                                                                     .build())
                                                                     .build();
-                                                    attributionPresenter.showDialog(
-                                                            "开源许可");
+                                                    attributionPresenter.showDialog("开源许可");
                                                 }))
                         .create();
 

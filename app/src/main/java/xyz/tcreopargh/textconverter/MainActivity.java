@@ -20,6 +20,7 @@
 // com.orhanobut:dialogplus
 // com.koushikdutta.ion:ion
 // com.github.franmontiel:AttributionPresenter
+// AndroidEdit
 //////////////////////////////////////////////////////////////////
 package xyz.tcreopargh.textconverter;
 
@@ -245,6 +246,7 @@ public class MainActivity extends AppCompatActivity
                 switch (getCurrentShowingLayoutId()) {
                     case R.id.textReplaceLayout:
                         replaceInput.setText(result, BufferType.EDITABLE);
+                        break;
 
                     case R.id.textSearchLayout:
                         searchInput.setText(result, BufferType.EDITABLE);
@@ -265,6 +267,7 @@ public class MainActivity extends AppCompatActivity
                     default:
                 }
             }
+            returnFromEditMode = false;
         }
     }
 
@@ -1105,6 +1108,7 @@ public class MainActivity extends AppCompatActivity
                                 switch (getCurrentShowingLayoutId()) {
                                     case R.id.textReplaceLayout:
                                         replaceInput.setText(result, BufferType.EDITABLE);
+                                        break;
 
                                     case R.id.textSearchLayout:
                                         searchInput.setText(result, BufferType.EDITABLE);

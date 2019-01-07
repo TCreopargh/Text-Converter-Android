@@ -47,7 +47,9 @@
         <activity
             android:label="@string/markdown_preview"
             android:name=".MarkdownPreviewActivity"/>
-        <activity android:name=".TextEditActivity">
+        <activity android:name=".TextEditActivity"
+            android:label="@string/edit_mode"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 
