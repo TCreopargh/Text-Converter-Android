@@ -46,7 +46,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="56" />
+                                                <entry key="scalingPercent" value="150" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -58,12 +58,9 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="f5f5f5" />
-                                      <entry key="backgroundLayerName" value="ic_shortcut_background" />
-                                      <entry key="foregroundImage" value="D:\Download\ic_toolbox.xml" />
-                                      <entry key="foregroundLayerName" value="shortcut_more_foreground" />
+                                      <entry key="backgroundColor" value="20b7fa" />
+                                      <entry key="foregroundImage" value="D:\Pictures\ic_renewed_light.png" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
-                                      <entry key="outputName" value="ic_shortcut_more" />
                                       <entry key="previewDensity" value="XXXHIGH" />
                                     </map>
                                   </option>

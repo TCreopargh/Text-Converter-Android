@@ -21,6 +21,7 @@
 // com.koushikdutta.ion:ion
 // com.github.franmontiel:AttributionPresenter
 // AndroidEdit
+// FastScroll-Everywhere
 //////////////////////////////////////////////////////////////////
 package xyz.tcreopargh.textconverter;
 

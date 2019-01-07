@@ -399,6 +399,16 @@ public class AboutActivity extends AppCompatActivity {
                                                                                                     .APACHE)
                                                                                     .setWebsite(
                                                                                             "https://github.com/qinci/AndroidEdit")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "FastScroll-Everywhere")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2016 Mixiaoxiao")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/Mixiaoxiao/FastScroll-Everywhere")
                                                                                     .build())
                                                                     .build();
                                                     attributionPresenter.showDialog("开源许可");

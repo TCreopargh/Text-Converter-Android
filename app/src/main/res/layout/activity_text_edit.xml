@@ -27,23 +27,32 @@
             />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <EditText
-        android:id="@+id/editor"
+
+    <com.mixiaoxiao.fastscroll.FastScrollScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:background="@android:color/transparent"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="@string/edit_text_here"
-        android:inputType="textMultiLine"
-        android:scrollHorizontally="false"
-        android:scrollbars="vertical"
-        android:singleLine="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarEdit"
-        tools:ignore="Autofill"/>
+        app:layout_constraintVertical_weight="1">
+        <EditText
+            android:id="@+id/editor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/edit_text_here"
+            android:inputType="textMultiLine"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
+            android:singleLine="false"
+            tools:ignore="Autofill"/>
+    </com.mixiaoxiao.fastscroll.FastScrollScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

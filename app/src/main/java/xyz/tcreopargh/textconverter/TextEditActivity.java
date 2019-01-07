@@ -13,6 +13,10 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
+import com.mixiaoxiao.fastscroll.FastScrollDelegate;
+import com.mixiaoxiao.fastscroll.FastScrollDelegate.IndicatorPopup;
+import com.mixiaoxiao.fastscroll.FastScrollDelegate.OnFastScrollListener;
+import com.mixiaoxiao.fastscroll.FastScrollScrollView;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import java.util.Objects;
@@ -51,6 +55,34 @@ public class TextEditActivity extends AppCompatActivity {
         setSupportActionBar(myToolBar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         editText = findViewById(R.id.editor);
+        FastScrollScrollView scrollView = findViewById(R.id.scrollView);
+
+        FastScrollDelegate delegate = scrollView.getFastScrollDelegate();
+        delegate.initIndicatorPopup(
+                new IndicatorPopup.Builder(delegate)
+                        .indicatorPopupColor(getColor(R.color.colorAccent))
+                        .indicatorTextSize(24)
+                        .build());
+        delegate.setOnFastScrollListener(
+                new OnFastScrollListener() {
+                    @Override
+                    public void onFastScrollStart(
+                            View view, FastScrollDelegate fastScrollDelegate) {}
+
+                    @Override
+                    public void onFastScrolled(
+                            View view,
+                            FastScrollDelegate fastScrollDelegate,
+                            int i,
+                            int i1,
+                            float v) {
+                        delegate.setIndicatorText(String.valueOf((int) (v * 100)) + "%");
+                    }
+
+                    @Override
+                    public void onFastScrollEnd(View view, FastScrollDelegate fastScrollDelegate) {}
+                });
+
         SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
         editText.setHorizontallyScrolling(!sharedPreferences.getBoolean("doMultiLine", true));
         if (sharedPreferences.getBoolean("doUseMonospaced", false)) {
