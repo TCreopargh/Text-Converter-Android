@@ -21,5 +21,28 @@
 
 ## TODO:
 - [ ] 保存用户自定义正则表达式
- 
+- [ ] 修复8.0以下系统Java格式化闪退
+- [ ] 搜索上一个
+- [ ] 添加文件关联
+- [ ] 多语言支持
+- [ ] Unicode编码转换
+- [ ] 字符串替换 可使用查找到的字符串
 ### 如有合理建议欢迎提出，我会考虑采纳
+
+
+### License
+```
+Copyright 2019 TCreopargh
+
+Licensed under the GNU Public License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
