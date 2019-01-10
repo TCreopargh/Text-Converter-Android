@@ -59,7 +59,6 @@ import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -71,7 +70,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.material.navigation.NavigationView;
-import com.google.googlejavaformat.java.Formatter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -182,7 +180,8 @@ public class MainActivity extends AppCompatActivity
     boolean alreadyLoadedShortcut = false;
     boolean regexCautionIsShown = false;
     boolean isGuideShown = false;
-    MyAdapter adapter;
+    boolean regexIsDefault = true;
+    ToolboxAdapter adapter;
     String tempString = "";
     boolean returnFromEditMode = false;
     private long clickTime = 0L;
@@ -312,7 +311,7 @@ public class MainActivity extends AppCompatActivity
 
         loadSettings(true);
 
-        adapter = new MyAdapter(MainActivity.this, R.layout.list_layout, itemsList);
+        adapter = new ToolboxAdapter(MainActivity.this, R.layout.list_layout, itemsList);
         initList();
 
         try {
@@ -435,6 +434,20 @@ public class MainActivity extends AppCompatActivity
 
         if (!isGuideShown) {
             tapTargetSequence.start();
+        }
+
+        SharedPreferences sharedPreferences1 = getSharedPreferences("settings", MODE_PRIVATE);
+        regexIsDefault = sharedPreferences1.getBoolean("isRegexDefault", true);
+
+        if (regexIsDefault) {
+            SharedPreferences.Editor editor = sharedPreferences1.edit();
+            for (int i = 0; i < presetsTitle.length; i++) {
+                editor.putString(CustomRegex.REGEX_KEY + i, presetsValue[i]);
+                editor.putString(CustomRegex.LABEL_KEY + i, presetsTitle[i]);
+            }
+            editor.putInt(CustomRegex.SIZE_KEY, presetsTitle.length);
+            editor.putBoolean("isRegexDefault", false);
+            editor.apply();
         }
 
         doUseRegexSearchCheckbox.setOnCheckedChangeListener(
@@ -829,71 +842,9 @@ public class MainActivity extends AppCompatActivity
                 default:
             }
         } else if (id == R.id.load_presets) {
-            final String[] preset = {""};
-            final int currentShowingLayoutFinal = currentShowingLayout;
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog
-                    .setTitle("选择预设值")
-                    .setIcon(R.mipmap.ic_launcher)
-                    .setItems(
-                            presetsTitle,
-                            (dialog, which) -> {
-                                preset[0] = presetsValue[which];
-                                switch (currentShowingLayoutFinal) {
-                                    case R.id.textReplaceLayout:
-                                        targetSeq.setText(preset[0]);
-                                        doUseRegexCheckbox.setChecked(true);
-                                        Toasty.success(
-                                                        MainActivity.this,
-                                                        "载入成功",
-                                                        Toast.LENGTH_SHORT,
-                                                        true)
-                                                .show();
-                                        break;
-
-                                    case R.id.textShuffleLayout:
-                                        Toasty.warning(
-                                                        MainActivity.this,
-                                                        "当前界面不需要正则表达式！",
-                                                        Toast.LENGTH_LONG,
-                                                        true)
-                                                .show();
-                                        break;
-
-                                    case R.id.textSearchLayout:
-                                        searchTarget.setText(preset[0]);
-                                        doUseRegexSearchCheckbox.setChecked(true);
-                                        Toasty.success(
-                                                        MainActivity.this,
-                                                        "载入成功",
-                                                        Toast.LENGTH_SHORT,
-                                                        true)
-                                                .show();
-                                        break;
-
-                                    case R.id.textEncryptLayout:
-                                        Toasty.warning(
-                                                        MainActivity.this,
-                                                        "当前界面不需要正则表达式！",
-                                                        Toast.LENGTH_LONG,
-                                                        true)
-                                                .show();
-                                        break;
-
-                                    case R.id.textMoreLayout:
-                                        Toasty.warning(
-                                                        MainActivity.this,
-                                                        "当前界面不需要正则表达式！",
-                                                        Toast.LENGTH_LONG,
-                                                        true)
-                                                .show();
-                                        break;
-
-                                    default:
-                                }
-                            })
-                    .create()
-                    .show();
+            Intent intent = new Intent(MainActivity.this, CustomRegexActivity.class);
+            intent.putExtra("selectionMode", true);
+            startActivityForResult(intent, 6);
         } else if (id == R.id.action_read_file) {
             if (ContextCompat.checkSelfPermission(
                             MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -1218,6 +1169,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivityForResult(intent, 4);
+        } else if (id == R.id.nav_manage_regex) {
+            Intent intent = new Intent(MainActivity.this, CustomRegexActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -1821,6 +1775,9 @@ public class MainActivity extends AppCompatActivity
                         rotateAll();
                     }
                     loadSettings(false);
+                } else if (requestCode == 6) {
+                    String regex = data.getStringExtra("regexValue");
+                    setRegex(regex);
                 }
             }
             if (requestCode == REQUESTCODE_READ) {
@@ -2689,9 +2646,33 @@ public class MainActivity extends AppCompatActivity
                                             try {
                                                 String formatCodeSrc =
                                                         moreInput.getText().toString();
-                                                Formatter formatter = new Formatter();
+
+                                                com.google.googlejavaformat.java.Formatter
+                                                        formatter =
+                                                                new com.google.googlejavaformat.java
+                                                                        .Formatter();
                                                 String formattedCode =
                                                         formatter.formatSource(formatCodeSrc);
+
+                                                /*
+                                                Jalopy jalopy = new Jalopy();
+                                                jalopy.setEncoding("UTF-8");
+                                                SharedPreferences sharedPreferences =
+                                                        getSharedPreferences(
+                                                                "settings", MODE_PRIVATE);
+                                                jalopy.setInput(
+                                                        formatCodeSrc,
+                                                        Objects.requireNonNull(
+                                                                sharedPreferences.getString(
+                                                                        "default_path",
+                                                                        Environment
+                                                                                        .getExternalStorageDirectory()
+                                                                                        .getAbsolutePath()
+                                                                                + "/TextConverter")));
+                                                StringBuffer stringBuffer = new StringBuffer();
+                                                jalopy.setOutput(stringBuffer);
+                                                String formattedCode = stringBuffer.toString();
+                                                */
                                                 moreOutput.setText(
                                                         formattedCode, BufferType.EDITABLE);
                                                 moreOutput.clearFocus();
@@ -3216,6 +3197,36 @@ public class MainActivity extends AppCompatActivity
             clickTime = System.currentTimeMillis();
         } else {
             finish();
+        }
+    }
+
+    private void setRegex(String regex) {
+        switch (getCurrentShowingLayoutId()) {
+            case R.id.textReplaceLayout:
+                targetSeq.setText(regex, BufferType.EDITABLE);
+                doUseRegexCheckbox.setChecked(true);
+                Toasty.success(MainActivity.this, "载入成功", Toast.LENGTH_SHORT, true).show();
+                break;
+
+            case R.id.textShuffleLayout:
+                Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
+                break;
+
+            case R.id.textSearchLayout:
+                searchTarget.setText(regex, BufferType.EDITABLE);
+                doUseRegexSearchCheckbox.setChecked(true);
+                Toasty.success(MainActivity.this, "载入成功", Toast.LENGTH_SHORT, true).show();
+                break;
+
+            case R.id.textEncryptLayout:
+                Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
+                break;
+
+            case R.id.textMoreLayout:
+                Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
+                break;
+
+            default:
         }
     }
 }

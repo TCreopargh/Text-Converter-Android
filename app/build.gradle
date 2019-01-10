@@ -28,9 +28,11 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.googlejavaformat:google-java-format:1.6'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.yanzhenjie:recyclerview-swipe:1.2.1'
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.googlejavaformat:google-java-format:1.6'
     implementation 'com.orhanobut:dialogplus:1.11@aar'
     implementation 'com.google.android.material:material:1.1.0-alpha02'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'

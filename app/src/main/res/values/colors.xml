@@ -10,4 +10,5 @@
     <color name="colorAllBlack">#000000</color>
     <color name="warningToast">#ffa900</color>
     <color name="successToast">#388e3c</color>
+    <color name="colorRed">#f44336</color>
 </resources>

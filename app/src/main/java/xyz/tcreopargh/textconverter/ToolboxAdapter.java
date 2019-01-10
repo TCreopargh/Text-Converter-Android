@@ -9,9 +9,9 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Objects;
 
-public class MyAdapter extends ArrayAdapter<ListItems> {
+public class ToolboxAdapter extends ArrayAdapter<ListItems> {
     private int resourceId;
-    public MyAdapter(Context context, int textViewResourceId, List<ListItems> objects) {
+    public ToolboxAdapter(Context context, int textViewResourceId, List<ListItems> objects) {
         super(context,textViewResourceId,objects);
         resourceId=textViewResourceId;
     }

@@ -37,13 +37,18 @@
                 android:icon="@drawable/baselinesettings"
                 android:title="@string/settings" />
             <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info"
+            android:title="@string/about" />
+            <item
+                android:id="@+id/nav_manage_regex"
+                android:icon="@drawable/ic_code_white_24dp"
+                android:title="@string/manage_regex" />
+            <item
                 android:id="@+id/nav_help"
                 android:icon="@drawable/baselinehelpoutline"
                 android:title="@string/view_help" />
-            <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/ic_info"
-                android:title="@string/about" />
+
         </menu>
     </item>
 

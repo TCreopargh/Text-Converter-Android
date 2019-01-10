@@ -47,9 +47,19 @@
         <activity
             android:label="@string/markdown_preview"
             android:name=".MarkdownPreviewActivity"/>
-        <activity android:name=".TextEditActivity"
+        <activity
             android:label="@string/edit_mode"
+            android:name=".TextEditActivity"
             android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:label="@string/title_activity_custom_regex"
+            android:name=".CustomRegexActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="xyz.tcreopargh.textconverter.MainActivity"/>
         </activity>
     </application>
 

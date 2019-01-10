@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/touch_bg_ripple"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/listLabel"
+        android:id="@+id/regexLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -14,7 +15,7 @@
         android:textAppearance="@style/MyRegular"/>
 
     <TextView
-        android:id="@+id/listSubtitle"
+        android:id="@+id/regexValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

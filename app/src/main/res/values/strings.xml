@@ -3,19 +3,19 @@
     <string name="navigation_drawer_open">打开抽屉</string>
     <string name="navigation_drawer_close">关闭抽屉</string>
     <string name="nav_header_subtitle">一个简单易用的小工具</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="nav_header_desc">导航栏</string>
+    <string name="action_settings">设置</string>
     <string name="input_source_text">输入源文本</string>
-    <string name="replace_from">将… (留空表示在每个字符中间插入)</string>
-    <string name="replace_to">替换为… (留空表示删除)</string>
+    <string name="replace_from">需要替换的文本</string>
+    <string name="replace_to">替换为文本 (留空表示删除)</string>
     <string name="use_regex">使用正则表达式</string>
     <string name="output">输出内容</string>
     <string name="generate">生成</string>
     <string name="copy_to_clipboard">复制到剪贴板</string>
     <string name="no_use_spaces">使用换行符连接打乱后的字符串</string>
     <string name="random_shuffle">子字符串打乱排序</string>
-    <string name="shuffle_hint">在这里输入内容，元素之间用空格或换行分隔</string>
-    <string name="shuffle_instruction">请在下面的文本框中输入内容，用空格或换行分隔的字符串表示一个元素，点击按钮后，系统将打乱所有的元素。</string>
+    <string name="shuffle_hint">在这里输入内容，字符串之间用空格或换行分隔</string>
+    <string name="shuffle_instruction">请在下面的文本框中输入用空格或换行分隔的字符串，点击按钮后，系统将打乱所有的字符串。</string>
     <string name="shuffle">打乱</string>
     <string name="sort_by_dict">按字典序排序</string>
     <string name="sort_by_number">按数字大小排序</string>
@@ -39,7 +39,7 @@
     <string name="settings">设置</string>
     <string name="failed_loading_shortcut">快捷方式菜单加载失败！</string>
     <string name="share">分享</string>
-    <string name="load_presets">载入预设正则表达式</string>
+    <string name="load_presets">载入正则表达式</string>
     <string name="title_activity_view_help">ViewHelpActivity</string>
     <string name="search_all">查找所有</string>
     <string name="action_share">分享</string>
@@ -138,7 +138,7 @@
     <string name="format_java_code">格式化Java代码</string>
     <string name="custom_random">自定义随机数</string>
     <string name="generate_md5">生成MD5编码</string>
-    <string name="format_instruction">输入一段自定义文本，文本中出现的{min,max}将被替换为min和max闭区间上的随机整数。注意：min和max必须是整数，如果要输出"{"符号，请用"{{"代替。</string>
+    <string name="format_instruction">输入一段自定义文本，文本中出现的{a,b}(a,b代表整数)将被替换为一个大于等于a，小于等于b的随机整数。注意：a和b必须是整数。如果要输出"{"符号，请用"{{"代替。</string>
     <string name="to_base_64">Base64编码</string>
     <string name="from_base_64">Base64解码</string>
     <string name="github_address">GitHub项目地址</string>
@@ -183,4 +183,11 @@
     <string name="redo">反撤销</string>
     <string name="edit_text_here">请在这里编辑文本</string>
     <string name="what_is_this">这是什么?</string>
+    <string name="title_activity_custom_regex">管理正则表达式</string>
+    <string name="input_title">输入标题</string>
+    <string name="cancel_zh">取消</string>
+    <string name="regex_value">表达式值</string>
+    <string name="title_hint">标题：</string>
+    <string name="expression_hint">表达式值：</string>
+    <string name="manage_regex">管理正则表达式</string>
 </resources>
