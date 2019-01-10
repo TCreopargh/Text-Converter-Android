@@ -205,6 +205,7 @@ public class CustomRegexActivity extends AppCompatActivity {
             regexValueBox.setText(regexList.get(position).getRegex(), BufferType.EDITABLE);
             regexLabelBox.setText(regexList.get(position).getLabel(), BufferType.EDITABLE);
         }
+
         dialog.setTitle(title)
                 .setView(dialogView)
                 .setTopColorRes(R.color.colorAccent)
