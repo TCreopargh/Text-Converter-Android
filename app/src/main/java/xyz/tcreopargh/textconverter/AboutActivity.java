@@ -409,6 +409,26 @@ public class AboutActivity extends AppCompatActivity {
                                                                                                     .APACHE)
                                                                                     .setWebsite(
                                                                                             "https://github.com/Mixiaoxiao/FastScroll-Everywhere")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "SwipeMenuRecyclerView")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2019 Zhenjie Yan")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/yanzhenjie/SwipeRecyclerView")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "java-string-similarity")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .MIT)
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2015 Thibault Debatty")
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/tdebatty/java-string-similarity")
                                                                                     .build())
                                                                     .build();
                                                     attributionPresenter.showDialog("开源许可");

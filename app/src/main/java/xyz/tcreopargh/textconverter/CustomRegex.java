@@ -1,5 +1,4 @@
 package xyz.tcreopargh.textconverter;
-
 public class CustomRegex {
 
     public static final String LABEL_KEY = "regex_label_";

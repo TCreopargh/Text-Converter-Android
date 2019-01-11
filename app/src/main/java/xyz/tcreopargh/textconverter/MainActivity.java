@@ -23,6 +23,7 @@
 // AndroidEdit
 // FastScroll-Everywhere
 //////////////////////////////////////////////////////////////////
+
 package xyz.tcreopargh.textconverter;
 
 import android.Manifest;
@@ -34,6 +35,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -85,6 +88,13 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
+import info.debatty.java.stringsimilarity.Damerau;
+import info.debatty.java.stringsimilarity.JaroWinkler;
+import info.debatty.java.stringsimilarity.LongestCommonSubsequence;
+import info.debatty.java.stringsimilarity.MetricLCS;
+import info.debatty.java.stringsimilarity.NGram;
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
+import info.debatty.java.stringsimilarity.QGram;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -121,7 +131,7 @@ public class MainActivity extends AppCompatActivity
     final int SENTENCE_FIRST = 4;
     final int REQUESTCODE_READ = 1000;
     final int REQUESTCODE_WRITE = 2000;
-    final boolean settingsBoolean[] = new boolean[] {false, false, false, true};
+    final boolean settingsBoolean[] = new boolean[] {false, false, false, true, true};
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
     final String presetsTitle[] =
             new String[] {
@@ -314,56 +324,104 @@ public class MainActivity extends AppCompatActivity
         adapter = new ToolboxAdapter(MainActivity.this, R.layout.list_layout, itemsList);
         initList();
 
-        try {
-            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            ClipData data = cm.getPrimaryClip();
-            ClipData.Item item = Objects.requireNonNull(data).getItemAt(0);
-            String content = item.getText().toString();
-            if (!content.isEmpty()) {
+        Intent intent1 = getIntent();
+        if (Intent.ACTION_SEND.equals(intent1.getAction()) && intent1.getType() != null) {
+            String content = "";
+            if (intent1.getStringExtra(Intent.EXTRA_TEXT) != null) {
+                content = intent1.getStringExtra(Intent.EXTRA_TEXT);
+            } else if (intent1.getStringExtra(Intent.EXTRA_TITLE) != null) {
+                String pathStr = intent1.getStringExtra(Intent.EXTRA_TITLE);
+                if (pathStr.matches("^([/] [\\w-]+)*$")) {
+                    content = readToString(pathStr);
+                } else {
+                    content = pathStr;
+                }
+            }
+            if (content.length() < 100 * 1024) {
+                replaceInput.setText(content);
+                searchInput.setText(content);
+                shuffleInput.setText(content);
+                encryptInput.setText(content);
+                moreInput.setText(content);
+                Snacky.builder()
+                        .setView(mainContext)
+                        .setDuration(Snacky.LENGTH_SHORT)
+                        .setText("操作成功")
+                        .setActionText(R.string.undo)
+                        .setActionClickListener(
+                                v12 -> {
+                                    replaceInput.setText("");
+                                    searchInput.setText("");
+                                    shuffleInput.setText("");
+                                    encryptInput.setText("");
+                                    moreInput.setText("");
+                                })
+                        .success()
+                        .show();
+            } else {
                 Snacky.builder()
                         .setView(mainContext)
                         .setDuration(Snacky.LENGTH_LONG)
-                        .setText("您的剪贴板不为空，是否粘贴？")
-                        .setActionText("粘贴")
-                        .setActionClickListener(
-                                v -> {
-                                    if (content.length() < 100 * 1024) {
-                                        replaceInput.setText(content);
-                                        searchInput.setText(content);
-                                        shuffleInput.setText(content);
-                                        encryptInput.setText(content);
-                                        moreInput.setText(content);
-                                        Snacky.builder()
-                                                .setView(mainContext)
-                                                .setDuration(Snacky.LENGTH_SHORT)
-                                                .setText("操作成功")
-                                                .setActionText(R.string.undo)
-                                                .setActionClickListener(
-                                                        v12 -> {
-                                                            replaceInput.setText("");
-                                                            searchInput.setText("");
-                                                            shuffleInput.setText("");
-                                                            encryptInput.setText("");
-                                                            moreInput.setText("");
-                                                        })
-                                                .success()
-                                                .show();
-                                    } else {
-                                        Snacky.builder()
-                                                .setView(mainContext)
-                                                .setDuration(Snacky.LENGTH_LONG)
-                                                .setText("操作失败：剪贴板内容过长")
-                                                .setActionText(R.string.confirm)
-                                                .setActionClickListener(v1 -> {})
-                                                .error()
-                                                .show();
-                                    }
-                                })
-                        .info()
+                        .setText("操作失败：内容过长")
+                        .setActionText(R.string.confirm)
+                        .setActionClickListener(v1 -> {})
+                        .error()
                         .show();
             }
-        } catch (Exception ignored) {
+        }
 
+        if (settingsBoolean[4]) {
+            try {
+                ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData data = cm.getPrimaryClip();
+                ClipData.Item item = Objects.requireNonNull(data).getItemAt(0);
+                String content = item.getText().toString();
+                if (!content.isEmpty()) {
+                    Snacky.builder()
+                            .setView(mainContext)
+                            .setDuration(Snacky.LENGTH_LONG)
+                            .setText("您的剪贴板不为空，是否粘贴？")
+                            .setActionText("粘贴")
+                            .setActionClickListener(
+                                    v -> {
+                                        if (content.length() < 100 * 1024) {
+                                            replaceInput.setText(content);
+                                            searchInput.setText(content);
+                                            shuffleInput.setText(content);
+                                            encryptInput.setText(content);
+                                            moreInput.setText(content);
+                                            Snacky.builder()
+                                                    .setView(mainContext)
+                                                    .setDuration(Snacky.LENGTH_SHORT)
+                                                    .setText("操作成功")
+                                                    .setActionText(R.string.undo)
+                                                    .setActionClickListener(
+                                                            v12 -> {
+                                                                replaceInput.setText("");
+                                                                searchInput.setText("");
+                                                                shuffleInput.setText("");
+                                                                encryptInput.setText("");
+                                                                moreInput.setText("");
+                                                            })
+                                                    .success()
+                                                    .show();
+                                        } else {
+                                            Snacky.builder()
+                                                    .setView(mainContext)
+                                                    .setDuration(Snacky.LENGTH_LONG)
+                                                    .setText("操作失败：剪贴板内容过长")
+                                                    .setActionText(R.string.confirm)
+                                                    .setActionClickListener(v1 -> {})
+                                                    .error()
+                                                    .show();
+                                        }
+                                    })
+                            .info()
+                            .show();
+                }
+            } catch (Exception ignored) {
+
+            }
         }
 
         TapTargetSequence tapTargetSequence =
@@ -529,6 +587,12 @@ public class MainActivity extends AppCompatActivity
 
         doUseRegexCheckbox.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
+                    if (isChecked) {
+                        replaceTo.setHint(
+                                getString(R.string.replace_to) + getString(R.string.val_hint));
+                    } else {
+                        replaceTo.setHint(getString(R.string.replace_to));
+                    }
                     if (isChecked && !regexCautionIsShown) {
                         regexCautionIsShown = true;
                         LovelyStandardDialog lovelyStandardDialog =
@@ -541,7 +605,9 @@ public class MainActivity extends AppCompatActivity
                                 .setTopColorRes(R.color.warningYellow)
                                 .setPositiveButtonColorRes(R.color.colorAccent)
                                 .setNeutralButtonColorRes(R.color.colorAccent)
-                                .setMessage(R.string.regex_info)
+                                .setMessage(
+                                        getString(R.string.regex_info)
+                                                + getString(R.string.val_dialog_hint))
                                 .setNeutralButton(
                                         R.string.view_help,
                                         v -> {
@@ -1248,8 +1314,30 @@ public class MainActivity extends AppCompatActivity
                     String replaceFromStr = targetSeq.getText().toString();
                     String replaceToStr = replaceTo.getText().toString();
                     if (doUseRegex) {
+                        StringBuilder input = new StringBuilder(textReplaceInput);
+                        Pattern p = Pattern.compile(replaceFromStr);
+                        Matcher m = p.matcher(input);
+                        replaceToStr =
+                                replaceToStr.replace("$$", "\u2333\u2888\u7575\u3139\u6666\u4232");
+                        ArrayList<String> strings = new ArrayList<>();
+                        while (m.find()) {
+                            strings.add(m.group());
+                            char c = '\uffff';
+                            StringBuilder temp = new StringBuilder();
+                            for (int i = 0; i < m.group().length(); i++) {
+                                temp.append(c);
+                            }
+                            input.replace(m.start(), m.end(), temp.toString());
+                        }
+                        String str = input.toString();
+                        for (int i = 0; i < strings.size(); i++) {
+                            str =
+                                    str.replaceFirst(
+                                            "\\uFFFF+",
+                                            replaceToStr.replace("$val", strings.get(i)));
+                        }
                         textReplaceOutput =
-                                textReplaceInput.replaceAll(replaceFromStr, replaceToStr);
+                                str.replace("\u2333\u2888\u7575\u3139\u6666\u4232", "$");
                     } else {
                         if (settingsBoolean[0]) {
                             textReplaceOutput =
@@ -2087,6 +2175,7 @@ public class MainActivity extends AppCompatActivity
             settingsBoolean[1] = sharedPreferences.getBoolean("doUseMonospaced", false);
             settingsBoolean[2] = sharedPreferences.getBoolean("doLowerCaseMorseCode", false);
             settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
+            settingsBoolean[4] = sharedPreferences.getBoolean("doCheckClipboard", true);
             isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
             salt = sharedPreferences.getString("salt", defaultSalt);
             initialLayout =
@@ -2317,6 +2406,15 @@ public class MainActivity extends AppCompatActivity
         // 12
         ListItems markdownPreview = new ListItems("Markdown预览", "预览Markdown文本");
         itemsList.add(markdownPreview);
+        // 13
+        ListItems unicodeParse = new ListItems("Unicode编码转义", "输入一段unicode编码，如\\u2333，将其转为编码对应的字符");
+        itemsList.add(unicodeParse);
+        // 14
+        ListItems toUnicode = new ListItems("转为Unicode编码", "将Unicode字符转为对应的Unicode编码");
+        itemsList.add(toUnicode);
+        // 15
+        ListItems stringSimilarity = new ListItems("字符串相似度", "用选定的算法计算输入区和输出区字符串的相似程度");
+        itemsList.add(stringSimilarity);
     }
 
     @SuppressLint("SetTextI18n")
@@ -2644,6 +2742,14 @@ public class MainActivity extends AppCompatActivity
 
                                         case 4: // format java code
                                             try {
+                                                if (VERSION.SDK_INT < VERSION_CODES.O) {
+                                                    Toasty.error(
+                                                                    MainActivity.this,
+                                                                    "抱歉，Android8.0以下系统暂不支持该功能！",
+                                                                    Toast.LENGTH_LONG)
+                                                            .show();
+                                                    break;
+                                                }
                                                 String formatCodeSrc =
                                                         moreInput.getText().toString();
 
@@ -3059,7 +3165,7 @@ public class MainActivity extends AppCompatActivity
                                             }
                                             break;
 
-                                        case 11:
+                                        case 11: // Random Text
                                             String textRandomInput = moreInput.getText().toString();
                                             final String[] dataQuantityString1 = {"1"};
                                             String items[] = textRandomInput.split("\\cJ");
@@ -3143,7 +3249,7 @@ public class MainActivity extends AppCompatActivity
 
                                             break;
 
-                                        case 12:
+                                        case 12: // View Markdown
                                             int totLen = 0;
                                             totLen += replaceInput.getText().toString().length();
                                             totLen += replaceOutput.getText().toString().length();
@@ -3169,6 +3275,181 @@ public class MainActivity extends AppCompatActivity
                                                 intent.putExtra("markdownText", mdText);
                                                 startActivity(intent);
                                             }
+                                            break;
+
+                                        case 13: // UnicodeParse
+                                            try {
+                                                String unicodeCode = moreInput.getText().toString();
+                                                String unicodeChar =
+                                                        UnicodeUtils.unicodeToString(unicodeCode);
+                                                moreOutput.setText(
+                                                        unicodeChar, BufferType.EDITABLE);
+                                            } catch (Exception e) {
+                                                moreOutput.setText(
+                                                        getString(R.string.exception_occurred)
+                                                                + e.toString(),
+                                                        BufferType.EDITABLE);
+                                            } finally {
+                                                moreInput.clearFocus();
+                                                moreOutput.clearFocus();
+                                            }
+                                            break;
+
+                                        case 14: // ToUnicode
+                                            try {
+                                                String unicodeChar = moreInput.getText().toString();
+                                                String unicodeCode =
+                                                        UnicodeUtils.stringToUnicode(unicodeChar);
+                                                moreOutput.setText(
+                                                        unicodeCode, BufferType.EDITABLE);
+                                            } catch (Exception e) {
+                                                moreOutput.setText(
+                                                        getString(R.string.exception_occurred)
+                                                                + e.toString(),
+                                                        BufferType.EDITABLE);
+                                            } finally {
+                                                moreInput.clearFocus();
+                                                moreOutput.clearFocus();
+                                            }
+                                            break;
+
+                                        case 15: // String Similarity
+                                            String m = moreInput.getText().toString();
+                                            String n = moreOutput.getText().toString();
+                                            final String[] outputType = {"相似度:"};
+                                            final String[] outputValue = {""};
+                                            Builder alertDialog = new Builder(MainActivity.this);
+                                            alertDialog
+                                                    .setTitle("选择相似度算法")
+                                                    .setIcon(R.mipmap.ic_launcher)
+                                                    .setItems(
+                                                            new String[] {
+                                                                "Levenshtein距离",
+                                                                "Levenshtein相似度",
+                                                                "Damerau-Levenshtein距离",
+                                                                "JaroWinkler距离",
+                                                                "JaroWinkler相似度",
+                                                                "最长公共子序列",
+                                                                "最长公共子序列(度量值)",
+                                                                "N-Gram距离",
+                                                                "Q-Gram距离"
+                                                            },
+                                                            (dialog12, which) -> {
+                                                                switch (which) {
+                                                                    case 0:
+                                                                        outputType[0] =
+                                                                                "Levenshtein距离: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new NormalizedLevenshtein()
+                                                                                                .distance(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 1:
+                                                                        outputType[0] =
+                                                                                "Levenshtein相似度: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new NormalizedLevenshtein()
+                                                                                                .similarity(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 2:
+                                                                        outputType[0] =
+                                                                                "Damerau-Levenshtein距离: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new Damerau()
+                                                                                                .distance(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 3:
+                                                                        outputType[0] =
+                                                                                "JaroWinkler距离: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new JaroWinkler()
+                                                                                                .distance(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 4:
+                                                                        outputType[0] =
+                                                                                "JaroWinkler相似度: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new JaroWinkler()
+                                                                                                .similarity(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 5:
+                                                                        outputType[0] = "最长公共子序列: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new LongestCommonSubsequence()
+                                                                                                .distance(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 6:
+                                                                        outputType[0] =
+                                                                                "最长公共子序列(度量值): ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new MetricLCS()
+                                                                                                .distance(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 7:
+                                                                        outputType[0] =
+                                                                                "N-Gram距离: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new NGram()
+                                                                                                .distance(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+
+                                                                    case 8:
+                                                                        outputType[0] =
+                                                                                "Q-Gram距离: ";
+                                                                        outputValue[0] =
+                                                                                String.valueOf(
+                                                                                        new QGram()
+                                                                                                .distance(
+                                                                                                        m,
+                                                                                                        n));
+                                                                        break;
+                                                                }
+                                                                new LovelyStandardDialog(this)
+                                                                        .setPositiveButtonText(
+                                                                                R.string.confirm)
+                                                                        .setTitle(outputType[0])
+                                                                        .setMessage(outputValue[0])
+                                                                        .setTopColorRes(
+                                                                                R.color
+                                                                                        .colorPrimary)
+                                                                        .setIcon(
+                                                                                R.drawable
+                                                                                        .ic_text_fields_white_48dp)
+                                                                        .create()
+                                                                        .show();
+                                                            })
+                                                    .create()
+                                                    .show();
 
                                             break;
 
@@ -3219,7 +3500,8 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.textEncryptLayout:
-                Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
+                encryptKey.setText(regex, BufferType.EDITABLE);
+                Toasty.success(MainActivity.this, "已载入为密码", Toast.LENGTH_SHORT, true).show();
                 break;
 
             case R.id.textMoreLayout:

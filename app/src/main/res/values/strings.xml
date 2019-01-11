@@ -7,7 +7,7 @@
     <string name="action_settings">设置</string>
     <string name="input_source_text">输入源文本</string>
     <string name="replace_from">需要替换的文本</string>
-    <string name="replace_to">替换为文本 (留空表示删除)</string>
+    <string name="replace_to">替换为文本</string>
     <string name="use_regex">使用正则表达式</string>
     <string name="output">输出内容</string>
     <string name="generate">生成</string>
@@ -190,4 +190,7 @@
     <string name="title_hint">标题：</string>
     <string name="expression_hint">表达式值：</string>
     <string name="manage_regex">管理正则表达式</string>
+    <string name="val_hint">(用\"$val\"表示匹配到的字符串)</string>
+    <string name="val_dialog_hint">\n可在\"替换为文本\"中输入\"$val\"表示匹配到的字符串。使用\"$$\"代表一个\"$\"字符。</string>
+    <string name="do_check_clipboard">进入应用时检查剪贴板</string>
 </resources>

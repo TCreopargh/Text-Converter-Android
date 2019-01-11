@@ -269,6 +269,10 @@ public class CustomRegexActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         for (int i = 0; i < regexList.size(); i++) {
+            editor.remove(CustomRegex.REGEX_KEY + i).remove(CustomRegex.LABEL_KEY + i);
+        }
+        editor.remove(CustomRegex.SIZE_KEY);
+        for (int i = 0; i < regexList.size(); i++) {
             editor.putString(CustomRegex.REGEX_KEY + i, regexList.get(i).getRegex());
             editor.putString(CustomRegex.LABEL_KEY + i, regexList.get(i).getLabel());
             editor.putInt(CustomRegex.SIZE_KEY, regexList.size());

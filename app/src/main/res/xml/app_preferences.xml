@@ -15,7 +15,7 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="doUseMonospaced"
-            android:summary="等宽字体更有利于代码阅读"
+            android:summary="等宽字体更有利于代码阅读，此设置将同样应用于编辑模式"
             android:title="@string/set_monospace"
             app:iconSpaceReserved="false"
             />
@@ -29,8 +29,15 @@
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="doMultiLine"
-            android:summary="此项设置决定文字超过输入框边界时是否换行显示。如果此项关闭，请左右拖动以查看未显示出来的文字。"
+            android:summary="此项设置决定文字超过输入框边界时是否换行显示。如果此项关闭，请左右拖动以查看未显示出来的文字"
             android:title="@string/multi_line"
+            app:iconSpaceReserved="false"
+            />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="doCheckClipboard"
+            android:summary="如果剪贴板不为空，则可将剪贴板内容快速粘贴到所有功能页面"
+            android:title="@string/do_check_clipboard"
             app:iconSpaceReserved="false"
             />
         <Preference
