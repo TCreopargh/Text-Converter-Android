@@ -32,7 +32,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private MyListener myListener;
     private String defaultSalt = MainActivity.defaultSalt;
     private String salt = defaultSalt;
-    private Preference storePath, initialLayout;
+    private Preference storePath, initialLayout, outputEncoding;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -77,6 +77,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Preference saltItem = findPreference("saltItem");
         storePath = findPreference("storePath");
         initialLayout = findPreference("initialLayout");
+        outputEncoding = findPreference("outputEncoding");
         SharedPreferences sharedPreferences0 =
                 Objects.requireNonNull(getContext()).getSharedPreferences("settings", MODE_PRIVATE);
         String pathTemp =
@@ -257,7 +258,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                                 R.drawable.lock_open,
                                                                 getActivity()
                                                                         .getColor(
-                                                                                R.color.warningToast),
+                                                                                R.color
+                                                                                        .warningToast),
                                                                 Toast.LENGTH_LONG,
                                                                 true,
                                                                 true)
@@ -277,7 +279,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                                 R.drawable.ic_lock,
                                                                 getActivity()
                                                                         .getColor(
-                                                                                R.color.successToast),
+                                                                                R.color
+                                                                                        .successToast),
                                                                 Toast.LENGTH_LONG,
                                                                 true,
                                                                 true)
@@ -325,6 +328,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     initialLayout.setSummary("选择进入应用时首先显示的界面\n当前设置: " + array[layoutId]);
                     return true;
                 });
+        outputEncoding.setOnPreferenceChangeListener(
+                (preference, newValue) -> {
+                    outputEncoding.setSummary("选择输出文件的编码格式，建议选择默认\n当前设置: " + newValue);
+                    return true;
+                });
     }
 
     private void getStoreLocation() {
@@ -370,8 +378,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     Integer.parseInt(
                             Objects.requireNonNull(
                                     sharedPreferences0.getString("initialLayout", "0")));
+            String currentEncoding = sharedPreferences0.getString("outputEncoding", "UTF-8");
             String[] array = getResources().getStringArray(R.array.layoutArray);
             initialLayout.setSummary("选择进入应用时首先显示的界面\n当前设置: " + array[layoutId]);
+            outputEncoding.setSummary("选择输出文件的编码格式，建议选择默认\n当前设置: " + currentEncoding);
         } catch (Exception ignored) {
         }
     }

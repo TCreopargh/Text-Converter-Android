@@ -95,6 +95,11 @@ import info.debatty.java.stringsimilarity.MetricLCS;
 import info.debatty.java.stringsimilarity.NGram;
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import info.debatty.java.stringsimilarity.QGram;
+import info.monitorenter.cpdetector.io.ASCIIDetector;
+import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
+import info.monitorenter.cpdetector.io.JChardetFacade;
+import info.monitorenter.cpdetector.io.ParsingDetector;
+import info.monitorenter.cpdetector.io.UnicodeDetector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -119,6 +124,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String defaultSalt = "Powered by TCreopargh!";
     public static boolean keyGenNeedToReset = true;
+    public static String encoding = "UTF-8";
 
     @SuppressLint("StaticFieldLeak")
     public static MainActivity mainActivity = null;
@@ -164,7 +170,7 @@ public class MainActivity extends AppCompatActivity
     EditText shuffleInput;
     EditText shuffleOutput;
     CheckBox noUseSpaces;
-    Button searchReset, searchNext, searchAll;
+    Button searchReset, searchPrevious, searchNext, searchAll;
     EditText searchInput, searchOutput, searchTarget;
     CheckBox doUseRegexSearchCheckbox;
     Button encrypt, decrypt;
@@ -194,8 +200,11 @@ public class MainActivity extends AppCompatActivity
     ToolboxAdapter adapter;
     String tempString = "";
     boolean returnFromEditMode = false;
+    boolean searchNextClicked = false;
+    boolean hasFind = false;
     private long clickTime = 0L;
     private List<ListItems> itemsList = new ArrayList<>();
+    private List<Range> searches = new ArrayList<>();
 
     public static int stringAppearCounter(String srcText, String findText) {
         int count = 0;
@@ -1108,6 +1117,7 @@ public class MainActivity extends AppCompatActivity
             returnFromEditMode = true;
             tempString = sendText;
             TextEditActivity.text = sendText;
+            TextEditActivity.currentCharset = encoding;
             Intent intent = new Intent(MainActivity.this, TextEditActivity.class);
             startActivity(intent);
         }
@@ -1267,6 +1277,7 @@ public class MainActivity extends AppCompatActivity
         searchReset = findViewById(R.id.searchReset);
         searchInput = findViewById(R.id.searchInput);
         searchOutput = findViewById(R.id.searchOutput);
+        searchPrevious = findViewById(R.id.searchPrevious);
         searchNext = findViewById(R.id.searchNext);
         searchTarget = findViewById(R.id.searchTargetText);
         doUseRegexSearchCheckbox = findViewById(R.id.doUseRegexInSearch);
@@ -1294,6 +1305,7 @@ public class MainActivity extends AppCompatActivity
         shuffleReverse.setOnClickListener(this);
         sortByNumberValue.setOnClickListener(this);
         sortByDictionaryIndex.setOnClickListener(this);
+        searchPrevious.setOnClickListener(this);
         searchNext.setOnClickListener(this);
         searchReset.setOnClickListener(this);
         searchAll.setOnClickListener(this);
@@ -1548,8 +1560,45 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
 
+            case R.id.searchPrevious:
+                try {
+                    if (!hasFind) {
+                        findAll();
+                    }
+                    if (currentSearchCount < 1) {
+                        currentSearchCount = 1;
+                    }
+                    if (currentSearchCount == 1) {
+                        currentSearchCount = searchCount - currentSearchCount + 2;
+                    }
+                    Range range = searches.get(currentSearchCount - 2);
+                    searchInput.setSelection(range.start(), range.end());
+                    currentSearchCount--;
+                    currentSearchPos = range.end();
+                    if (doUseRegexSearchCheckbox.isChecked()) {
+                        searchOutput.setText(
+                                "目标共出现"
+                                        + searchCount
+                                        + "处，正在选中第"
+                                        + currentSearchCount
+                                        + "处\n匹配到的内容为："
+                                        + searchInput
+                                                .getText()
+                                                .toString()
+                                                .substring(range.start(), range.end()));
+                    } else {
+                        searchOutput.setText(
+                                "目标共出现" + searchCount + "处，正在选中第" + currentSearchCount + "处");
+                    }
+
+                } catch (Exception e) {
+                    searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
+                }
+                break;
+
             case R.id.searchNext:
                 try {
+                    searchNextClicked = true;
                     String findTarget = searchTarget.getText().toString();
                     String findSrc = searchInput.getText().toString();
                     if (findTarget.isEmpty() || findSrc.isEmpty()) {
@@ -1813,6 +1862,58 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void findAll() {
+        int tempSearchPos = currentSearchPos;
+        int tempSearchCount = currentSearchCount;
+        currentSearchPos = 0;
+        currentSearchCount = 0;
+        String findTarget = searchTarget.getText().toString();
+        String findSrc = searchInput.getText().toString();
+        if (findTarget.isEmpty() || findSrc.isEmpty()) {
+            Toasty.error(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG, true).show();
+            return;
+        }
+        boolean doUseRegexInSearch = doUseRegexSearchCheckbox.isChecked();
+        if (!doUseRegexInSearch) {
+            if (!settingsBoolean[0]) {
+                findTarget = findTarget.toLowerCase();
+                findSrc = findSrc.toLowerCase();
+            }
+            if (searchCount == -1) {
+                searchCount = stringAppearCounter(findSrc, findTarget);
+                currentSearchCount = 0;
+                currentSearchPos = 0;
+            }
+            if (searchCount == 0) {
+                searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+            } else {
+                for (int i = 0; i < searchCount; i++) {
+                    currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
+                    searches.add(
+                            new Range(currentSearchPos, currentSearchPos + findTarget.length()));
+                    currentSearchPos++;
+                }
+            }
+        } else {
+            if (searchCount == -1) {
+                searchCount = regexAppearCounter(findSrc, findTarget);
+                currentSearchCount = 0;
+                currentSearchPos = 0;
+            }
+            if (searchCount == 0) {
+                searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+            } else {
+                currentSearchCount++;
+                while (matcher.find()) {
+                    searches.add(new Range(matcher.start(), matcher.end()));
+                }
+            }
+        }
+        currentSearchPos = tempSearchPos;
+        currentSearchCount = tempSearchCount;
+        hasFind = true;
+    }
+
     private int getCurrentShowingLayoutId() {
         if (textReplaceLayout.getVisibility() == View.VISIBLE) {
             return R.id.textReplaceLayout;
@@ -1836,6 +1937,7 @@ public class MainActivity extends AppCompatActivity
             begin = 0;
             pattern = Pattern.compile(searchTarget.getText().toString());
             matcher = pattern.matcher(searchInput.getText().toString());
+            hasFind = false;
         } catch (Exception ignored) {
         }
     }
@@ -1943,16 +2045,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void writeSDFile(String fileName, String write_str) throws IOException {
+        SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
+        String outputEncoding = sharedPreferences.getString("outputEncoding", "UTF-8");
         File file = new File(fileName);
         FileOutputStream fos = new FileOutputStream(file);
-        byte[] bytes = write_str.getBytes();
+        byte[] bytes = write_str.getBytes(Objects.requireNonNull(outputEncoding));
         fos.write(bytes);
         fos.close();
     }
 
     public String readToString(String fileName) {
-        String encoding = "UTF-8";
+
         File file = new File(fileName);
+
+        CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();
+        detector.add(new ParsingDetector(false));
+        detector.add(JChardetFacade.getInstance());
+        detector.add(ASCIIDetector.getInstance());
+        detector.add(UnicodeDetector.getInstance());
+        java.nio.charset.Charset charset = null;
+        try {
+            charset = detector.detectCodepage(file.toURI().toURL());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (charset != null) {
+            encoding = charset.name();
+        }
+        if (!encoding.equals("UTF-8")) {
+            Toasty.warning(MainActivity.this, "当前文件编码格式为: " + encoding, Toast.LENGTH_LONG).show();
+        }
         Long filelength = file.length();
         byte[] filecontent = new byte[filelength.intValue()];
         try {
@@ -1969,7 +2091,8 @@ public class MainActivity extends AppCompatActivity
         try {
             return new String(filecontent, encoding);
         } catch (UnsupportedEncodingException e) {
-            System.err.println("抱歉，本系统不支持以下编码格式：" + encoding);
+            Toasty.error(MainActivity.this, "抱歉，本系统不支持以下编码格式：" + encoding, Toast.LENGTH_LONG)
+                    .show();
             e.printStackTrace();
             return null;
         }

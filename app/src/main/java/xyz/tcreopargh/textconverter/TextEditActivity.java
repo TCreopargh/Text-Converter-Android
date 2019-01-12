@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import com.mixiaoxiao.fastscroll.FastScrollDelegate;
@@ -19,13 +21,16 @@ import com.mixiaoxiao.fastscroll.FastScrollDelegate.OnFastScrollListener;
 import com.mixiaoxiao.fastscroll.FastScrollScrollView;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import es.dmoral.toasty.Toasty;
+import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import ren.qinc.edit.PerformEdit;
 
 public class TextEditActivity extends AppCompatActivity {
 
+    public static String[] charsets;
     public static String text = "";
-
+    public static String currentCharset = "UTF-8";
     private EditText editText;
     private PerformEdit performEdit;
 
@@ -51,6 +56,7 @@ public class TextEditActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_edit);
+        charsets = getResources().getStringArray(R.array.encodingValues);
         androidx.appcompat.widget.Toolbar myToolBar = findViewById(R.id.editModeToolbar);
         setSupportActionBar(myToolBar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -118,6 +124,15 @@ public class TextEditActivity extends AppCompatActivity {
                         .create()
                         .show();
                 break;
+            case R.id.changeEncoding:
+                Builder alertDialog = new Builder(TextEditActivity.this);
+                alertDialog
+                        .setTitle("当前编码格式: " + currentCharset)
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setItems(charsets, (dialog12, which) -> setCharset(charsets[which]))
+                        .create()
+                        .show();
+                break;
         }
 
         return true;
@@ -140,6 +155,7 @@ public class TextEditActivity extends AppCompatActivity {
                             "保存",
                             v -> {
                                 MainActivity.returnText = verifiedText;
+                                // MainActivity.encoding = currentCharset;
                                 finish();
                             })
                     .setNeutralButton("放弃更改", v -> finish())
@@ -155,6 +171,18 @@ public class TextEditActivity extends AppCompatActivity {
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    private void setCharset(String newCharset) {
+        String temp = currentCharset;
+        try {
+            editText.setText(
+                    new String(editText.getText().toString().getBytes(currentCharset), newCharset));
+            currentCharset = newCharset;
+        } catch (UnsupportedEncodingException e) {
+            Toasty.error(this, "当前设备不支持该编码！", Toast.LENGTH_LONG).show();
+            currentCharset = temp;
         }
     }
 }

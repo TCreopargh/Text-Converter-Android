@@ -1,4 +1,7 @@
 package xyz.tcreopargh.textconverter;
+
+import androidx.annotation.NonNull;
+
 public class CustomRegex {
 
     public static final String LABEL_KEY = "regex_label_";
@@ -11,6 +14,12 @@ public class CustomRegex {
     public CustomRegex(String label, String regex) {
         this.label = label;
         this.regex = regex;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return label + ":" + regex;
     }
 
     public String getLabel() {

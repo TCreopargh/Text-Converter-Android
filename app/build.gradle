@@ -10,7 +10,7 @@ android {
         versionName "4.2.0-Beta-1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+    buildTypes  {
         release {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation group: 'info.debatty', name: 'java-string-similarity', version: '0.13'
+    implementation 'info.debatty:java-string-similarity:0.13'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.yanzhenjie:recyclerview-swipe:1.2.1'
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
@@ -60,4 +60,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation files('libs/pinyin4j-2.5.0.jar')
     implementation files('libs/fastscroll_v1.2_20160903.jar')
+    implementation files('libs/jargs-1.0.jar')
+    implementation files('libs/cpdetector_1.0.10.jar')
+    implementation files('libs/chardet-1.0.jar')
+    implementation files('libs/antlr-2.7.4.jar')
 }

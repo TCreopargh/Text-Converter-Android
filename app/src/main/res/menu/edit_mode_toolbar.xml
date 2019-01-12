@@ -8,7 +8,6 @@
         android:icon="@drawable/ic_undo_white_24dp"
         android:title="@string/undo"
         app:showAsAction="ifRoom"/>
-
     <item
         android:id="@+id/editRedo"
         android:icon="@drawable/ic_redo_white_24dp"
@@ -19,5 +18,9 @@
         android:icon="@drawable/baselinehelpoutline_white_small"
         android:title="@string/what_is_this"
         app:showAsAction="never"/>
-
+    <item
+        android:id="@+id/changeEncoding"
+        android:icon="@drawable/ic_code_white_24dp"
+        android:title="@string/encoding"
+        app:showAsAction="never"/>
 </menu>

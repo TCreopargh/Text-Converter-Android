@@ -58,6 +58,14 @@
             android:summary="选择进入应用时首先显示的界面"
             android:title="初始界面"
             app:iconSpaceReserved="false"/>
+        <ListPreference
+            android:defaultValue="UTF-8"
+            android:entries="@array/encodingArray"
+            android:entryValues="@array/encodingValues"
+            android:key="outputEncoding"
+            android:summary="选择输出文件的编码格式，建议选择默认"
+            android:title="输出文件编码格式"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="其他"

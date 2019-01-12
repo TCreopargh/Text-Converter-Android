@@ -193,4 +193,5 @@
     <string name="val_hint">(用\"$val\"表示匹配到的字符串)</string>
     <string name="val_dialog_hint">\n可在\"替换为文本\"中输入\"$val\"表示匹配到的字符串。使用\"$$\"代表一个\"$\"字符。</string>
     <string name="do_check_clipboard">进入应用时检查剪贴板</string>
+    <string name="encoding">编码格式</string>
 </resources>
