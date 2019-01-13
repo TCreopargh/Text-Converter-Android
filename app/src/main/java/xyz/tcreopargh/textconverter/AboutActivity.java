@@ -251,7 +251,7 @@ public class AboutActivity extends AppCompatActivity {
                                                                     "本App的开发离不开您的支持。如果您能为我提供一些援助，我将十分感激。")
                                                             .setButtonsColorRes(R.color.colorAccent)
                                                             .setPositiveButton(
-                                                                    "好的",
+                                                                    "支付宝",
                                                                     v1 -> {
                                                                         String payCode =
                                                                                 "fkx04710ib3jtulb74vfx3b";
@@ -274,6 +274,27 @@ public class AboutActivity extends AppCompatActivity {
                                                                                                     .LENGTH_LONG)
                                                                                     .show();
                                                                         }
+                                                                        lovelyStandardDialog1
+                                                                                .dismiss();
+                                                                    })
+                                                            .setNegativeButton(
+                                                                    "微信",
+                                                                    v1 -> {
+                                                                        String url =
+                                                                                "https://donate.tcreopargh.xyz/";
+                                                                        CustomTabsIntent.Builder
+                                                                                builder =
+                                                                                        new CustomTabsIntent
+                                                                                                .Builder();
+                                                                        builder.setToolbarColor(
+                                                                                0x2196f3);
+                                                                        CustomTabsIntent
+                                                                                customTabsIntent =
+                                                                                        builder
+                                                                                                .build();
+                                                                        customTabsIntent.launchUrl(
+                                                                                this,
+                                                                                Uri.parse(url));
                                                                         lovelyStandardDialog1
                                                                                 .dismiss();
                                                                     })
@@ -505,6 +526,14 @@ public class AboutActivity extends AppCompatActivity {
                                                                                     .addLicense(
                                                                                             "License",
                                                                                             "http://jtidy.sourceforge.net/license.html")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "AndroidDonate")
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/didikee/AndroidDonate")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .MIT)
                                                                                     .build())
                                                                     .build();
                                                     attributionPresenter.showDialog("开源许可");
