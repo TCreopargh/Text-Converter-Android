@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.didikee.donate.AlipayDonate;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -229,6 +230,63 @@ public class AboutActivity extends AppCompatActivity {
                                                 }))
                         .addItem(
                                 new Element()
+                                        .setTitle("向我捐赠")
+                                        .setIconDrawable(R.drawable.ic_attach_money_black_24dp)
+                                        .setAutoApplyIconTint(true)
+                                        .setOnClickListener(
+                                                v -> {
+                                                    LovelyStandardDialog lovelyStandardDialog1 =
+                                                            new LovelyStandardDialog(
+                                                                    AboutActivity.this,
+                                                                    LovelyStandardDialog
+                                                                            .ButtonLayout
+                                                                            .HORIZONTAL);
+                                                    lovelyStandardDialog1
+                                                            .setTitle("向我捐赠")
+                                                            .setTopColorRes(R.color.safeGreen)
+                                                            .setIcon(
+                                                                    R.drawable
+                                                                            .ic_attach_money_white_48dp)
+                                                            .setMessage(
+                                                                    "本App的开发离不开您的支持。如果您能为我提供一些援助，我将十分感激。")
+                                                            .setButtonsColorRes(R.color.colorAccent)
+                                                            .setPositiveButton(
+                                                                    "好的",
+                                                                    v1 -> {
+                                                                        String payCode =
+                                                                                "fkx04710ib3jtulb74vfx3b";
+                                                                        boolean
+                                                                                hasInstalledAlipayClient =
+                                                                                        AlipayDonate
+                                                                                                .hasInstalledAlipayClient(
+                                                                                                        this);
+                                                                        if (hasInstalledAlipayClient) {
+                                                                            AlipayDonate
+                                                                                    .startAlipayClient(
+                                                                                            this,
+                                                                                            payCode);
+                                                                        } else {
+                                                                            Toasty.error(
+                                                                                            AboutActivity
+                                                                                                    .this,
+                                                                                            "请先安装支付宝！",
+                                                                                            Toast
+                                                                                                    .LENGTH_LONG)
+                                                                                    .show();
+                                                                        }
+                                                                        lovelyStandardDialog1
+                                                                                .dismiss();
+                                                                    })
+                                                            .setNeutralButton(
+                                                                    "下次吧",
+                                                                    v1 ->
+                                                                            lovelyStandardDialog1
+                                                                                    .dismiss())
+                                                            .create()
+                                                            .show();
+                                                }))
+                        .addItem(
+                                new Element()
                                         .setTitle("开源许可")
                                         .setIconDrawable(R.drawable.ic_account_balance_black_24dp)
                                         .setAutoApplyIconTint(true)
@@ -437,6 +495,16 @@ public class AboutActivity extends AppCompatActivity {
                                                                                     .addLicense(
                                                                                             License
                                                                                                     .GPL_2)
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "Jtidy")
+                                                                                    .setWebsite(
+                                                                                            "http://jtidy.sourceforge.net/index.html")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright (c) 1998-2000 World Wide Web Consortium")
+                                                                                    .addLicense(
+                                                                                            "License",
+                                                                                            "http://jtidy.sourceforge.net/license.html")
                                                                                     .build())
                                                                     .build();
                                                     attributionPresenter.showDialog("开源许可");

@@ -1,11 +1,9 @@
 package xyz.tcreopargh.textconverter;
 
-
 /**
  * @author Nan
  * @link https://blog.csdn.net/qq_34471736/article/details/70311796
  */
-
 public class UnicodeUtils {
 
     /**
@@ -19,7 +17,7 @@ public class UnicodeUtils {
         StringBuilder unicode = new StringBuilder();
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
-            unicode.append("\\u").append(Integer.toHexString(c));
+            unicode.append("\\u").append(String.format("%04x", (int) c));
         }
         return unicode.toString();
     }

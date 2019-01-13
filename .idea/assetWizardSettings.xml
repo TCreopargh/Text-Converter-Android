@@ -146,7 +146,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/E:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_text_fields_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/E:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_attach_money_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -158,7 +158,7 @@
                           <map>
                             <entry key="color" value="ffffff" />
                             <entry key="height" value="48" />
-                            <entry key="outputName" value="ic_text_fields_white_48dp" />
+                            <entry key="outputName" value="ic_attach_money_white_48dp" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\TCreopargh" />
                             <entry key="width" value="48" />

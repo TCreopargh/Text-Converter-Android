@@ -101,10 +101,13 @@ import info.monitorenter.cpdetector.io.CodepageDetectorProxy;
 import info.monitorenter.cpdetector.io.JChardetFacade;
 import info.monitorenter.cpdetector.io.ParsingDetector;
 import info.monitorenter.cpdetector.io.UnicodeDetector;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -118,6 +121,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.w3c.dom.Document;
+import org.w3c.tidy.Tidy;
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
 public class MainActivity extends AppCompatActivity
@@ -1068,6 +1073,7 @@ public class MainActivity extends AppCompatActivity
                             .setConfirmButton(
                                     "确定",
                                     text -> {
+                                        text = text.trim();
                                         if (text.matches(
                                                 "https?://([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?")) {
                                             getSourceCodeFromUrl(text);
@@ -1596,7 +1602,11 @@ public class MainActivity extends AppCompatActivity
                     }
 
                 } catch (Exception e) {
-                    searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
+                    if (e instanceof ArrayIndexOutOfBoundsException) {
+                        searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                    } else {
+                        searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
+                    }
                 }
                 break;
 
@@ -1982,28 +1992,30 @@ public class MainActivity extends AppCompatActivity
             }
             if (requestCode == REQUESTCODE_READ) {
                 String getFileContent = readToString(path);
-                switch (getCurrentShowingLayoutId()) {
-                    case R.id.textReplaceLayout:
-                        replaceInput.setText(getFileContent, TextView.BufferType.EDITABLE);
-                        break;
+                if (getFileContent != null) {
+                    switch (getCurrentShowingLayoutId()) {
+                        case R.id.textReplaceLayout:
+                            replaceInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textSearchLayout:
-                        searchInput.setText(getFileContent, TextView.BufferType.EDITABLE);
-                        break;
+                        case R.id.textSearchLayout:
+                            searchInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textShuffleLayout:
-                        shuffleInput.setText(getFileContent, TextView.BufferType.EDITABLE);
-                        break;
+                        case R.id.textShuffleLayout:
+                            shuffleInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textEncryptLayout:
-                        encryptInput.setText(getFileContent, TextView.BufferType.EDITABLE);
-                        break;
+                        case R.id.textEncryptLayout:
+                            encryptInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textMoreLayout:
-                        moreInput.setText(getFileContent, TextView.BufferType.EDITABLE);
-                        break;
+                        case R.id.textMoreLayout:
+                            moreInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    default:
+                        default:
+                    }
                 }
             } else if (requestCode == REQUESTCODE_WRITE) {
                 if (path.isEmpty()) {
@@ -2082,6 +2094,9 @@ public class MainActivity extends AppCompatActivity
         if (charset != null) {
             encoding = charset.name();
         }
+        if (encoding.equals("US-ASCII")) {
+            encoding = "UTF-8";
+        }
         if (!encoding.equals("UTF-8")) {
             Toasty.warning(MainActivity.this, "当前文件编码格式为: " + encoding, Toast.LENGTH_LONG).show();
         }
@@ -2097,6 +2112,7 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         try {
             return new String(filecontent, encoding);
@@ -2498,10 +2514,8 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.add_numbers), getString(R.string.add_numbers_disc));
         itemsList.add(addNumbers);
         // 4
-        ListItems formatJava =
-                new ListItems(
-                        getString(R.string.format_java_code), getString(R.string.format_java_disc));
-        itemsList.add(formatJava);
+        ListItems htmlFormat = new ListItems("HTML格式化", "将HTML文本变得易读");
+        itemsList.add(htmlFormat);
         // 5
         ListItems customRandom =
                 new ListItems(
@@ -2548,6 +2562,11 @@ public class MainActivity extends AppCompatActivity
         // 15
         ListItems stringSimilarity = new ListItems("字符串相似度", "用选定的算法计算输入区和输出区字符串的相似程度");
         itemsList.add(stringSimilarity);
+        // 16
+        ListItems formatJava =
+                new ListItems(
+                        getString(R.string.format_java_code), getString(R.string.format_java_disc));
+        itemsList.add(formatJava);
     }
 
     @SuppressLint("SetTextI18n")
@@ -2873,50 +2892,28 @@ public class MainActivity extends AppCompatActivity
                                             }
                                             break;
 
-                                        case 4: // format java code
+                                        case 4: // HTML formatter
                                             try {
-                                                if (VERSION.SDK_INT < VERSION_CODES.O) {
-                                                    Toasty.error(
-                                                                    MainActivity.this,
-                                                                    "抱歉，Android8.0以下系统暂不支持该功能！",
-                                                                    Toast.LENGTH_LONG)
-                                                            .show();
-                                                    break;
-                                                }
-                                                String formatCodeSrc =
-                                                        moreInput.getText().toString();
-
-                                                com.google.googlejavaformat.java.Formatter
-                                                        formatter =
-                                                                new com.google.googlejavaformat.java
-                                                                        .Formatter();
-                                                String formattedCode =
-                                                        formatter.formatSource(formatCodeSrc);
-
-                                                /*
-                                                Jalopy jalopy = new Jalopy();
-                                                jalopy.setEncoding("UTF-8");
-                                                SharedPreferences sharedPreferences =
-                                                        getSharedPreferences(
-                                                                "settings", MODE_PRIVATE);
-                                                jalopy.setInput(
-                                                        formatCodeSrc,
-                                                        Objects.requireNonNull(
-                                                                sharedPreferences.getString(
-                                                                        "default_path",
-                                                                        Environment
-                                                                                        .getExternalStorageDirectory()
-                                                                                        .getAbsolutePath()
-                                                                                + "/TextConverter")));
-                                                StringBuffer stringBuffer = new StringBuffer();
-                                                jalopy.setOutput(stringBuffer);
-                                                String formattedCode = stringBuffer.toString();
-                                                */
-                                                moreOutput.setText(
-                                                        formattedCode, BufferType.EDITABLE);
+                                                Tidy tidy = new Tidy();
+                                                tidy.setXHTML(true);
+                                                tidy.setIndentContent(true);
+                                                tidy.setPrintBodyOnly(true);
+                                                tidy.setTidyMark(false);
+                                                Document htmlDOM =
+                                                        tidy.parseDOM(
+                                                                new ByteArrayInputStream(
+                                                                        moreInput
+                                                                                .getText()
+                                                                                .toString()
+                                                                                .getBytes()),
+                                                                null);
+                                                OutputStream out = new ByteArrayOutputStream();
+                                                tidy.pprint(htmlDOM, out);
+                                                moreOutput.setText(out.toString());
                                                 moreOutput.clearFocus();
                                                 moreInput.clearFocus();
                                             } catch (Exception e) {
+
                                                 moreOutput.setText(
                                                         getString(R.string.exception_occurred)
                                                                 + e.toString(),
@@ -3401,12 +3398,12 @@ public class MainActivity extends AppCompatActivity
 
                                             if (totLen < 250 * 1024) {
                                                 String mdText = moreInput.getText().toString();
-                                                Intent intent =
+                                                Intent intent1 =
                                                         new Intent(
                                                                 MainActivity.this,
                                                                 MarkdownPreviewActivity.class);
-                                                intent.putExtra("markdownText", mdText);
-                                                startActivity(intent);
+                                                intent1.putExtra("markdownText", mdText);
+                                                startActivity(intent1);
                                             }
                                             break;
 
@@ -3584,6 +3581,60 @@ public class MainActivity extends AppCompatActivity
                                                     .create()
                                                     .show();
 
+                                            break;
+
+                                        case 16: // format java code
+                                            try {
+                                                if (VERSION.SDK_INT < VERSION_CODES.O) {
+                                                    Toasty.error(
+                                                                    MainActivity.this,
+                                                                    "抱歉，Android8.0以下系统暂不支持该功能！",
+                                                                    Toast.LENGTH_LONG)
+                                                            .show();
+                                                    break;
+                                                }
+                                                String formatCodeSrc =
+                                                        moreInput.getText().toString();
+
+                                                com.google.googlejavaformat.java.Formatter
+                                                        formatter =
+                                                                new com.google.googlejavaformat.java
+                                                                        .Formatter();
+                                                String formattedCode =
+                                                        formatter.formatSourceAndFixImports(
+                                                                formatCodeSrc);
+
+                                                /*
+                                                Jalopy jalopy = new Jalopy();
+                                                jalopy.setEncoding("UTF-8");
+                                                SharedPreferences sharedPreferences =
+                                                        getSharedPreferences(
+                                                                "settings", MODE_PRIVATE);
+                                                jalopy.setInput(
+                                                        formatCodeSrc,
+                                                        Objects.requireNonNull(
+                                                                sharedPreferences.getString(
+                                                                        "default_path",
+                                                                        Environment
+                                                                                        .getExternalStorageDirectory()
+                                                                                        .getAbsolutePath()
+                                                                                + "/TextConverter")));
+                                                StringBuffer stringBuffer = new StringBuffer();
+                                                jalopy.setOutput(stringBuffer);
+                                                String formattedCode = stringBuffer.toString();
+                                                */
+                                                moreOutput.setText(
+                                                        formattedCode, BufferType.EDITABLE);
+                                                moreOutput.clearFocus();
+                                                moreInput.clearFocus();
+                                            } catch (Exception e) {
+                                                moreOutput.setText(
+                                                        getString(R.string.exception_occurred)
+                                                                + e.toString(),
+                                                        BufferType.EDITABLE);
+                                                moreOutput.clearFocus();
+                                                moreInput.clearFocus();
+                                            }
                                             break;
 
                                         default:
