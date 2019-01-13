@@ -63,7 +63,7 @@
             android:entries="@array/encodingArray"
             android:entryValues="@array/encodingValues"
             android:key="outputEncoding"
-            android:summary="选择输出文件的编码格式，建议选择默认"
+            android:summary="选择输出文件的编码格式，建议保持默认"
             android:title="输出文件编码格式"
             app:iconSpaceReserved="false"/>
     </PreferenceCategory>
@@ -74,13 +74,11 @@
             android:key="about"
             android:summary="查看应用信息"
             android:title="@string/about"
-            app:iconSpaceReserved="false">
-        </Preference>
+            app:iconSpaceReserved="false"/>
         <Preference
             android:key="resetSettings"
             android:summary="恢复所有设置到默认状态"
             android:title="重置设置"
-            app:iconSpaceReserved="false"
-            />
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

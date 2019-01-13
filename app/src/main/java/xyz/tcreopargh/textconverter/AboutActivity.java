@@ -429,6 +429,14 @@ public class AboutActivity extends AppCompatActivity {
                                                                                             "Copyright 2015 Thibault Debatty")
                                                                                     .setWebsite(
                                                                                             "https://github.com/tdebatty/java-string-similarity")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "cpdetector")
+                                                                                    .setWebsite(
+                                                                                            "http://cpdetector.sourceforge.net/donation.shtml")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .GPL_2)
                                                                                     .build())
                                                                     .build();
                                                     attributionPresenter.showDialog("开源许可");

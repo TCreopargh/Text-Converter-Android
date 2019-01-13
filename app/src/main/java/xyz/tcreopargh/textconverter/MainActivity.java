@@ -22,6 +22,7 @@
 // com.github.franmontiel:AttributionPresenter
 // AndroidEdit
 // FastScroll-Everywhere
+// etc (refer to in-app credit)
 //////////////////////////////////////////////////////////////////
 
 package xyz.tcreopargh.textconverter;
@@ -200,7 +201,6 @@ public class MainActivity extends AppCompatActivity
     ToolboxAdapter adapter;
     String tempString = "";
     boolean returnFromEditMode = false;
-    boolean searchNextClicked = false;
     boolean hasFind = false;
     private long clickTime = 0L;
     private List<ListItems> itemsList = new ArrayList<>();
@@ -1565,6 +1565,7 @@ public class MainActivity extends AppCompatActivity
                     if (!hasFind) {
                         findAll();
                     }
+
                     if (currentSearchCount < 1) {
                         currentSearchCount = 1;
                     }
@@ -1576,6 +1577,9 @@ public class MainActivity extends AppCompatActivity
                     currentSearchCount--;
                     currentSearchPos = range.end();
                     if (doUseRegexSearchCheckbox.isChecked()) {
+                        if (!matcher.find(range.start())) {
+                            matcher.reset();
+                        }
                         searchOutput.setText(
                                 "目标共出现"
                                         + searchCount
@@ -1598,7 +1602,6 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.searchNext:
                 try {
-                    searchNextClicked = true;
                     String findTarget = searchTarget.getText().toString();
                     String findSrc = searchInput.getText().toString();
                     if (findTarget.isEmpty() || findSrc.isEmpty()) {
@@ -1867,6 +1870,10 @@ public class MainActivity extends AppCompatActivity
         int tempSearchCount = currentSearchCount;
         currentSearchPos = 0;
         currentSearchCount = 0;
+        Pattern tempPattern = pattern;
+        Matcher tempMatcher = matcher;
+        pattern = Pattern.compile(searchTarget.getText().toString());
+        matcher = pattern.matcher(searchInput.getText().toString());
         String findTarget = searchTarget.getText().toString();
         String findSrc = searchInput.getText().toString();
         if (findTarget.isEmpty() || findSrc.isEmpty()) {
@@ -1891,7 +1898,7 @@ public class MainActivity extends AppCompatActivity
                     currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
                     searches.add(
                             new Range(currentSearchPos, currentSearchPos + findTarget.length()));
-                    currentSearchPos++;
+                    currentSearchPos = currentSearchPos + findTarget.length();
                 }
             }
         } else {
@@ -1912,6 +1919,8 @@ public class MainActivity extends AppCompatActivity
         currentSearchPos = tempSearchPos;
         currentSearchCount = tempSearchCount;
         hasFind = true;
+        pattern = tempPattern;
+        matcher = tempMatcher;
     }
 
     private int getCurrentShowingLayoutId() {
@@ -1938,6 +1947,7 @@ public class MainActivity extends AppCompatActivity
             pattern = Pattern.compile(searchTarget.getText().toString());
             matcher = pattern.matcher(searchInput.getText().toString());
             hasFind = false;
+            searches.clear();
         } catch (Exception ignored) {
         }
     }
