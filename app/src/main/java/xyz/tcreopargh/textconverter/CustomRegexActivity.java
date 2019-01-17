@@ -3,6 +3,8 @@ package xyz.tcreopargh.textconverter;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -130,7 +132,6 @@ public class CustomRegexActivity extends AppCompatActivity {
                         showCustomDialog(false, position);
                     }
                 });
-
         recyclerView.setSwipeItemClickListener(
                 (itemView, position) -> {
                     if (selectionMode) {
@@ -252,6 +253,22 @@ public class CustomRegexActivity extends AppCompatActivity {
                             dialog.dismiss();
                         })
                 .setListener(R.id.cancelAddRegex, v -> dialog.dismiss())
+            .setListener(R.id.copyRegex, v -> {
+                ClipboardManager clipboardManager =
+                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData mClipData =
+                    ClipData.newPlainText(
+                        "TextConverter_Custom_Regex",
+                        regexValueBox.getText().toString());
+                clipboardManager.setPrimaryClip(mClipData);
+                Toasty.success(
+                    CustomRegexActivity.this,
+                    "已复制到剪贴板",
+                    Toast.LENGTH_SHORT,
+                    true)
+                    .show();
+                dialog.dismiss();
+            })
                 .create()
                 .show();
     }

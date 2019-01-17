@@ -52,6 +52,16 @@
         app:layout_constraintTop_toBottomOf="@+id/regexText"/>
 
     <Button
+        android:id="@+id/copyRegex"
+        style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
+        android:layout_width="67dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="4dp"
+        android:text="@string/copy_regex"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/regexText"/>
+    <Button
         android:id="@+id/confirmAddRegex"
         style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
         android:layout_width="67dp"

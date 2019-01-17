@@ -29,6 +29,7 @@ package xyz.tcreopargh.textconverter;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -122,6 +123,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
@@ -2574,6 +2576,13 @@ public class MainActivity extends AppCompatActivity
         // 17
         ListItems stringTrim = new ListItems("去除两端空白字符", "去除字符串两端的空白字符，包括回车、空格等");
         itemsList.add(stringTrim);
+        // 18
+        ListItems escapeEverything =
+                new ListItems("各种转义/反转义", "可转义或反转义HTML、XML、JSON、Java、CSV、ECMAScript");
+        itemsList.add(escapeEverything);
+        // 19
+        ListItems parseRegex = new ListItems("正则表达式转义", "将正则表达式使用的特殊字符转为其原本的含义");
+        itemsList.add(parseRegex);
     }
 
     @SuppressLint("SetTextI18n")
@@ -3650,7 +3659,150 @@ public class MainActivity extends AppCompatActivity
                                                     trimInput.trim(), BufferType.EDITABLE);
                                             break;
 
+                                        case 18: // escape Everything
+                                            String escapeInput = moreInput.getText().toString();
+                                            final String[] escapeOutput = {""};
+                                            AlertDialog.Builder builder =
+                                                    new AlertDialog.Builder(this);
+                                            builder.setIcon(R.drawable.ic_launcher_round)
+                                                    .setTitle("选择操作")
+                                                    .setItems(
+                                                            new String[] {
+                                                                "HTML转义",
+                                                                "HTML反转义",
+                                                                "XML转义",
+                                                                "XML反转义",
+                                                                "JSON转义",
+                                                                "JSON反转义",
+                                                                "Java转义",
+                                                                "Java反转义",
+                                                                "CSV转义",
+                                                                "CSV反转义",
+                                                                "ECMAScript转义",
+                                                                "ECMAScript反转义"
+                                                            },
+                                                            (dialog13, which) -> {
+                                                                try {
+                                                                    switch (which) {
+                                                                        case 0:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .escapeHtml4(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 1:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .unescapeHtml4(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 2:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .escapeXml11(
+                                                                                                    escapeInput);
+                                                                            break;
+
+                                                                        case 3:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .unescapeXml(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 4:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .escapeJson(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 5:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .unescapeJson(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 6:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .escapeJava(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 7:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .unescapeJava(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 8:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .escapeCsv(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 9:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .unescapeCsv(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 10:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .escapeEcmaScript(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                        case 11:
+                                                                            escapeOutput[0] =
+                                                                                    StringEscapeUtils
+                                                                                            .unescapeEcmaScript(
+                                                                                                    escapeInput);
+                                                                            break;
+                                                                    }
+                                                                    moreOutput.setText(
+                                                                            escapeOutput[0],
+                                                                            BufferType.EDITABLE);
+                                                                } catch (Exception e) {
+                                                                    moreOutput.setText(
+                                                                            getString(
+                                                                                            R.string
+                                                                                                    .exception_occurred)
+                                                                                    + e.toString(),
+                                                                            BufferType.EDITABLE);
+                                                                } finally {
+                                                                    moreInput.clearFocus();
+                                                                    moreOutput.clearFocus();
+                                                                }
+                                                            })
+                                                    .create()
+                                                    .show();
+                                            break;
+
+                                        case 19: // parse Regex
+                                            try {
+                                                String regexParseInput =
+                                                        moreInput.getText().toString();
+                                                for (String key : fbsArr) {
+                                                    if (regexParseInput.contains(key)) {
+                                                        regexParseInput =
+                                                                regexParseInput.replace(
+                                                                        key, "\\" + key);
+                                                    }
+                                                }
+                                                moreOutput.setText(
+                                                        regexParseInput, BufferType.EDITABLE);
+                                            } catch (Exception e) {
+                                                moreOutput.setText(
+                                                        getString(R.string.exception_occurred)
+                                                                + e.toString(),
+                                                        BufferType.EDITABLE);
+                                            } finally {
+                                                moreInput.clearFocus();
+                                                moreOutput.clearFocus();
+                                            }
+                                            break;
+
                                         default:
+                                            break;
                                     }
                                     dialog.dismiss();
                                 })
@@ -3687,7 +3839,13 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.textShuffleLayout:
-                Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
+                shuffleInput.setText(regex, BufferType.EDITABLE);
+                Toasty.warning(
+                                MainActivity.this,
+                                "当前界面似乎不需要正则表达式？已将其载入到输入框中",
+                                Toast.LENGTH_LONG,
+                                true)
+                        .show();
                 break;
 
             case R.id.textSearchLayout:
@@ -3702,7 +3860,13 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.textMoreLayout:
-                Toasty.warning(MainActivity.this, "当前界面不需要正则表达式！", Toast.LENGTH_LONG, true).show();
+                moreInput.setText(regex, BufferType.EDITABLE);
+                Toasty.warning(
+                                MainActivity.this,
+                                "当前界面似乎不需要正则表达式？已将其载入到输入框中",
+                                Toast.LENGTH_LONG,
+                                true)
+                        .show();
                 break;
 
             default:

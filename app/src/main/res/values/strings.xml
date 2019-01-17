@@ -197,4 +197,5 @@
     <string name="select_programming_language">选择语言</string>
     <string name="reset_search_result">重置搜索结果</string>
     <string name="function_menu">功能菜单</string>
+    <string name="copy_regex">复制</string>
 </resources>

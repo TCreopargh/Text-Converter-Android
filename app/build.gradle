@@ -28,6 +28,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'org.apache.commons:commons-text:1.1'
     implementation 'com.github.florent37:viewtooltip:1.2.1'
     implementation 'com.github.didikee:AndroidDonate:0.1.0'
     implementation 'info.debatty:java-string-similarity:0.13'

@@ -534,6 +534,26 @@ public class AboutActivity extends AppCompatActivity {
                                                                                     .addLicense(
                                                                                             License
                                                                                                     .MIT)
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "ViewTooltip")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .setWebsite(
+                                                                                            "https://github.com/florent37/ViewTooltip")
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright 2017 Florent37, Inc.")
+                                                                                    .build(),
+                                                                            new Attribution.Builder(
+                                                                                            "Apache Commons Text")
+                                                                                    .setWebsite(
+                                                                                            "https://commons.apache.org/proper/commons-text/")
+                                                                                    .addLicense(
+                                                                                            License
+                                                                                                    .APACHE)
+                                                                                    .addCopyrightNotice(
+                                                                                            "Copyright © 2019 The Apache Software Foundation.")
                                                                                     .build())
                                                                     .build();
                                                     attributionPresenter.showDialog("开源许可");
