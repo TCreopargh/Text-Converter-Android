@@ -43,8 +43,6 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -56,6 +54,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -73,6 +72,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.github.florent37.viewtooltip.ViewTooltip;
+import com.github.florent37.viewtooltip.ViewTooltip.Position;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -126,7 +127,9 @@ import org.w3c.tidy.Tidy;
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                View.OnClickListener,
+                View.OnLongClickListener {
 
     public static final String defaultSalt = "Powered by TCreopargh!";
     public static boolean keyGenNeedToReset = true;
@@ -176,12 +179,11 @@ public class MainActivity extends AppCompatActivity
     EditText shuffleInput;
     EditText shuffleOutput;
     CheckBox noUseSpaces;
-    Button searchReset, searchPrevious, searchNext, searchAll;
+    ImageButton searchReset, searchPrevious, searchNext, searchAll;
     EditText searchInput, searchOutput, searchTarget;
     CheckBox doUseRegexSearchCheckbox;
     Button encrypt, decrypt;
     EditText encryptInput, encryptOutput, encryptKey;
-    CheckBox doPasswordVisible;
     EditText moreInput, moreOutput;
     Button openMoreMenu;
     FloatingTextButton moreFab;
@@ -522,6 +524,12 @@ public class MainActivity extends AppCompatActivity
             editor.apply();
         }
 
+        try {
+            navigationView.setCheckedItem(getCheckedDrawerItemId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         doUseRegexSearchCheckbox.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
                     resetSearch();
@@ -635,17 +643,6 @@ public class MainActivity extends AppCompatActivity
                                         R.string.i_know, v -> lovelyStandardDialog.dismiss())
                                 .create()
                                 .show();
-                    }
-                });
-
-        doPasswordVisible.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> {
-                    if (isChecked) {
-                        encryptKey.setTransformationMethod(
-                                HideReturnsTransformationMethod.getInstance());
-                    } else {
-                        encryptKey.setTransformationMethod(
-                                PasswordTransformationMethod.getInstance());
                     }
                 });
 
@@ -875,11 +872,9 @@ public class MainActivity extends AppCompatActivity
                     final String bufferEncryptInput = encryptInput.getText().toString();
                     final String bufferEncryptOutput = encryptOutput.getText().toString();
                     final String bufferEncryptKey = encryptKey.getText().toString();
-                    final boolean bufferDoPasswordVisible = doPasswordVisible.isChecked();
                     encryptInput.setText("");
                     encryptOutput.setText("");
                     encryptKey.setText("");
-                    doPasswordVisible.setChecked(false);
                     Snacky.builder()
                             .setView(mainContext)
                             .setText(R.string.cleared)
@@ -893,7 +888,6 @@ public class MainActivity extends AppCompatActivity
                                                 bufferEncryptOutput, TextView.BufferType.EDITABLE);
                                         encryptKey.setText(
                                                 bufferEncryptKey, TextView.BufferType.EDITABLE);
-                                        doPasswordVisible.setChecked(bufferDoPasswordVisible);
                                     })
                             .success()
                             .show();
@@ -1294,7 +1288,6 @@ public class MainActivity extends AppCompatActivity
         encryptInput = findViewById(R.id.encryptInput);
         encryptKey = findViewById(R.id.encryptKey);
         encrypt = findViewById(R.id.encrypt);
-        doPasswordVisible = findViewById(R.id.doPasswordVisible);
         decrypt = findViewById(R.id.decrypt);
 
         textMoreLayout = findViewById(R.id.textMoreLayout);
@@ -1318,6 +1311,11 @@ public class MainActivity extends AppCompatActivity
         encrypt.setOnClickListener(this);
         decrypt.setOnClickListener(this);
         openMoreMenu.setOnClickListener(this);
+
+        searchReset.setOnLongClickListener(this);
+        searchAll.setOnLongClickListener(this);
+        searchPrevious.setOnLongClickListener(this);
+        searchNext.setOnLongClickListener(this);
     }
 
     @SuppressLint("SetTextI18n")
@@ -3708,6 +3706,70 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             default:
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.searchReset:
+                ViewTooltip.on(MainActivity.this, mainContext, v)
+                        .autoHide(true, 2000)
+                        .corner(30)
+                        .color(R.color.colorAccentAlpha)
+                        .withShadow(true)
+                        .position(Position.TOP)
+                        .text(R.string.reset_search_result)
+                        .show();
+                break;
+            case R.id.searchAll:
+                ViewTooltip.on(MainActivity.this, mainContext, v)
+                        .corner(30)
+                        .autoHide(true, 2000)
+                        .color(R.color.colorAccentAlpha)
+                        .withShadow(true)
+                        .position(Position.TOP)
+                        .text(R.string.search_all)
+                        .show();
+                break;
+            case R.id.searchPrevious:
+                ViewTooltip.on(MainActivity.this, mainContext, v)
+                        .corner(30)
+                        .autoHide(true, 2000)
+                        .color(R.color.colorAccentAlpha)
+                        .withShadow(true)
+                        .position(Position.TOP)
+                        .text(R.string.search_previous)
+                        .show();
+                break;
+            case R.id.searchNext:
+                ViewTooltip.on(MainActivity.this, mainContext, v)
+                        .corner(30)
+                        .autoHide(true, 2000)
+                        .color(R.color.colorAccentAlpha)
+                        .withShadow(true)
+                        .position(Position.TOP)
+                        .text(R.string.search_next)
+                        .show();
+                break;
+        }
+        return true;
+    }
+
+    private int getCheckedDrawerItemId() throws Exception {
+        switch (getCurrentShowingLayoutId()) {
+            case R.id.textReplaceLayout:
+                return R.id.nav_text_replace;
+            case R.id.textSearchLayout:
+                return R.id.nav_text_search;
+            case R.id.textShuffleLayout:
+                return R.id.nav_text_shuffle;
+            case R.id.textEncryptLayout:
+                return R.id.nav_text_encrypt;
+            case R.id.textMoreLayout:
+                return R.id.nav_more_functions;
+            default:
+                throw new Exception("Unknown Exception");
         }
     }
 }

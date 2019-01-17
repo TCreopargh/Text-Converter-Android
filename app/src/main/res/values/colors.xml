@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#03a9f4</color>
     <color name="colorPrimaryDark">#007ac1</color>
-    <color name="colorAccent">#ef5350</color>x
+    <color name="colorAccent">#ef5350</color>
+    <color name="colorAccentAlpha">#ffef5350</color>
     <color name="colorAllWhite">#ffffff</color>
     <color name="warningYellow">#fbc02d</color>
     <color name="settingsGrey">#546e7a</color>
@@ -11,4 +12,7 @@
     <color name="warningToast">#ffa900</color>
     <color name="successToast">#388e3c</color>
     <color name="colorRed">#f44336</color>
+    <color name="lightgray">#dddddd</color>
+    <color name="colorBackground">#fafafa</color>
+    <color name="veryLightGray">#efefef</color>
 </resources>

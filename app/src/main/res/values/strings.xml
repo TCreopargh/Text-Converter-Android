@@ -118,7 +118,7 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="uppercase_sensitive">区分大小写</string>
-    <string name="input_password">输入密钥</string>
+    <string name="input_password">密钥</string>
     <string name="encrypt">加密</string>
     <string name="decrypt">解密</string>
     <string name="password_visible">使密钥可见</string>
@@ -195,4 +195,6 @@
     <string name="do_check_clipboard">进入应用时检查剪贴板</string>
     <string name="encoding">编码格式</string>
     <string name="select_programming_language">选择语言</string>
+    <string name="reset_search_result">重置搜索结果</string>
+    <string name="function_menu">功能菜单</string>
 </resources>

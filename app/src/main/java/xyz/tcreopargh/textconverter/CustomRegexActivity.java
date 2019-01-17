@@ -65,6 +65,7 @@ public class CustomRegexActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_custom_regex);
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
 
         selectionMode = getIntent().getBooleanExtra("selectionMode", false);
