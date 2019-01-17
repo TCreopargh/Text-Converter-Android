@@ -21,7 +21,7 @@ public class Range {
         return end - start + 1;
     }
 
-    public boolean checkLegality() {
+    public boolean isLegal() {
         return end >= start;
     }
 }

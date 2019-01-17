@@ -40,6 +40,13 @@
             android:title="@string/do_check_clipboard"
             app:iconSpaceReserved="false"
             />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="doOpenWithUtf8"
+            android:summary="不进行编码自动判断，总是以UTF-8编码打开文件"
+            android:title="总是以UTF-8编码打开文件"
+            app:iconSpaceReserved="false"
+            />
         <Preference
             android:key="saltItem"
             android:summary="对AES加密功能设置盐值，点击以查看详情"

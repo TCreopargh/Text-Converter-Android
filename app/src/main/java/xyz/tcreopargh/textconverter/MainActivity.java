@@ -1579,6 +1579,7 @@ public class MainActivity extends AppCompatActivity
                         currentSearchCount = searchCount - currentSearchCount + 2;
                     }
                     Range range = searches.get(currentSearchCount - 2);
+                    searchInput.requestFocus();
                     searchInput.setSelection(range.start(), range.end());
                     currentSearchCount--;
                     currentSearchPos = range.end();
@@ -1992,30 +1993,28 @@ public class MainActivity extends AppCompatActivity
             }
             if (requestCode == REQUESTCODE_READ) {
                 String getFileContent = readToString(path);
-                if (getFileContent != null) {
-                    switch (getCurrentShowingLayoutId()) {
-                        case R.id.textReplaceLayout:
-                            replaceInput.setText(getFileContent, BufferType.EDITABLE);
-                            break;
+                switch (getCurrentShowingLayoutId()) {
+                    case R.id.textReplaceLayout:
+                        replaceInput.setText(getFileContent, BufferType.EDITABLE);
+                        break;
 
-                        case R.id.textSearchLayout:
-                            searchInput.setText(getFileContent, BufferType.EDITABLE);
-                            break;
+                    case R.id.textSearchLayout:
+                        searchInput.setText(getFileContent, BufferType.EDITABLE);
+                        break;
 
-                        case R.id.textShuffleLayout:
-                            shuffleInput.setText(getFileContent, BufferType.EDITABLE);
-                            break;
+                    case R.id.textShuffleLayout:
+                        shuffleInput.setText(getFileContent, BufferType.EDITABLE);
+                        break;
 
-                        case R.id.textEncryptLayout:
-                            encryptInput.setText(getFileContent, BufferType.EDITABLE);
-                            break;
+                    case R.id.textEncryptLayout:
+                        encryptInput.setText(getFileContent, BufferType.EDITABLE);
+                        break;
 
-                        case R.id.textMoreLayout:
-                            moreInput.setText(getFileContent, BufferType.EDITABLE);
-                            break;
+                    case R.id.textMoreLayout:
+                        moreInput.setText(getFileContent, BufferType.EDITABLE);
+                        break;
 
-                        default:
-                    }
+                    default:
                 }
             } else if (requestCode == REQUESTCODE_WRITE) {
                 if (path.isEmpty()) {
@@ -2076,7 +2075,7 @@ public class MainActivity extends AppCompatActivity
         fos.close();
     }
 
-    public String readToString(String fileName) {
+    private String readToString(String fileName) {
 
         File file = new File(fileName);
 
@@ -2086,16 +2085,23 @@ public class MainActivity extends AppCompatActivity
         detector.add(ASCIIDetector.getInstance());
         detector.add(UnicodeDetector.getInstance());
         java.nio.charset.Charset charset = null;
-        try {
-            charset = detector.detectCodepage(file.toURI().toURL());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        if (charset != null) {
-            encoding = charset.name();
-        }
-        if (encoding.equals("US-ASCII")) {
+        SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean doAlwaysUtf8 = sharedPreferences.getBoolean("doOpenWithUtf8", false);
+
+        if (doAlwaysUtf8) {
             encoding = "UTF-8";
+        } else {
+            try {
+                charset = detector.detectCodepage(file.toURI().toURL());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (charset != null) {
+                encoding = charset.name();
+            }
+            if (encoding.equals("US-ASCII")) {
+                encoding = "UTF-8";
+            }
         }
         if (!encoding.equals("UTF-8")) {
             Toasty.warning(MainActivity.this, "当前文件编码格式为: " + encoding, Toast.LENGTH_LONG).show();
@@ -2112,7 +2118,7 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return "读取文件失败！";
         }
         try {
             return new String(filecontent, encoding);
@@ -2120,7 +2126,7 @@ public class MainActivity extends AppCompatActivity
             Toasty.error(MainActivity.this, "抱歉，本系统不支持以下编码格式：" + encoding, Toast.LENGTH_LONG)
                     .show();
             e.printStackTrace();
-            return null;
+            return "读取文件失败！";
         }
     }
 
@@ -2567,6 +2573,9 @@ public class MainActivity extends AppCompatActivity
                 new ListItems(
                         getString(R.string.format_java_code), getString(R.string.format_java_disc));
         itemsList.add(formatJava);
+        // 17
+        ListItems stringTrim = new ListItems("去除两端空白字符", "去除字符串两端的空白字符，包括回车、空格等");
+        itemsList.add(stringTrim);
     }
 
     @SuppressLint("SetTextI18n")
@@ -3635,6 +3644,12 @@ public class MainActivity extends AppCompatActivity
                                                 moreOutput.clearFocus();
                                                 moreInput.clearFocus();
                                             }
+                                            break;
+
+                                        case 17: // String Trim
+                                            String trimInput = moreInput.getText().toString();
+                                            moreOutput.setText(
+                                                    trimInput.trim(), BufferType.EDITABLE);
                                             break;
 
                                         default:
