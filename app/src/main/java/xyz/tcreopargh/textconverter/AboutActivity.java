@@ -243,7 +243,7 @@ public class AboutActivity extends AppCompatActivity {
                                                                             .HORIZONTAL);
                                                     lovelyStandardDialog1
                                                             .setTitle("向我捐赠")
-                                                            .setTopColorRes(R.color.safeGreen)
+                                                            .setTopColorRes(R.color.mdMagenta)
                                                             .setIcon(
                                                                     R.drawable
                                                                             .ic_attach_money_white_48dp)

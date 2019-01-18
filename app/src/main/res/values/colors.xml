@@ -15,4 +15,8 @@
     <color name="lightgray">#dddddd</color>
     <color name="colorBackground">#fafafa</color>
     <color name="veryLightGray">#efefef</color>
+    <color name="mdIndigo">#3f51b5</color>
+    <color name="mdPurple">#9c27b0</color>
+    <color name="mdBrown">#795548</color>
+    <color name="mdMagenta">#e91e63</color>
 </resources>

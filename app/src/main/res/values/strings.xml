@@ -198,4 +198,12 @@
     <string name="reset_search_result">重置搜索结果</string>
     <string name="function_menu">功能菜单</string>
     <string name="copy_regex">复制</string>
+    <string name="_6">6</string>
+    <string name="_12">12</string>
+    <string name="start_code_point">起始码位</string>
+    <string name="end_code_point">终止码位</string>
+    <string name="min_length">最小长度</string>
+    <string name="max_length">最大长度</string>
+    <string name="_1">1</string>
+    <string name="_cancel_zh">取消</string>
 </resources>

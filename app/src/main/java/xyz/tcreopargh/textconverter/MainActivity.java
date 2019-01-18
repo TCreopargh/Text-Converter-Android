@@ -124,6 +124,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
@@ -342,52 +343,6 @@ public class MainActivity extends AppCompatActivity
         adapter = new ToolboxAdapter(MainActivity.this, R.layout.list_layout, itemsList);
         initList();
 
-        Intent intent1 = getIntent();
-        if (Intent.ACTION_SEND.equals(intent1.getAction()) && intent1.getType() != null) {
-            String content = "";
-            if (intent1.getStringExtra(Intent.EXTRA_TEXT) != null) {
-                content = intent1.getStringExtra(Intent.EXTRA_TEXT);
-            } else if (intent1.getStringExtra(Intent.EXTRA_TITLE) != null) {
-                String pathStr = intent1.getStringExtra(Intent.EXTRA_TITLE);
-                if (pathStr.matches("^([/] [\\w-]+)*$")) {
-                    content = readToString(pathStr);
-                } else {
-                    content = pathStr;
-                }
-            }
-            if (content.length() < 100 * 1024) {
-                replaceInput.setText(content);
-                searchInput.setText(content);
-                shuffleInput.setText(content);
-                encryptInput.setText(content);
-                moreInput.setText(content);
-                Snacky.builder()
-                        .setView(mainContext)
-                        .setDuration(Snacky.LENGTH_SHORT)
-                        .setText("操作成功")
-                        .setActionText(R.string.undo)
-                        .setActionClickListener(
-                                v12 -> {
-                                    replaceInput.setText("");
-                                    searchInput.setText("");
-                                    shuffleInput.setText("");
-                                    encryptInput.setText("");
-                                    moreInput.setText("");
-                                })
-                        .success()
-                        .show();
-            } else {
-                Snacky.builder()
-                        .setView(mainContext)
-                        .setDuration(Snacky.LENGTH_LONG)
-                        .setText("操作失败：内容过长")
-                        .setActionText(R.string.confirm)
-                        .setActionClickListener(v1 -> {})
-                        .error()
-                        .show();
-            }
-        }
-
         if (settingsBoolean[4]) {
             try {
                 ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -439,6 +394,64 @@ public class MainActivity extends AppCompatActivity
                 }
             } catch (Exception ignored) {
 
+            }
+        }
+
+        Intent intent1 = getIntent();
+        if (Intent.ACTION_SEND.equals(intent1.getAction()) && intent1.getType() != null) {
+            String content = "";
+            if (intent1.getStringExtra(Intent.EXTRA_TEXT) != null) {
+                content = intent1.getStringExtra(Intent.EXTRA_TEXT);
+            } else if (intent1.getStringExtra(Intent.EXTRA_TITLE) != null) {
+                String pathStr = intent1.getStringExtra(Intent.EXTRA_TITLE);
+                if (pathStr.matches("^([/] [\\w-]+)*$")) {
+                    content = readToString(pathStr);
+                } else {
+                    content = pathStr;
+                }
+            }
+            if (content == null || content.length() < 100 * 1024) {
+                if (content != null) {
+                    replaceInput.setText(content);
+                    searchInput.setText(content);
+                    shuffleInput.setText(content);
+                    encryptInput.setText(content);
+                    moreInput.setText(content);
+
+                    Snacky.builder()
+                            .setView(mainContext)
+                            .setDuration(Snacky.LENGTH_SHORT)
+                            .setText("接收内容成功")
+                            .setActionText(R.string.undo)
+                            .setActionClickListener(
+                                    v12 -> {
+                                        replaceInput.setText("");
+                                        searchInput.setText("");
+                                        shuffleInput.setText("");
+                                        encryptInput.setText("");
+                                        moreInput.setText("");
+                                    })
+                            .success()
+                            .show();
+                } else {
+                    Snacky.builder()
+                            .setView(mainContext)
+                            .setDuration(Snacky.LENGTH_LONG)
+                            .setText("操作失败：读取文件时出现错误")
+                            .setActionText(R.string.confirm)
+                            .setActionClickListener(v1 -> {})
+                            .error()
+                            .show();
+                }
+            } else {
+                Snacky.builder()
+                        .setView(mainContext)
+                        .setDuration(Snacky.LENGTH_LONG)
+                        .setText("操作失败：内容过长")
+                        .setActionText(R.string.confirm)
+                        .setActionClickListener(v1 -> {})
+                        .error()
+                        .show();
             }
         }
 
@@ -1993,28 +2006,30 @@ public class MainActivity extends AppCompatActivity
             }
             if (requestCode == REQUESTCODE_READ) {
                 String getFileContent = readToString(path);
-                switch (getCurrentShowingLayoutId()) {
-                    case R.id.textReplaceLayout:
-                        replaceInput.setText(getFileContent, BufferType.EDITABLE);
-                        break;
+                if (getFileContent != null) {
+                    switch (getCurrentShowingLayoutId()) {
+                        case R.id.textReplaceLayout:
+                            replaceInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textSearchLayout:
-                        searchInput.setText(getFileContent, BufferType.EDITABLE);
-                        break;
+                        case R.id.textSearchLayout:
+                            searchInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textShuffleLayout:
-                        shuffleInput.setText(getFileContent, BufferType.EDITABLE);
-                        break;
+                        case R.id.textShuffleLayout:
+                            shuffleInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textEncryptLayout:
-                        encryptInput.setText(getFileContent, BufferType.EDITABLE);
-                        break;
+                        case R.id.textEncryptLayout:
+                            encryptInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    case R.id.textMoreLayout:
-                        moreInput.setText(getFileContent, BufferType.EDITABLE);
-                        break;
+                        case R.id.textMoreLayout:
+                            moreInput.setText(getFileContent, BufferType.EDITABLE);
+                            break;
 
-                    default:
+                        default:
+                    }
                 }
             } else if (requestCode == REQUESTCODE_WRITE) {
                 if (path.isEmpty()) {
@@ -2118,7 +2133,7 @@ public class MainActivity extends AppCompatActivity
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return "读取文件失败！";
+            return null;
         }
         try {
             return new String(filecontent, encoding);
@@ -2126,7 +2141,7 @@ public class MainActivity extends AppCompatActivity
             Toasty.error(MainActivity.this, "抱歉，本系统不支持以下编码格式：" + encoding, Toast.LENGTH_LONG)
                     .show();
             e.printStackTrace();
-            return "读取文件失败！";
+            return null;
         }
     }
 
@@ -2298,7 +2313,7 @@ public class MainActivity extends AppCompatActivity
                         MainActivity.this,
                         ":-p",
                         R.drawable.ic_check_white_48dp,
-                        getColor(R.color.colorAccent),
+                        getColor(R.color.mdPurple),
                         Toast.LENGTH_LONG,
                         false,
                         true)
@@ -2583,6 +2598,9 @@ public class MainActivity extends AppCompatActivity
         // 19
         ListItems parseRegex = new ListItems("正则表达式转义", "将正则表达式使用的特殊字符转为其原本的含义");
         itemsList.add(parseRegex);
+        // 20
+        ListItems randString = new ListItems("生成随机字符串", "依据指定的码位、长度批量生成随机字符的字符串");
+        itemsList.add(randString);
     }
 
     @SuppressLint("SetTextI18n")
@@ -3333,7 +3351,7 @@ public class MainActivity extends AppCompatActivity
                                                     .setView(dialogView)
                                                     .setCancelable(false)
                                                     .setTitle(R.string.text_random)
-                                                    .setTopColorRes(R.color.colorPrimary)
+                                                    .setTopColorRes(R.color.mdIndigo)
                                                     .setIcon(
                                                             R.drawable
                                                                     .ic_format_list_numbered_white_24dp)
@@ -3586,8 +3604,7 @@ public class MainActivity extends AppCompatActivity
                                                                         .setTitle(outputType[0])
                                                                         .setMessage(outputValue[0])
                                                                         .setTopColorRes(
-                                                                                R.color
-                                                                                        .colorPrimary)
+                                                                                R.color.mdBrown)
                                                                         .setIcon(
                                                                                 R.drawable
                                                                                         .ic_text_fields_white_48dp)
@@ -3799,6 +3816,185 @@ public class MainActivity extends AppCompatActivity
                                                 moreInput.clearFocus();
                                                 moreOutput.clearFocus();
                                             }
+                                            break;
+                                        case 20:
+                                            LovelyCustomDialog randStrDialog =
+                                                    new LovelyCustomDialog(this);
+                                            randStrDialog
+                                                    .setView(R.layout.random_string_dialog)
+                                                    .setIcon(R.drawable.ic_shuffle_white_48dp)
+                                                    .setTopColorRes(R.color.mdPurple)
+                                                    .setTitle("生成随机字符串")
+                                                    .configureView(
+                                                            v -> {
+                                                                EditText startPointBox =
+                                                                        v.findViewById(
+                                                                                R.id.startPoint);
+                                                                EditText endPointBox =
+                                                                        v.findViewById(
+                                                                                R.id.endPoint);
+                                                                EditText minLengthBox =
+                                                                        v.findViewById(
+                                                                                R.id.minLength);
+                                                                EditText maxLengthBox =
+                                                                        v.findViewById(
+                                                                                R.id.maxLength);
+                                                                EditText randQuantityBox =
+                                                                        v.findViewById(
+                                                                                R.id.randTextQuantity);
+                                                                Button confirm =
+                                                                        v.findViewById(
+                                                                                R.id.confirmTextRand);
+                                                                Button dismiss =
+                                                                        v.findViewById(
+                                                                                R.id.cancelTextRand);
+                                                                startPointBox.setText(
+                                                                        "0", BufferType.EDITABLE);
+                                                                endPointBox.setText(
+                                                                        "z", BufferType.EDITABLE);
+                                                                minLengthBox.setText(
+                                                                        "6", BufferType.EDITABLE);
+                                                                maxLengthBox.setText(
+                                                                        "18", BufferType.EDITABLE);
+                                                                confirm.setOnClickListener(
+                                                                        v18 -> {
+                                                                            try {
+                                                                                if (startPointBox
+                                                                                                .getText()
+                                                                                                .toString()
+                                                                                                .isEmpty()
+                                                                                        || endPointBox
+                                                                                                .getText()
+                                                                                                .toString()
+                                                                                                .isEmpty()) {
+                                                                                    throw new NumberFormatException(
+                                                                                            "Empty Input");
+                                                                                }
+                                                                                char startPoint =
+                                                                                        startPointBox
+                                                                                                .getText()
+                                                                                                .toString()
+                                                                                                .charAt(
+                                                                                                        0);
+                                                                                char endPoint =
+                                                                                        endPointBox
+                                                                                                .getText()
+                                                                                                .toString()
+                                                                                                .charAt(
+                                                                                                        0);
+                                                                                int minLength =
+                                                                                        Integer
+                                                                                                .parseInt(
+                                                                                                        minLengthBox
+                                                                                                                .getText()
+                                                                                                                .toString());
+                                                                                int maxLength =
+                                                                                        Integer
+                                                                                                .parseInt(
+                                                                                                        maxLengthBox
+                                                                                                                .getText()
+                                                                                                                .toString());
+                                                                                int randQuantity =
+                                                                                        Integer
+                                                                                                .parseInt(
+                                                                                                        randQuantityBox
+                                                                                                                        .getText()
+                                                                                                                        .toString()
+                                                                                                                        .isEmpty()
+                                                                                                                ? "1"
+                                                                                                                : randQuantityBox
+                                                                                                                        .getText()
+                                                                                                                        .toString());
+                                                                                if (endPoint
+                                                                                        < startPoint) {
+                                                                                    throw new IllegalArgumentException(
+                                                                                            "起始码位应小于终止码位");
+                                                                                }
+                                                                                if (maxLength
+                                                                                        < minLength) {
+                                                                                    throw new IllegalArgumentException(
+                                                                                            "最小长度应小于最大长度");
+                                                                                }
+                                                                                RandomStringGenerator
+                                                                                        generator =
+                                                                                                new RandomStringGenerator
+                                                                                                                .Builder()
+                                                                                                        .withinRange(
+                                                                                                                startPoint,
+                                                                                                                endPoint)
+                                                                                                        .build();
+                                                                                Random random =
+                                                                                        new Random();
+                                                                                StringBuilder
+                                                                                        output =
+                                                                                                new StringBuilder();
+                                                                                for (int i = 0;
+                                                                                        i
+                                                                                                < randQuantity;
+                                                                                        i++) {
+                                                                                    int length =
+                                                                                            random
+                                                                                                            .nextInt(
+                                                                                                                    maxLength
+                                                                                                                            - minLength
+                                                                                                                            + 1)
+                                                                                                    + minLength;
+                                                                                    String randStr =
+                                                                                            generator
+                                                                                                    .generate(
+                                                                                                            length);
+                                                                                    output.append(
+                                                                                            randStr);
+                                                                                    if (i
+                                                                                            < randQuantity
+                                                                                                    - 1) {
+                                                                                        output
+                                                                                                .append(
+                                                                                                        '\n');
+                                                                                    }
+                                                                                }
+                                                                                moreOutput.setText(
+                                                                                        output
+                                                                                                .toString(),
+                                                                                        BufferType
+                                                                                                .EDITABLE);
+                                                                            } catch (
+                                                                                    NumberFormatException
+                                                                                            e) {
+                                                                                Toasty.error(
+                                                                                                MainActivity
+                                                                                                        .this,
+                                                                                                "输入内容为空或格式错误！",
+                                                                                                Toast
+                                                                                                        .LENGTH_LONG)
+                                                                                        .show();
+                                                                            } catch (Exception e) {
+                                                                                moreOutput.setText(
+                                                                                        getString(
+                                                                                                        R.string
+                                                                                                                .exception_occurred)
+                                                                                                + e
+                                                                                                        .toString(),
+                                                                                        BufferType
+                                                                                                .EDITABLE);
+                                                                            } finally {
+                                                                                moreInput
+                                                                                        .clearFocus();
+                                                                                moreOutput
+                                                                                        .clearFocus();
+                                                                                randStrDialog
+                                                                                        .dismiss();
+                                                                            }
+                                                                        });
+                                                                dismiss.setOnClickListener(
+                                                                        v19 -> {
+                                                                            moreInput.clearFocus();
+                                                                            moreOutput.clearFocus();
+                                                                            randStrDialog.dismiss();
+                                                                        });
+                                                            })
+                                                    .create()
+                                                    .show();
                                             break;
 
                                         default:
