@@ -238,7 +238,7 @@
     <string name="copy_success_1">Success</string>
     <string name="operation_success">Success</string>
     <string name="input_area_count">Character count of the input area:</string>
-    <string name="output_area_count">Character count of the output area:</string>
+    <string name="output_area_count">\nCharacter count of the output area:</string>
     <string name="retrieve_source_code_from_web">Get source code from URL</string>
     <string name="enter_url">Enter the URL of a website, it will get the source code of the site and fill it into the input box.</string>
     <string name="example_google">Example: www.google.com</string>
@@ -360,7 +360,7 @@
     <string name="reset_failed">Reset failed.</string>
     <string name="aes_add_salt">AES Salt</string>
     <string name="salt_intro">SALT can be used to increase the security of encrypted ciphertext. Leave blank to disable this feature</string>
-    <string name="empty_to_not_use_salt">Leave blank to disable this feature</string>
+    <string name="empty_to_not_use_salt">Leave blank to disable salt</string>
     <string name="reset_default">Reset</string>
     <string name="already_reset">Reseted</string>
     <string name="no_use_salt">Salt is disabled</string>
@@ -368,8 +368,8 @@
     <string name="init_layout_current">Initial view to display on app start\nCurrent: </string>
     <string name="encoding_current">Encoding of output files. Default is suggested\nCurrent: </string>
     <string name="fail_mkdir">Unable to create folders!</string>
-    <string name="more_clicks">\0</string>
-    <string name="unlock_easter_egg">clicks left to enter hard mode!</string>
+    <string name="more_clicks"> </string>
+    <string name="unlock_easter_egg"> clicks left to enter hard mode!</string>
     <string name="version_name">Version Name:</string>
     <string name="hard_mode">Click the button to enter hard mode</string>
     <string name="click_me">ClickME</string>

@@ -238,7 +238,7 @@
     <string name="copy_success_1">複製成功！</string>
     <string name="operation_success">操作成功</string>
     <string name="input_area_count">輸入區字符數:</string>
-    <string name="output_area_count">輸出區字符數:</string>
+    <string name="output_area_count">\n輸出區字符數:</string>
     <string name="retrieve_source_code_from_web">從網頁獲取源碼</string>
     <string name="enter_url">在下面填入網頁Url，系統將從該網頁獲取源碼並填入輸入框</string>
     <string name="example_google">如: www.google.com</string>
