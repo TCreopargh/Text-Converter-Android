@@ -14,11 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.browser.customtabs.CustomTabsIntent.Builder;
 import com.franmontiel.attributionpresenter.AttributionPresenter;
 import com.franmontiel.attributionpresenter.entities.Attribution;
 import com.franmontiel.attributionpresenter.entities.Library;
 import com.franmontiel.attributionpresenter.entities.License;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog.ButtonLayout;
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
 import java.util.Objects;
@@ -60,11 +62,16 @@ public class AboutActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         LinearLayout aboutLayout = findViewById(R.id.aboutLayout);
         final Toast[] toast = {
-            Toasty.info(AboutActivity.this, "还需" + clicks + "次点击即可解锁彩蛋！", Toast.LENGTH_SHORT)
+            Toasty.info(
+                    AboutActivity.this,
+                    getString(R.string.more_clicks)
+                            + clicks
+                            + getString(R.string.unlock_easter_egg),
+                    Toast.LENGTH_SHORT)
         };
         Element versionElement =
                 new Element()
-                        .setTitle("版本号: " + getAppVersionName(this))
+                        .setTitle(getString(R.string.version_name) + getAppVersionName(this))
                         .setOnClickListener(
                                 v -> {
                                     clicks--;
@@ -73,14 +80,18 @@ public class AboutActivity extends AppCompatActivity {
                                         toast[0] =
                                                 Toasty.info(
                                                         AboutActivity.this,
-                                                        "还需" + clicks + "次点击即可解锁彩蛋！");
+                                                        getString(R.string.more_clicks)
+                                                                + clicks
+                                                                + getString(
+                                                                        R.string
+                                                                                .unlock_easter_egg));
                                         toast[0].show();
                                     } else if (clicks == 1) {
                                         Snacky.builder()
                                                 .setActivity(AboutActivity.this)
-                                                .setText("点击右边的按钮即可进入困难模式")
+                                                .setText(getString(R.string.hard_mode))
                                                 .setDuration(Snacky.LENGTH_LONG)
-                                                .setActionText("点我")
+                                                .setActionText(getString(R.string.click_me))
                                                 .setActionClickListener(
                                                         v1 -> {
                                                             Intent intent = new Intent();
@@ -88,7 +99,10 @@ public class AboutActivity extends AppCompatActivity {
                                                             Snacky.builder()
                                                                     .setActivity(AboutActivity.this)
                                                                     .setDuration(Snacky.LENGTH_LONG)
-                                                                    .setText("已进入困难模式，请返回主界面查看")
+                                                                    .setText(
+                                                                            getString(
+                                                                                    R.string
+                                                                                            .in_hard_mode))
                                                                     .centerText()
                                                                     .success()
                                                                     .show();
@@ -101,7 +115,7 @@ public class AboutActivity extends AppCompatActivity {
                                         Snacky.builder()
                                                 .setActivity(AboutActivity.this)
                                                 .setDuration(Snacky.LENGTH_LONG)
-                                                .setText("哈哈哈，你完美错过了彩蛋！")
+                                                .setText(getString(R.string.missed_easter_egg))
                                                 .centerText()
                                                 .error()
                                                 .show();
@@ -111,12 +125,11 @@ public class AboutActivity extends AppCompatActivity {
 
         Element viewMySiteElement =
                 new Element()
-                        .setTitle("我的网站")
+                        .setTitle(getString(R.string.my_website))
                         .setOnClickListener(
                                 v -> {
                                     String url = "https://tcreopargh.xyz";
-                                    CustomTabsIntent.Builder builder =
-                                            new CustomTabsIntent.Builder();
+                                    Builder builder = new Builder();
                                     builder.setToolbarColor(0x2196f3);
                                     CustomTabsIntent customTabsIntent = builder.build();
                                     customTabsIntent.launchUrl(this, Uri.parse(url));
@@ -124,13 +137,12 @@ public class AboutActivity extends AppCompatActivity {
                         .setIconDrawable(R.drawable.about_icon_link);
         Element viewRepo =
                 new Element()
-                        .setTitle("GitHub项目地址")
+                        .setTitle(getString(R.string.github_address))
                         .setOnClickListener(
                                 v -> {
                                     String url =
                                             "https://github.com/TCreopargh/Text-Converter-Android";
-                                    CustomTabsIntent.Builder builder =
-                                            new CustomTabsIntent.Builder();
+                                    Builder builder = new Builder();
                                     builder.setToolbarColor(0x2196f3);
                                     CustomTabsIntent customTabsIntent = builder.build();
                                     customTabsIntent.launchUrl(this, Uri.parse(url));
@@ -138,22 +150,24 @@ public class AboutActivity extends AppCompatActivity {
                         .setIconDrawable(R.drawable.about_icon_github);
         Element sendFeedback =
                 new Element()
-                        .setTitle("发送反馈")
+                        .setTitle(getString(R.string.send_feedback))
                         .setIconDrawable(R.drawable.about_icon_email)
                         .setOnClickListener(
                                 v -> {
                                     try {
                                         Intent intent = new Intent(Intent.ACTION_SENDTO);
                                         intent.setData(Uri.parse("mailto:admin@tcreopargh.xyz"))
-                                                .putExtra(Intent.EXTRA_SUBJECT, "《文本转换》用户反馈")
+                                                .putExtra(
+                                                        Intent.EXTRA_SUBJECT,
+                                                        R.string.feedback_title)
                                                 .putExtra(
                                                         Intent.EXTRA_TEXT,
-                                                        "请在此处附上您遇到问题的详细内容，最好能附上截图。感谢您的反馈。");
+                                                        R.string.feedback_message);
                                         startActivity(intent);
                                     } catch (Exception e) {
                                         Toasty.error(
                                                         AboutActivity.this,
-                                                        "请先安装邮件应用！",
+                                                        R.string.install_mail_first,
                                                         Toast.LENGTH_LONG)
                                                 .show();
                                     }
@@ -161,13 +175,13 @@ public class AboutActivity extends AppCompatActivity {
         View aboutView =
                 new AboutPage(this)
                         .isRTL(false)
-                        .setDescription("文本转换: 好用轻便的文本高级转换工具\n" + "项目编号: Text-Converter-Android")
+                        .setDescription(getString(R.string.about_intro))
                         .setImage(R.drawable.banner_new)
-                        .addGroup("应用信息")
+                        .addGroup(getString(R.string.app_info))
                         .addItem(versionElement)
                         .addItem(
                                 new Element()
-                                        .setTitle("开发者: TCreopargh")
+                                        .setTitle(getString(R.string.developer_me))
                                         .setOnClickListener(
                                                 v ->
                                                         Toasty.custom(
@@ -182,13 +196,13 @@ public class AboutActivity extends AppCompatActivity {
                                                                         false,
                                                                         true)
                                                                 .show()))
-                        .addGroup("相关链接")
+                        .addGroup(getString(R.string.relevant_links))
                         .addItem(viewRepo)
                         .addItem(viewMySiteElement)
                         .addItem(sendFeedback)
                         .addItem(
                                 new Element()
-                                        .setTitle("为我评分")
+                                        .setTitle(getString(R.string.rate_me))
                                         .setIconDrawable(R.drawable.ic_star_border_white_24dp)
                                         .setAutoApplyIconTint(true)
                                         .setOnClickListener(
@@ -196,18 +210,16 @@ public class AboutActivity extends AppCompatActivity {
                                                     LovelyStandardDialog lovelyStandardDialog =
                                                             new LovelyStandardDialog(
                                                                     AboutActivity.this,
-                                                                    LovelyStandardDialog
-                                                                            .ButtonLayout
-                                                                            .HORIZONTAL);
+                                                                    ButtonLayout.HORIZONTAL);
                                                     lovelyStandardDialog
-                                                            .setTitle("为我评分")
+                                                            .setTitle(getString(R.string.rate_me))
                                                             .setTopColorRes(R.color.warningYellow)
                                                             .setIcon(R.drawable.ic_stars_black_24dp)
                                                             .setMessage(
-                                                                    "您的评分将是我继续开发的动力，如果您对此App感到满意，或是发现有不足之处，欢迎留下您的宝贵评论。")
+                                                                    getString(R.string.rate_intro))
                                                             .setButtonsColorRes(R.color.colorAccent)
                                                             .setPositiveButton(
-                                                                    "好的",
+                                                                    getString(R.string.okay),
                                                                     v1 -> {
                                                                         Intent intent =
                                                                                 new Intent(
@@ -221,7 +233,7 @@ public class AboutActivity extends AppCompatActivity {
                                                                                 .dismiss();
                                                                     })
                                                             .setNegativeButton(
-                                                                    "下次吧",
+                                                                    getString(R.string.maybe_later),
                                                                     v1 ->
                                                                             lovelyStandardDialog
                                                                                     .dismiss())
@@ -230,7 +242,7 @@ public class AboutActivity extends AppCompatActivity {
                                                 }))
                         .addItem(
                                 new Element()
-                                        .setTitle("向我捐赠")
+                                        .setTitle(getString(R.string.donate_me))
                                         .setIconDrawable(R.drawable.ic_attach_money_black_24dp)
                                         .setAutoApplyIconTint(true)
                                         .setOnClickListener(
@@ -238,20 +250,19 @@ public class AboutActivity extends AppCompatActivity {
                                                     LovelyStandardDialog lovelyStandardDialog1 =
                                                             new LovelyStandardDialog(
                                                                     AboutActivity.this,
-                                                                    LovelyStandardDialog
-                                                                            .ButtonLayout
-                                                                            .HORIZONTAL);
+                                                                    ButtonLayout.HORIZONTAL);
                                                     lovelyStandardDialog1
-                                                            .setTitle("向我捐赠")
+                                                            .setTitle(getString(R.string.donate_me))
                                                             .setTopColorRes(R.color.mdMagenta)
                                                             .setIcon(
                                                                     R.drawable
                                                                             .ic_attach_money_white_48dp)
                                                             .setMessage(
-                                                                    "本App的开发离不开您的支持。如果您能为我提供一些援助，我将十分感激。")
+                                                                    getString(
+                                                                            R.string.donate_intro))
                                                             .setButtonsColorRes(R.color.colorAccent)
                                                             .setPositiveButton(
-                                                                    "支付宝",
+                                                                    getString(R.string.alipay),
                                                                     v1 -> {
                                                                         String payCode =
                                                                                 "fkx04710ib3jtulb74vfx3b";
@@ -269,7 +280,8 @@ public class AboutActivity extends AppCompatActivity {
                                                                             Toasty.error(
                                                                                             AboutActivity
                                                                                                     .this,
-                                                                                            "请先安装支付宝！",
+                                                                                            R.string
+                                                                                                    .install_alipay_first,
                                                                                             Toast
                                                                                                     .LENGTH_LONG)
                                                                                     .show();
@@ -278,14 +290,12 @@ public class AboutActivity extends AppCompatActivity {
                                                                                 .dismiss();
                                                                     })
                                                             .setNegativeButton(
-                                                                    "微信",
+                                                                    getString(R.string.wechat),
                                                                     v1 -> {
                                                                         String url =
                                                                                 "https://donate.tcreopargh.xyz/";
-                                                                        CustomTabsIntent.Builder
-                                                                                builder =
-                                                                                        new CustomTabsIntent
-                                                                                                .Builder();
+                                                                        Builder builder =
+                                                                                new Builder();
                                                                         builder.setToolbarColor(
                                                                                 0x2196f3);
                                                                         CustomTabsIntent
@@ -299,7 +309,7 @@ public class AboutActivity extends AppCompatActivity {
                                                                                 .dismiss();
                                                                     })
                                                             .setNeutralButton(
-                                                                    "下次吧",
+                                                                    getString(R.string.maybe_later),
                                                                     v1 ->
                                                                             lovelyStandardDialog1
                                                                                     .dismiss())
@@ -308,7 +318,7 @@ public class AboutActivity extends AppCompatActivity {
                                                 }))
                         .addItem(
                                 new Element()
-                                        .setTitle("开源许可")
+                                        .setTitle(getString(R.string.os_libs))
                                         .setIconDrawable(R.drawable.ic_account_balance_black_24dp)
                                         .setAutoApplyIconTint(true)
                                         .setOnClickListener(
@@ -556,7 +566,8 @@ public class AboutActivity extends AppCompatActivity {
                                                                                             "Copyright © 2019 The Apache Software Foundation.")
                                                                                     .build())
                                                                     .build();
-                                                    attributionPresenter.showDialog("开源许可");
+                                                    attributionPresenter.showDialog(
+                                                            getString(R.string.os_libs));
                                                 }))
                         .create();
 

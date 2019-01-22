@@ -113,21 +113,19 @@ public class TextEditActivity extends AppCompatActivity {
                 break;
             case R.id.editHelp:
                 new LovelyInfoDialog(this)
-                        .setTitle("编辑模式")
+                        .setTitle(getString(R.string.edit_mode))
                         .setTopColorRes(R.color.safeGreen)
                         .setIcon(R.drawable.baselinehelpoutline_white)
                         .setMessage(
-                                "编辑模式是专为长文本编辑打造的界面，在这里你可以屏蔽一切干扰，专心编辑文本。\n"
-                                        + "本模式带有撤销和反撤销功能，如需回退之前的界面轻触返回键即可，系统会询问您是否需要保存更改。\n"
-                                        + "设置中的等宽字体和自动换行设置在这里仍然有效。")
-                        .setConfirmButtonText("确定")
+                            getString(R.string.edit_mode_intro))
+                        .setConfirmButtonText(R.string.confirm)
                         .create()
                         .show();
                 break;
             case R.id.changeEncoding:
                 Builder alertDialog = new Builder(TextEditActivity.this);
                 alertDialog
-                        .setTitle("当前编码格式: " + currentCharset)
+                        .setTitle(getString(R.string.encoding_now) + currentCharset)
                         .setIcon(R.mipmap.ic_launcher)
                         .setItems(charsets, (dialog12, which) -> setCharset(charsets[which]))
                         .create()
@@ -147,18 +145,18 @@ public class TextEditActivity extends AppCompatActivity {
             new LovelyStandardDialog(this)
                     .setIcon(R.drawable.ic_save_white_48dp)
                     .setTopColorRes(R.color.settingsGrey)
-                    .setTitle("退出确认")
-                    .setMessage("是否保存所有的更改?")
-                    .setNegativeButton("取消", v -> {})
+                    .setTitle(getString(R.string.confirm_to_exit))
+                    .setMessage(getString(R.string.save_changes_whether))
+                    .setNegativeButton(getString(R.string.cancel_zh), v -> {})
                     .setPositiveButtonColorRes(R.color.colorAccent)
                     .setPositiveButton(
-                            "保存",
+                            getString(R.string.save),
                             v -> {
                                 MainActivity.returnText = verifiedText;
                                 // MainActivity.encoding = currentCharset;
                                 finish();
                             })
-                    .setNeutralButton("放弃更改", v -> finish())
+                    .setNeutralButton(getString(R.string.abandon_changes), v -> finish())
                     .create()
                     .show();
         }
@@ -181,7 +179,7 @@ public class TextEditActivity extends AppCompatActivity {
                     new String(editText.getText().toString().getBytes(currentCharset), newCharset));
             currentCharset = newCharset;
         } catch (UnsupportedEncodingException e) {
-            Toasty.error(this, "当前设备不支持该编码！", Toast.LENGTH_LONG).show();
+            Toasty.error(this, getString(R.string.encoding_not_supported), Toast.LENGTH_LONG).show();
             currentCharset = temp;
         }
     }

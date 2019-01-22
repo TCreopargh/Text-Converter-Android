@@ -3,89 +3,97 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
-        android:title="常规设置"
+        android:title="@string/normal_settings"
         app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="doCapsSensitive"
-            android:summary="此项设置仅在替换、查找不使用正则表达式时有效"
+            android:summary="@string/summary1"
             android:title="@string/uppercase_sensitive"
             app:iconSpaceReserved="false"
             />
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="doUseMonospaced"
-            android:summary="等宽字体更有利于代码阅读，此设置将同样应用于编辑模式"
+            android:summary="@string/summary2"
             android:title="@string/set_monospace"
             app:iconSpaceReserved="false"
             />
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="doLowerCaseMorseCode"
-            android:summary="摩斯电码不区分大小写，这一选项将更改摩斯电码解码后的字母表现形式"
+            android:summary="@string/summary3"
             android:title="@string/morse_lower"
             app:iconSpaceReserved="false"
             />
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="doMultiLine"
-            android:summary="此项设置决定文字超过输入框边界时是否换行显示。如果此项关闭，请左右拖动以查看未显示出来的文字"
+            android:summary="@string/summary4"
             android:title="@string/multi_line"
             app:iconSpaceReserved="false"
             />
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="doCheckClipboard"
-            android:summary="如果剪贴板不为空，则可将剪贴板内容快速粘贴到所有功能页面"
+            android:summary="@string/summary5"
             android:title="@string/do_check_clipboard"
             app:iconSpaceReserved="false"
             />
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="doOpenWithUtf8"
-            android:summary="不进行编码自动判断，总是以UTF-8编码打开文件"
-            android:title="总是以UTF-8编码打开文件"
+            android:summary="@string/summary6"
+            android:title="@string/always_utf8"
             app:iconSpaceReserved="false"
             />
         <Preference
             android:key="saltItem"
-            android:summary="对AES加密功能设置盐值，点击以查看详情"
-            android:title="AES盐值"
+            android:summary="@string/summary7"
+            android:title="@string/aes_salt"
             app:iconSpaceReserved="false"/>
         <Preference
             android:key="storePath"
-            android:summary="文件的存放默认路径和起始位置"
-            android:title="文件默认存放路径"
+            android:summary="@string/summary8"
+            android:title="@string/def_path"
             app:iconSpaceReserved="false"/>
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/layoutArray"
             android:entryValues="@array/layoutValues"
             android:key="initialLayout"
-            android:summary="选择进入应用时首先显示的界面"
-            android:title="初始界面"
+            android:summary="@string/summary9"
+            android:title="@string/init_layout"
             app:iconSpaceReserved="false"/>
         <ListPreference
             android:defaultValue="UTF-8"
             android:entries="@array/encodingArray"
             android:entryValues="@array/encodingValues"
             android:key="outputEncoding"
-            android:summary="选择输出文件的编码格式，建议保持默认"
-            android:title="输出文件编码格式"
+            android:summary="@string/summary10"
+            android:title="@string/output_encoding"
+            app:iconSpaceReserved="false"/>
+        <ListPreference
+            android:defaultValue="auto"
+            android:entries="@array/languageArray"
+            android:entryValues="@array/languageValues"
+            android:key="appLanguage"
+            android:summary="@string/summary13"
+            android:title="@string/set_language"
             app:iconSpaceReserved="false"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="其他"
+        android:title="@string/others"
         app:iconSpaceReserved="false">
         <Preference
             android:key="about"
-            android:summary="查看应用信息"
+            android:summary="@string/summary11"
             android:title="@string/about"
             app:iconSpaceReserved="false"/>
         <Preference
             android:key="resetSettings"
-            android:summary="恢复所有设置到默认状态"
-            android:title="重置设置"
+            android:summary="@string/summary12"
+            android:title="@string/reset_settings"
             app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

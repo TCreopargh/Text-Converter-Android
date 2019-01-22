@@ -37,6 +37,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -76,6 +78,7 @@ import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.github.florent37.viewtooltip.ViewTooltip;
 import com.github.florent37.viewtooltip.ViewTooltip.Position;
 import com.google.android.material.navigation.NavigationView;
+import com.google.googlejavaformat.java.Formatter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -119,10 +122,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import org.w3c.dom.Document;
@@ -151,12 +160,6 @@ public class MainActivity extends AppCompatActivity
     final int REQUESTCODE_WRITE = 2000;
     final boolean settingsBoolean[] = new boolean[] {false, false, false, true, true};
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
-    final String presetsTitle[] =
-            new String[] {
-                "十六进制数值", "电子邮箱", "URL", "IP地址", "整数", "常规数字", "HTML标签", "维基百科注释", "代码注释", "汉字"
-            };
-    final String capsSwitchModes[] =
-            new String[] {"全部转为小写", "全部转为大写", "切换大小写", "单词首字母大写", "句子首字母大写"};
     final String presetsValue[] =
             new String[] {
                 "#?([a-f0-9]{6}|[a-f0-9]{3})",
@@ -212,6 +215,9 @@ public class MainActivity extends AppCompatActivity
     String tempString = "";
     boolean returnFromEditMode = false;
     boolean hasFind = false;
+    private String capsSwitchModes[];
+    private String similarityAlgorithms[];
+    private String pinyinModes[];
     private long clickTime = 0L;
     private List<ListItems> itemsList = new ArrayList<>();
     private List<Range> searches = new ArrayList<>();
@@ -303,6 +309,29 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Resources resources = getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration config = resources.getConfiguration();
+        String newValue =
+                getSharedPreferences("settings", MODE_PRIVATE).getString("appLanguage", "auto");
+        if (newValue != null) {
+            switch (newValue) {
+                case "auto":
+                    config.setLocale(Locale.getDefault());
+                    break;
+                case "en-us":
+                    config.setLocale(Locale.ENGLISH);
+                    break;
+                case "zh-cn":
+                    config.setLocale(Locale.SIMPLIFIED_CHINESE);
+                    break;
+                case "zh-hk":
+                    config.setLocale(Locale.TRADITIONAL_CHINESE);
+                    break;
+            }
+        }
+        resources.updateConfiguration(config, dm);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -343,6 +372,46 @@ public class MainActivity extends AppCompatActivity
         adapter = new ToolboxAdapter(MainActivity.this, R.layout.list_layout, itemsList);
         initList();
 
+        String[] presetsTitle =
+                new String[] {
+                    getString(R.string.hex_dec_value),
+                    getString(R.string.e_mail),
+                    getString(R.string.url),
+                    getString(R.string.IP_address),
+                    getString(R.string.integer_num),
+                    getString(R.string.regular_num),
+                    getString(R.string.html_label),
+                    getString(R.string.wikipedia_notice),
+                    getString(R.string.code_comment),
+                    getString(R.string.chinese_character)
+                };
+        capsSwitchModes =
+                new String[] {
+                    getString(R.string.to_lower_case),
+                    getString(R.string.to_upper_case),
+                    getString(R.string.switch_up_low),
+                    getString(R.string.word_first_upper),
+                    getString(R.string.sentence_first_upper)
+                };
+        similarityAlgorithms =
+                new String[] {
+                    getString(R.string.lev_dist),
+                    getString(R.string.lev_sim),
+                    getString(R.string.dl_dist),
+                    getString(R.string.jw_dist),
+                    getString(R.string.jw_sim),
+                    getString(R.string.lcs),
+                    getString(R.string.lcs_measure),
+                    getString(R.string.n_dist),
+                    getString(R.string.q_dist)
+                };
+        pinyinModes =
+                new String[] {
+                    getString(R.string.no_tone),
+                    getString(R.string.num_tone),
+                    getString(R.string.unicode_tone)
+                };
+
         if (settingsBoolean[4]) {
             try {
                 ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -353,8 +422,8 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_LONG)
-                            .setText("您的剪贴板不为空，是否粘贴？")
-                            .setActionText("粘贴")
+                            .setText(getString(R.string.clipboard_not_empty))
+                            .setActionText(getString(R.string.paste))
                             .setActionClickListener(
                                     v -> {
                                         if (content.length() < 100 * 1024) {
@@ -366,7 +435,7 @@ public class MainActivity extends AppCompatActivity
                                             Snacky.builder()
                                                     .setView(mainContext)
                                                     .setDuration(Snacky.LENGTH_SHORT)
-                                                    .setText("操作成功")
+                                                    .setText(getString(R.string.copy_success))
                                                     .setActionText(R.string.undo)
                                                     .setActionClickListener(
                                                             v12 -> {
@@ -382,7 +451,10 @@ public class MainActivity extends AppCompatActivity
                                             Snacky.builder()
                                                     .setView(mainContext)
                                                     .setDuration(Snacky.LENGTH_LONG)
-                                                    .setText("操作失败：剪贴板内容过长")
+                                                    .setText(
+                                                            getString(
+                                                                    R.string
+                                                                            .copy_failed_clipboard_too_long))
                                                     .setActionText(R.string.confirm)
                                                     .setActionClickListener(v1 -> {})
                                                     .error()
@@ -421,7 +493,7 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
-                            .setText("接收内容成功")
+                            .setText(getString(R.string.receive_success))
                             .setActionText(R.string.undo)
                             .setActionClickListener(
                                     v12 -> {
@@ -437,7 +509,7 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_LONG)
-                            .setText("操作失败：读取文件时出现错误")
+                            .setText(getString(R.string.err_loading_file))
                             .setActionText(R.string.confirm)
                             .setActionClickListener(v1 -> {})
                             .error()
@@ -447,7 +519,7 @@ public class MainActivity extends AppCompatActivity
                 Snacky.builder()
                         .setView(mainContext)
                         .setDuration(Snacky.LENGTH_LONG)
-                        .setText("操作失败：内容过长")
+                        .setText(getString(R.string.share_too_long))
                         .setActionText(R.string.confirm)
                         .setActionClickListener(v1 -> {})
                         .error()
@@ -460,10 +532,8 @@ public class MainActivity extends AppCompatActivity
                         .targets(
                                 TapTarget.forToolbarNavigationIcon(
                                                 toolbar,
-                                                "点击这里打开菜单",
-                                                "《文本转换》是一款包含多种实用功能的文本处理应用，"
-                                                        + "菜单可在不同的功能界面进行切换。"
-                                                        + "点击这里以继续向导。")
+                                                getString(R.string.open_menu_here),
+                                                getString(R.string.app_intro))
                                         .outerCircleColor(R.color.colorPrimary)
                                         .outerCircleAlpha(0.90f)
                                         .targetCircleColor(R.color.colorAllWhite)
@@ -475,8 +545,8 @@ public class MainActivity extends AppCompatActivity
                                         .id(1),
                                 TapTarget.forToolbarOverflow(
                                                 toolbar,
-                                                "这里包含了更多功能",
-                                                "可以从这个菜单进行读取/存储文件、复制到剪贴板、统计字数等操作。")
+                                                getString(R.string.more_func_here),
+                                                getString(R.string.menu_intro))
                                         .outerCircleColor(R.color.colorAccent)
                                         .outerCircleAlpha(0.90f)
                                         .targetCircleColor(R.color.colorAllWhite)
@@ -486,7 +556,10 @@ public class MainActivity extends AppCompatActivity
                                         .cancelable(false)
                                         .tintTarget(true)
                                         .id(2),
-                                TapTarget.forView(tick, "开始使用", "您已经完成了设置向导，点击旁边的按钮，开始使用吧!")
+                                TapTarget.forView(
+                                                tick,
+                                                getString(R.string.start_to_use),
+                                                getString(R.string.tap_seq_end))
                                         .outerCircleColor(R.color.safeGreen)
                                         .outerCircleAlpha(0.90f)
                                         .targetCircleColor(R.color.colorAllWhite)
@@ -714,11 +787,17 @@ public class MainActivity extends AppCompatActivity
                 default:
             }
             if (clip.length() > 500000) {
-                Toasty.error(MainActivity.this, "内容过长，无法复制到剪贴板！", Toast.LENGTH_LONG, true).show();
+                Toasty.error(
+                                MainActivity.this,
+                                R.string.copy_fail_too_long,
+                                Toast.LENGTH_LONG,
+                                true)
+                        .show();
             } else {
                 ClipData mClipData = ClipData.newPlainText("TextConverter", clip);
                 clipboardManager.setPrimaryClip(mClipData);
-                Toasty.success(MainActivity.this, "复制成功！", Toast.LENGTH_SHORT, true).show();
+                Toasty.success(MainActivity.this, R.string.copy_success_1, Toast.LENGTH_SHORT, true)
+                        .show();
             }
         } else if (id == R.id.action_reverse_io) {
             switch (currentShowingLayout) {
@@ -729,7 +808,7 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
-                            .setText("操作成功")
+                            .setText(getString(R.string.operation_success))
                             .setActionText(R.string.undo)
                             .setActionClickListener(v -> replaceInput.setText(buffer1))
                             .success()
@@ -743,7 +822,7 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
-                            .setText("操作成功")
+                            .setText(getString(R.string.operation_success))
                             .setActionText(R.string.undo)
                             .setActionClickListener(v -> shuffleInput.setText(buffer2))
                             .success()
@@ -757,7 +836,7 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
-                            .setText("操作成功")
+                            .setText(getString(R.string.operation_success))
                             .setActionText(R.string.undo)
                             .setActionClickListener(v -> searchInput.setText(buffer3))
                             .success()
@@ -771,7 +850,7 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
-                            .setText("操作成功")
+                            .setText(getString(R.string.operation_success))
                             .setActionText(R.string.undo)
                             .setActionClickListener(v -> encryptInput.setText(buffer4))
                             .success()
@@ -785,7 +864,7 @@ public class MainActivity extends AppCompatActivity
                     Snacky.builder()
                             .setView(mainContext)
                             .setDuration(Snacky.LENGTH_SHORT)
-                            .setText("操作成功")
+                            .setText(getString(R.string.operation_success))
                             .setActionText(R.string.undo)
                             .setActionClickListener(v -> moreInput.setText(buffer5))
                             .success()
@@ -1056,21 +1135,24 @@ public class MainActivity extends AppCompatActivity
             int outLen = outStr.length();
             Toasty.info(
                             MainActivity.this,
-                            "输入区字符数: " + inLen + "\n输出区字符数: " + outLen,
+                            getString(R.string.input_area_count)
+                                    + inLen
+                                    + getString(R.string.output_area_count)
+                                    + outLen,
                             Toast.LENGTH_LONG)
                     .show();
         } else if (id == R.id.get_string_from_url) {
             LovelyTextInputDialog inputDialog =
                     new LovelyTextInputDialog(this)
-                            .setTitle("从网页获取源码")
-                            .setMessage("在下面填入网页Url，系统将从该网页获取源码并填入输入框")
+                            .setTitle(getString(R.string.retrieve_source_code_from_web))
+                            .setMessage(getString(R.string.enter_url))
                             .setTopColorRes(R.color.colorAccent)
                             .setCancelable(true)
                             .setIcon(R.drawable.ic_public_white_24dp)
                             .configureEditText(
                                     v -> {
                                         v.setTextColor(getColor(R.color.colorAllBlack));
-                                        v.setHint("如: www.google.com");
+                                        v.setHint(getString(R.string.example_google));
                                         if (getSharedPreferences("settings", MODE_PRIVATE)
                                                 .getBoolean("doUseMonospaced", false)) {
                                             v.setTextAppearance(R.style.MyMonospace);
@@ -1080,7 +1162,7 @@ public class MainActivity extends AppCompatActivity
                                         v.clearFocus();
                                     })
                             .setConfirmButton(
-                                    "确定",
+                                    getString(R.string.confirm),
                                     text -> {
                                         text = text.trim();
                                         if (text.matches(
@@ -1094,7 +1176,7 @@ public class MainActivity extends AppCompatActivity
                                             } else {
                                                 Toasty.error(
                                                                 MainActivity.this,
-                                                                "输入内容不是合法的Url！",
+                                                                R.string.illegal_url,
                                                                 Toast.LENGTH_LONG)
                                                         .show();
                                             }
@@ -1141,7 +1223,10 @@ public class MainActivity extends AppCompatActivity
 
     private void getSourceCodeFromUrl(String text) {
         final ProgressDialog progressDialog =
-                ProgressDialog.show(MainActivity.this, "请稍等", "正在连接...");
+                ProgressDialog.show(
+                        MainActivity.this,
+                        getString(R.string.wait_plz),
+                        getString(R.string.connecting_hint));
         Ion.with(getApplicationContext())
                 .load(text)
                 .asString()
@@ -1171,11 +1256,17 @@ public class MainActivity extends AppCompatActivity
 
                                     default:
                                 }
-                                Toasty.success(MainActivity.this, "获取成功！", Toast.LENGTH_LONG)
+                                Toasty.success(
+                                                MainActivity.this,
+                                                R.string.retrieve_success,
+                                                Toast.LENGTH_LONG)
                                         .show();
                             } else {
                                 if (e == null) {
-                                    Toasty.error(MainActivity.this, "连接超时！", Toast.LENGTH_LONG)
+                                    Toasty.error(
+                                                    MainActivity.this,
+                                                    R.string.connection_timeout,
+                                                    Toast.LENGTH_LONG)
                                             .show();
                                 } else {
                                     String errMsg = e.toString();
@@ -1242,14 +1333,12 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain")
                         .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.action_share))
-                        .putExtra(
-                                Intent.EXTRA_TEXT,
-                                "我正在使用“文本转换”工具，你也来试试看吧！\n"
-                                        + "点击查看: https://www.coolapk.com/apk/212564")
+                        .putExtra(Intent.EXTRA_TEXT, getString(R.string.share_content))
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(Intent.createChooser(intent, getString(R.string.action_share)));
             } catch (Exception e) {
-                Toasty.error(MainActivity.this, "没有应用能响应请求！", Toast.LENGTH_LONG).show();
+                Toasty.error(MainActivity.this, R.string.no_responsible_apps, Toast.LENGTH_LONG)
+                        .show();
             }
         } else if (id == R.id.nav_help) {
             Intent intent = new Intent(MainActivity.this, ViewHelpActivity.class);
@@ -1528,7 +1617,7 @@ public class MainActivity extends AppCompatActivity
                     shuffleOutput.clearFocus();
                 } catch (Exception e) {
                     if (e instanceof NumberFormatException) {
-                        shuffleOutput.setText("发生错误：所有元素必须是数字！" + e.toString());
+                        shuffleOutput.setText(getString(R.string.digit_err) + e.toString());
                     } else {
                         shuffleOutput.setText(
                                 getString(R.string.exception_occurred) + e.toString());
@@ -1601,23 +1690,28 @@ public class MainActivity extends AppCompatActivity
                             matcher.reset();
                         }
                         searchOutput.setText(
-                                "目标共出现"
+                                getString(R.string.tot_appear)
                                         + searchCount
-                                        + "处，正在选中第"
+                                        + getString(R.string.tot_appear_1)
                                         + currentSearchCount
-                                        + "处\n匹配到的内容为："
+                                        + getString(R.string.matches)
                                         + searchInput
                                                 .getText()
                                                 .toString()
                                                 .substring(range.start(), range.end()));
                     } else {
                         searchOutput.setText(
-                                "目标共出现" + searchCount + "处，正在选中第" + currentSearchCount + "处");
+                                getString(R.string.tot_appear)
+                                        + searchCount
+                                        + getString(R.string.tot_appear_1)
+                                        + currentSearchCount
+                                        + getString(R.string.chu));
                     }
 
                 } catch (Exception e) {
                     if (e instanceof ArrayIndexOutOfBoundsException) {
-                        searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                        searchOutput.setText(
+                                getString(R.string.target_not_found), BufferType.EDITABLE);
                     } else {
                         searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
                     }
@@ -1629,7 +1723,11 @@ public class MainActivity extends AppCompatActivity
                     String findTarget = searchTarget.getText().toString();
                     String findSrc = searchInput.getText().toString();
                     if (findTarget.isEmpty() || findSrc.isEmpty()) {
-                        Toasty.error(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG, true)
+                        Toasty.error(
+                                        MainActivity.this,
+                                        R.string.search_is_empty,
+                                        Toast.LENGTH_LONG,
+                                        true)
                                 .show();
                         return;
                     }
@@ -1645,7 +1743,8 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                            searchOutput.setText(
+                                    getString(R.string.target_not_found), BufferType.EDITABLE);
                         } else {
                             currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
                             if (currentSearchPos == -1) {
@@ -1658,11 +1757,11 @@ public class MainActivity extends AppCompatActivity
                                 searchInput.setSelection(
                                         currentSearchPos, currentSearchPos + findTarget.length());
                                 searchOutput.setText(
-                                        "目标共出现"
+                                        getString(R.string.tot_appear)
                                                 + searchCount
-                                                + "处，正在选中第"
+                                                + getString(R.string.tot_appear_1)
                                                 + currentSearchCount
-                                                + "处");
+                                                + getString(R.string.chu));
                                 currentSearchPos += findTarget.length();
                             }
                         }
@@ -1673,7 +1772,8 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                            searchOutput.setText(
+                                    getString(R.string.target_not_found), BufferType.EDITABLE);
                         } else {
                             currentSearchCount++;
                             if (matcher.find()) {
@@ -1683,11 +1783,11 @@ public class MainActivity extends AppCompatActivity
                                 searchInput.requestFocus();
                                 searchInput.setSelection(begin, currentSearchPos);
                                 searchOutput.setText(
-                                        "目标共出现"
+                                        getString(R.string.tot_appear)
                                                 + searchCount
-                                                + "处，正在选中第"
+                                                + getString(R.string.tot_appear_1)
                                                 + currentSearchCount
-                                                + "处\n匹配到的内容为："
+                                                + getString(R.string.matches)
                                                 + group);
                             } else {
                                 pattern = Pattern.compile(searchTarget.getText().toString());
@@ -1707,7 +1807,8 @@ public class MainActivity extends AppCompatActivity
                 try {
                     resetSearch();
                     searchOutput.setText("");
-                    Toasty.success(MainActivity.this, "已重置", Toast.LENGTH_SHORT).show();
+                    Toasty.success(MainActivity.this, R.string.hint_reset, Toast.LENGTH_SHORT)
+                            .show();
                 } catch (Exception e) {
                     searchOutput.setText(getString(R.string.exception_occurred) + e.toString());
                 } finally {
@@ -1724,7 +1825,11 @@ public class MainActivity extends AppCompatActivity
                     StringBuilder searchResult = new StringBuilder();
                     String findSrc = searchInput.getText().toString();
                     if (findTarget.isEmpty() || findSrc.isEmpty()) {
-                        Toasty.error(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG, true)
+                        Toasty.error(
+                                        MainActivity.this,
+                                        R.string.search_is_empty,
+                                        Toast.LENGTH_LONG,
+                                        true)
                                 .show();
                         return;
                     }
@@ -1741,7 +1846,8 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                            searchOutput.setText(
+                                    getString(R.string.target_not_found), BufferType.EDITABLE);
                         } else {
                             for (int i = 0; i < searchCount; i++) {
                                 currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
@@ -1761,7 +1867,8 @@ public class MainActivity extends AppCompatActivity
                             currentSearchPos = 0;
                         }
                         if (searchCount == 0) {
-                            searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                            searchOutput.setText(
+                                    getString(R.string.target_not_found), BufferType.EDITABLE);
                         } else {
                             currentSearchCount++;
                             while (matcher.find()) {
@@ -1866,14 +1973,18 @@ public class MainActivity extends AppCompatActivity
                 } catch (Exception e) {
                     if (e instanceof IllegalArgumentException) {
                         if (salt.isEmpty()) {
-                            encryptOutput.setText("输入内容不是加密后的密文！", BufferType.EDITABLE);
+                            encryptOutput.setText(
+                                    getString(R.string.not_encrypted), BufferType.EDITABLE);
                         } else {
                             encryptOutput.setText(
-                                    "输入内容不是加密后的密文！\n" + "当前设置为采用加盐加密，普通AES密文解密时会出现错误！\n",
+                                    getString(R.string.not_encrypted)
+                                            + "\n"
+                                            + getString(R.string.salted_enc),
                                     BufferType.EDITABLE);
                         }
                     } else if (e instanceof GeneralSecurityException) {
-                        encryptOutput.setText("解密失败，可能是密码错误或输入了不正确的密文！", BufferType.EDITABLE);
+                        encryptOutput.setText(
+                                getString(R.string.decrypt_fail), BufferType.EDITABLE);
                     } else {
                         encryptOutput.setText(
                                 getString(R.string.exception_occurred) + e.toString(),
@@ -1901,7 +2012,8 @@ public class MainActivity extends AppCompatActivity
         String findTarget = searchTarget.getText().toString();
         String findSrc = searchInput.getText().toString();
         if (findTarget.isEmpty() || findSrc.isEmpty()) {
-            Toasty.error(MainActivity.this, "查找内容不能为空！", Toast.LENGTH_LONG, true).show();
+            Toasty.error(MainActivity.this, R.string.search_is_empty, Toast.LENGTH_LONG, true)
+                    .show();
             return;
         }
         boolean doUseRegexInSearch = doUseRegexSearchCheckbox.isChecked();
@@ -1916,7 +2028,7 @@ public class MainActivity extends AppCompatActivity
                 currentSearchPos = 0;
             }
             if (searchCount == 0) {
-                searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                searchOutput.setText(getString(R.string.target_not_found), BufferType.EDITABLE);
             } else {
                 for (int i = 0; i < searchCount; i++) {
                     currentSearchPos = findSrc.indexOf(findTarget, currentSearchPos);
@@ -1932,7 +2044,7 @@ public class MainActivity extends AppCompatActivity
                 currentSearchPos = 0;
             }
             if (searchCount == 0) {
-                searchOutput.setText("未查找到目标！", BufferType.EDITABLE);
+                searchOutput.setText(getString(R.string.target_not_found), BufferType.EDITABLE);
             } else {
                 currentSearchCount++;
                 while (matcher.find()) {
@@ -2033,7 +2145,12 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (requestCode == REQUESTCODE_WRITE) {
                 if (path.isEmpty()) {
-                    Toasty.warning(MainActivity.this, "未选定目标文件夹！", Toast.LENGTH_LONG, true).show();
+                    Toasty.warning(
+                                    MainActivity.this,
+                                    R.string.target_folder_not_selected,
+                                    Toast.LENGTH_LONG,
+                                    true)
+                            .show();
                     return;
                 }
                 String outputString = "";
@@ -2067,7 +2184,11 @@ public class MainActivity extends AppCompatActivity
                 Date date = new Date();
                 filename.append("/TextConverter-").append(sdf.format(date)).append(".txt");
                 writeSDFile(filename.toString(), outputString);
-                Toasty.success(MainActivity.this, "文件已保存为: " + filename, Toast.LENGTH_LONG, true)
+                Toasty.success(
+                                MainActivity.this,
+                                getString(R.string.file_saved) + filename,
+                                Toast.LENGTH_LONG,
+                                true)
                         .show();
             }
         } catch (Exception e) {
@@ -2119,7 +2240,11 @@ public class MainActivity extends AppCompatActivity
             }
         }
         if (!encoding.equals("UTF-8")) {
-            Toasty.warning(MainActivity.this, "当前文件编码格式为: " + encoding, Toast.LENGTH_LONG).show();
+            Toasty.warning(
+                            MainActivity.this,
+                            getString(R.string.current_encoding) + encoding,
+                            Toast.LENGTH_LONG)
+                    .show();
         }
         Long filelength = file.length();
         byte[] filecontent = new byte[filelength.intValue()];
@@ -2138,7 +2263,10 @@ public class MainActivity extends AppCompatActivity
         try {
             return new String(filecontent, encoding);
         } catch (UnsupportedEncodingException e) {
-            Toasty.error(MainActivity.this, "抱歉，本系统不支持以下编码格式：" + encoding, Toast.LENGTH_LONG)
+            Toasty.error(
+                            MainActivity.this,
+                            getString(R.string.encoding_not_supported) + encoding,
+                            Toast.LENGTH_LONG)
                     .show();
             e.printStackTrace();
             return null;
@@ -2157,7 +2285,7 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     Toasty.error(
                                     MainActivity.this,
-                                    "您拒绝了文件访问权限，因此本功能无法运行。",
+                                    R.string.file_permission_denied,
                                     Toast.LENGTH_LONG,
                                     true)
                             .show();
@@ -2171,7 +2299,7 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     Toasty.error(
                                     MainActivity.this,
-                                    "您拒绝了文件访问权限，因此本功能无法运行。",
+                                    R.string.file_permission_denied,
                                     Toast.LENGTH_LONG,
                                     true)
                             .show();
@@ -2185,7 +2313,7 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     Toasty.error(
                                     MainActivity.this,
-                                    "您拒绝了文件访问权限，因此本功能无法运行。",
+                                    R.string.file_permission_denied,
                                     Toast.LENGTH_LONG,
                                     true)
                             .show();
@@ -2201,7 +2329,12 @@ public class MainActivity extends AppCompatActivity
         if (!destDir.exists()) {
             boolean doMkdirSuccess = destDir.mkdirs();
             if (!doMkdirSuccess) {
-                Toasty.error(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG, true).show();
+                Toasty.error(
+                                MainActivity.this,
+                                R.string.folder_create_failed,
+                                Toast.LENGTH_LONG,
+                                true)
+                        .show();
                 pathTemp = Environment.getExternalStorageDirectory().getAbsolutePath();
             }
         }
@@ -2210,7 +2343,7 @@ public class MainActivity extends AppCompatActivity
                 .withActivity(MainActivity.this)
                 .withBackgroundColor("#03a9f4")
                 .withRequestCode(REQUESTCODE_WRITE)
-                .withTitle("选择目标文件夹")
+                .withTitle(getString(R.string.select_target_folder))
                 .withChooseMode(false)
                 .withStartPath(pathTemp)
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
@@ -2225,7 +2358,12 @@ public class MainActivity extends AppCompatActivity
             if (!destDir.exists()) {
                 boolean doMkdirSuccess = destDir.mkdirs();
                 if (!doMkdirSuccess) {
-                    Toasty.error(MainActivity.this, "文件夹创建失败！", Toast.LENGTH_LONG, true).show();
+                    Toasty.error(
+                                    MainActivity.this,
+                                    R.string.folder_create_failed,
+                                    Toast.LENGTH_LONG,
+                                    true)
+                            .show();
                     return;
                 }
             }
@@ -2262,7 +2400,7 @@ public class MainActivity extends AppCompatActivity
             writeSDFile(filename.toString(), outputString);
             Toasty.info(
                             MainActivity.this,
-                            "文本过长，因此将直接保存。\n文件已保存为: " + filename,
+                            getString(R.string.text_too_long_saved) + filename,
                             Toast.LENGTH_LONG,
                             true)
                     .show();
@@ -2285,7 +2423,7 @@ public class MainActivity extends AppCompatActivity
                 .withBackgroundColor("#03a9f4")
                 .withRequestCode(REQUESTCODE_READ)
                 .withMutilyMode(false)
-                .withTitle("选择文件")
+                .withTitle(getString(R.string.pick_folder))
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
                 .withBackIcon(Constant.BACKICON_STYLETHREE)
                 .withIsGreater(false)
@@ -2445,7 +2583,11 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         } catch (Exception e) {
-            Toasty.error(MainActivity.this, "设置载入失败！\n" + e.toString(), Toast.LENGTH_LONG).show();
+            Toasty.error(
+                            MainActivity.this,
+                            getString(R.string.error_loading_prefs) + e.toString(),
+                            Toast.LENGTH_LONG)
+                    .show();
         }
         try {
             String shortcutData = getIntent().getDataString();
@@ -2535,7 +2677,9 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.add_numbers), getString(R.string.add_numbers_disc));
         itemsList.add(addNumbers);
         // 4
-        ListItems htmlFormat = new ListItems("HTML格式化", "将HTML文本变得易读");
+        ListItems htmlFormat =
+                new ListItems(
+                        getString(R.string.format_html), getString(R.string.format_html_disc));
         itemsList.add(htmlFormat);
         // 5
         ListItems customRandom =
@@ -2572,16 +2716,25 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.text_random), getString(R.string.text_random_disc));
         itemsList.add(textRandom);
         // 12
-        ListItems markdownPreview = new ListItems("Markdown预览", "预览Markdown文本");
+        ListItems markdownPreview =
+                new ListItems(
+                        getString(R.string.markdown_preview),
+                        getString(R.string.markdown_preview_disc));
         itemsList.add(markdownPreview);
         // 13
-        ListItems unicodeParse = new ListItems("Unicode编码转义", "输入一段unicode编码，如\\u2333，将其转为编码对应的字符");
+        ListItems unicodeParse =
+                new ListItems(
+                        getString(R.string.unicode_parse), getString(R.string.unicode_parse_disc));
         itemsList.add(unicodeParse);
         // 14
-        ListItems toUnicode = new ListItems("转为Unicode编码", "将Unicode字符转为对应的Unicode编码");
+        ListItems toUnicode =
+                new ListItems(getString(R.string.to_unicode), getString(R.string.to_unicode_disc));
         itemsList.add(toUnicode);
         // 15
-        ListItems stringSimilarity = new ListItems("字符串相似度", "用选定的算法计算输入区和输出区字符串的相似程度");
+        ListItems stringSimilarity =
+                new ListItems(
+                        getString(R.string.string_similarity),
+                        getString(R.string.string_similarity_disc));
         itemsList.add(stringSimilarity);
         // 16
         ListItems formatJava =
@@ -2589,18 +2742,28 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.format_java_code), getString(R.string.format_java_disc));
         itemsList.add(formatJava);
         // 17
-        ListItems stringTrim = new ListItems("去除两端空白字符", "去除字符串两端的空白字符，包括回车、空格等");
+        ListItems stringTrim =
+                new ListItems(getString(R.string.trim), getString(R.string.trim_disc));
         itemsList.add(stringTrim);
         // 18
         ListItems escapeEverything =
-                new ListItems("各种转义/反转义", "可转义或反转义HTML、XML、JSON、Java、CSV、ECMAScript");
+                new ListItems(getString(R.string.parse_all), getString(R.string.parse_all_disc));
         itemsList.add(escapeEverything);
         // 19
-        ListItems parseRegex = new ListItems("正则表达式转义", "将正则表达式使用的特殊字符转为其原本的含义");
+        ListItems parseRegex =
+                new ListItems(
+                        getString(R.string.parse_regex), getString(R.string.parse_regex_disc));
         itemsList.add(parseRegex);
         // 20
-        ListItems randString = new ListItems("生成随机字符串", "依据指定的码位、长度批量生成随机字符的字符串");
+        ListItems randString =
+                new ListItems(getString(R.string.rand_str), getString(R.string.rand_str_disc));
         itemsList.add(randString);
+        // 21
+        ListItems toPinyin =
+                new ListItems(
+                        getString(R.string.hanyu_to_pinyin),
+                        getString(R.string.hanyu_to_pinyin_disc));
+        itemsList.add(toPinyin);
     }
 
     @SuppressLint("SetTextI18n")
@@ -2647,9 +2810,10 @@ public class MainActivity extends AppCompatActivity
                                             lovelyTextInputDialog
                                                     .setTopColorRes(R.color.settingsGrey)
                                                     .setIcon(R.drawable.ic_content_copy_black_24dp)
-                                                    .setTitle("输入复制份数")
+                                                    .setTitle(getString(R.string.copy_copies))
                                                     .setCancelable(true)
-                                                    .setMessage("请在下面输入您想要复制的份数")
+                                                    .setMessage(
+                                                            getString(R.string.input_copy_copies))
                                                     .configureView(
                                                             v14 -> {
                                                                 v14.setFocusableInTouchMode(true);
@@ -2657,7 +2821,10 @@ public class MainActivity extends AppCompatActivity
                                                             })
                                                     .configureEditText(
                                                             v15 -> {
-                                                                v15.setHint("输入复制份数");
+                                                                v15.setHint(
+                                                                        getString(
+                                                                                R.string
+                                                                                        .input_copies_1));
                                                                 v15.setInputType(
                                                                         InputType
                                                                                 .TYPE_CLASS_NUMBER);
@@ -2685,7 +2852,8 @@ public class MainActivity extends AppCompatActivity
                                                                         Toasty.error(
                                                                                         MainActivity
                                                                                                 .this,
-                                                                                        "输入内容不能为空！",
+                                                                                        R.string
+                                                                                                .empty_input,
                                                                                         Toast
                                                                                                 .LENGTH_LONG)
                                                                                 .show();
@@ -2732,7 +2900,7 @@ public class MainActivity extends AppCompatActivity
                                                 Builder alertDialog =
                                                         new Builder(MainActivity.this);
                                                 alertDialog
-                                                        .setTitle("选择模式")
+                                                        .setTitle(getString(R.string.select_mode))
                                                         .setIcon(R.mipmap.ic_launcher)
                                                         .setItems(
                                                                 capsSwitchModes,
@@ -2982,7 +3150,9 @@ public class MainActivity extends AppCompatActivity
                                                                 R.id.viewInstance,
                                                                 v13 -> {
                                                                     moreInput.setText(
-                                                                            "生成随机时间：{0,23}:{0,59}\n");
+                                                                            getString(
+                                                                                    R.string
+                                                                                            .custom_random_example));
                                                                     dialog1.dismiss();
                                                                 })
                                                         .setListener(
@@ -3144,7 +3314,9 @@ public class MainActivity extends AppCompatActivity
                                                                                 instanceof
                                                                                 NumberFormatException) {
                                                                             moreOutput.setText(
-                                                                                    "输入格式错误："
+                                                                                    getString(
+                                                                                                    R.string
+                                                                                                            .format_err)
                                                                                             + e
                                                                                                     .toString(),
                                                                                     BufferType
@@ -3153,7 +3325,9 @@ public class MainActivity extends AppCompatActivity
                                                                                 instanceof
                                                                                 IllegalArgumentException) {
                                                                             moreOutput.setText(
-                                                                                    "参数错误，随机数的上界必须大于下界！",
+                                                                                    getString(
+                                                                                            R.string
+                                                                                                    .args_err),
                                                                                     BufferType
                                                                                             .EDITABLE);
                                                                         } else {
@@ -3235,7 +3409,7 @@ public class MainActivity extends AppCompatActivity
                                             } catch (Exception e) {
                                                 if (e instanceof IllegalArgumentException) {
                                                     moreOutput.setText(
-                                                            "输入内容不是合法的Base64编码！",
+                                                            getString(R.string.illegal_base64),
                                                             BufferType.EDITABLE);
                                                 } else {
                                                     moreOutput.setText(
@@ -3346,8 +3520,7 @@ public class MainActivity extends AppCompatActivity
                                             dialogView
                                                     .findViewById(R.id.viewInstance)
                                                     .setVisibility(View.GONE);
-                                            dialog2.setMessage(
-                                                            "在输入框中输入一段文本，每行之间用回车分隔，系统将随机抽取一行文本并显示。")
+                                            dialog2.setMessage(getString(R.string.test_rand_hint))
                                                     .setView(dialogView)
                                                     .setCancelable(false)
                                                     .setTitle(R.string.text_random)
@@ -3480,29 +3653,24 @@ public class MainActivity extends AppCompatActivity
                                         case 15: // String Similarity
                                             String m = moreInput.getText().toString();
                                             String n = moreOutput.getText().toString();
-                                            final String[] outputType = {"相似度:"};
+                                            final String[] outputType = {
+                                                getString(R.string.similarity_)
+                                            };
                                             final String[] outputValue = {""};
                                             Builder alertDialog = new Builder(MainActivity.this);
                                             alertDialog
-                                                    .setTitle("选择相似度算法")
+                                                    .setTitle(
+                                                            getString(
+                                                                    R.string
+                                                                            .choose_similarity_algorithm))
                                                     .setIcon(R.mipmap.ic_launcher)
                                                     .setItems(
-                                                            new String[] {
-                                                                "Levenshtein距离",
-                                                                "Levenshtein相似度",
-                                                                "Damerau-Levenshtein距离",
-                                                                "JaroWinkler距离",
-                                                                "JaroWinkler相似度",
-                                                                "最长公共子序列",
-                                                                "最长公共子序列(度量值)",
-                                                                "N-Gram距离",
-                                                                "Q-Gram距离"
-                                                            },
+                                                            similarityAlgorithms,
                                                             (dialog12, which) -> {
+                                                                outputType[0] =
+                                                                        similarityAlgorithms[which];
                                                                 switch (which) {
                                                                     case 0:
-                                                                        outputType[0] =
-                                                                                "Levenshtein距离: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new NormalizedLevenshtein()
@@ -3512,8 +3680,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 1:
-                                                                        outputType[0] =
-                                                                                "Levenshtein相似度: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new NormalizedLevenshtein()
@@ -3523,8 +3689,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 2:
-                                                                        outputType[0] =
-                                                                                "Damerau-Levenshtein距离: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new Damerau()
@@ -3534,8 +3698,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 3:
-                                                                        outputType[0] =
-                                                                                "JaroWinkler距离: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new JaroWinkler()
@@ -3545,8 +3707,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 4:
-                                                                        outputType[0] =
-                                                                                "JaroWinkler相似度: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new JaroWinkler()
@@ -3556,7 +3716,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 5:
-                                                                        outputType[0] = "最长公共子序列: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new LongestCommonSubsequence()
@@ -3566,8 +3725,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 6:
-                                                                        outputType[0] =
-                                                                                "最长公共子序列(度量值): ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new MetricLCS()
@@ -3577,8 +3734,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 7:
-                                                                        outputType[0] =
-                                                                                "N-Gram距离: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new NGram()
@@ -3588,8 +3743,6 @@ public class MainActivity extends AppCompatActivity
                                                                         break;
 
                                                                     case 8:
-                                                                        outputType[0] =
-                                                                                "Q-Gram距离: ";
                                                                         outputValue[0] =
                                                                                 String.valueOf(
                                                                                         new QGram()
@@ -3621,7 +3774,8 @@ public class MainActivity extends AppCompatActivity
                                                 if (VERSION.SDK_INT < VERSION_CODES.O) {
                                                     Toasty.error(
                                                                     MainActivity.this,
-                                                                    "抱歉，Android8.0以下系统暂不支持该功能！",
+                                                                    R.string
+                                                                            .sorry_not_supported_8_0,
                                                                     Toast.LENGTH_LONG)
                                                             .show();
                                                     break;
@@ -3629,10 +3783,7 @@ public class MainActivity extends AppCompatActivity
                                                 String formatCodeSrc =
                                                         moreInput.getText().toString();
 
-                                                com.google.googlejavaformat.java.Formatter
-                                                        formatter =
-                                                                new com.google.googlejavaformat.java
-                                                                        .Formatter();
+                                                Formatter formatter = new Formatter();
                                                 String formattedCode =
                                                         formatter.formatSourceAndFixImports(
                                                                 formatCodeSrc);
@@ -3682,21 +3833,21 @@ public class MainActivity extends AppCompatActivity
                                             AlertDialog.Builder builder =
                                                     new AlertDialog.Builder(this);
                                             builder.setIcon(R.drawable.ic_launcher_round)
-                                                    .setTitle("选择操作")
+                                                    .setTitle(getString(R.string.select_operation))
                                                     .setItems(
                                                             new String[] {
-                                                                "HTML转义",
-                                                                "HTML反转义",
-                                                                "XML转义",
-                                                                "XML反转义",
-                                                                "JSON转义",
-                                                                "JSON反转义",
-                                                                "Java转义",
-                                                                "Java反转义",
-                                                                "CSV转义",
-                                                                "CSV反转义",
-                                                                "ECMAScript转义",
-                                                                "ECMAScript反转义"
+                                                                getString(R.string.parse_html),
+                                                                getString(R.string.unparse_html),
+                                                                getString(R.string.parse_xml),
+                                                                getString(R.string.unparse_xml),
+                                                                getString(R.string.parse_json),
+                                                                getString(R.string.unparse_json),
+                                                                getString(R.string.parse_java),
+                                                                getString(R.string.unparse_java),
+                                                                getString(R.string.parse_csv),
+                                                                getString(R.string.unparse_csv),
+                                                                getString(R.string.parse_ecma),
+                                                                getString(R.string.unparse_ecma)
                                                             },
                                                             (dialog13, which) -> {
                                                                 try {
@@ -3817,14 +3968,14 @@ public class MainActivity extends AppCompatActivity
                                                 moreOutput.clearFocus();
                                             }
                                             break;
-                                        case 20:
+                                        case 20: // Random string
                                             LovelyCustomDialog randStrDialog =
                                                     new LovelyCustomDialog(this);
                                             randStrDialog
                                                     .setView(R.layout.random_string_dialog)
                                                     .setIcon(R.drawable.ic_shuffle_white_48dp)
                                                     .setTopColorRes(R.color.mdPurple)
-                                                    .setTitle("生成随机字符串")
+                                                    .setTitle(getString(R.string.gen_rand_str))
                                                     .configureView(
                                                             v -> {
                                                                 EditText startPointBox =
@@ -3908,12 +4059,16 @@ public class MainActivity extends AppCompatActivity
                                                                                 if (endPoint
                                                                                         < startPoint) {
                                                                                     throw new IllegalArgumentException(
-                                                                                            "起始码位应小于终止码位");
+                                                                                            getString(
+                                                                                                    R.string
+                                                                                                            .codepoint_mismatch));
                                                                                 }
                                                                                 if (maxLength
                                                                                         < minLength) {
                                                                                     throw new IllegalArgumentException(
-                                                                                            "最小长度应小于最大长度");
+                                                                                            getString(
+                                                                                                    R.string
+                                                                                                            .length_negative));
                                                                                 }
                                                                                 RandomStringGenerator
                                                                                         generator =
@@ -3964,7 +4119,8 @@ public class MainActivity extends AppCompatActivity
                                                                                 Toasty.error(
                                                                                                 MainActivity
                                                                                                         .this,
-                                                                                                "输入内容为空或格式错误！",
+                                                                                                R.string
+                                                                                                        .format_err_or_empty,
                                                                                                 Toast
                                                                                                         .LENGTH_LONG)
                                                                                         .show();
@@ -3997,6 +4153,103 @@ public class MainActivity extends AppCompatActivity
                                                     .show();
                                             break;
 
+                                        case 21: // To hanyu pinyin
+                                            String hanyu = moreInput.getText().toString();
+                                            Builder pinyinDialog = new Builder(MainActivity.this);
+                                            StringBuilder pinyin = new StringBuilder();
+
+                                            pinyinDialog
+                                                    .setTitle(getString(R.string.select_mode))
+                                                    .setIcon(R.mipmap.ic_launcher)
+                                                    .setItems(
+                                                            pinyinModes,
+                                                            (dialog14, which) -> {
+                                                                HanyuPinyinOutputFormat format =
+                                                                        new HanyuPinyinOutputFormat();
+                                                                switch (which) {
+                                                                    case 0: // WITHOUT_TONE
+                                                                        format.setToneType(
+                                                                                HanyuPinyinToneType
+                                                                                        .WITHOUT_TONE);
+                                                                        format.setVCharType(
+                                                                                HanyuPinyinVCharType
+                                                                                        .WITH_V);
+                                                                        break;
+                                                                    case 1: // WITH_TONE_NUMBER
+                                                                        format.setToneType(
+                                                                                HanyuPinyinToneType
+                                                                                        .WITH_TONE_NUMBER);
+                                                                        format.setVCharType(
+                                                                                HanyuPinyinVCharType
+                                                                                        .WITH_V);
+                                                                        break;
+                                                                    case 2: // WITH_TONE_MARK
+                                                                        format.setToneType(
+                                                                                HanyuPinyinToneType
+                                                                                        .WITH_TONE_MARK);
+                                                                        format.setVCharType(
+                                                                                HanyuPinyinVCharType
+                                                                                        .WITH_U_UNICODE);
+                                                                        break;
+                                                                }
+                                                                try {
+                                                                    for (int i = 0;
+                                                                            i < hanyu.length();
+                                                                            i++) {
+                                                                        if (hanyu.charAt(i) > 127) {
+                                                                            if (pinyin.length() > 0
+                                                                                    && pinyin
+                                                                                                    .charAt(
+                                                                                                            pinyin
+                                                                                                                            .length()
+                                                                                                                    - 1)
+                                                                                            != ' ') {
+                                                                                pinyin.append(' ');
+                                                                            }
+                                                                            String[] pinyinArray =
+                                                                                    PinyinHelper
+                                                                                            .toHanyuPinyinStringArray(
+                                                                                                    hanyu
+                                                                                                            .charAt(
+                                                                                                                    i),
+                                                                                                    format);
+                                                                            if (pinyinArray
+                                                                                    != null) {
+                                                                                pinyin.append(
+                                                                                                pinyinArray[
+                                                                                                        0])
+                                                                                        .append(
+                                                                                                ' ');
+                                                                            }
+
+                                                                        } else {
+                                                                            pinyin.append(
+                                                                                    hanyu.charAt(
+                                                                                            i));
+                                                                        }
+                                                                    }
+                                                                    moreOutput.setText(
+                                                                            pinyin,
+                                                                            BufferType.EDITABLE);
+
+                                                                } catch (
+                                                                        BadHanyuPinyinOutputFormatCombination
+                                                                                e) {
+                                                                    moreOutput.setText(
+                                                                            getString(
+                                                                                            R.string
+                                                                                                    .exception_occurred)
+                                                                                    + e.toString(),
+                                                                            BufferType.EDITABLE);
+                                                                } finally {
+                                                                    moreInput.clearFocus();
+                                                                    moreOutput.clearFocus();
+                                                                }
+                                                            })
+                                                    .create()
+                                                    .show();
+                                            break;
+
                                         default:
                                             break;
                                     }
@@ -4008,7 +4261,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // 是否触发按键为back键
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             onBackPressed();
             return true;
@@ -4019,7 +4271,7 @@ public class MainActivity extends AppCompatActivity
 
     private void exit() {
         if ((System.currentTimeMillis() - clickTime) > 2000) {
-            Toasty.info(MainActivity.this, "再按一次返回键退出程序", Toast.LENGTH_SHORT).show();
+            Toasty.info(MainActivity.this, R.string.press_more_to_exit, Toast.LENGTH_SHORT).show();
             clickTime = System.currentTimeMillis();
         } else {
             finish();
@@ -4031,37 +4283,36 @@ public class MainActivity extends AppCompatActivity
             case R.id.textReplaceLayout:
                 targetSeq.setText(regex, BufferType.EDITABLE);
                 doUseRegexCheckbox.setChecked(true);
-                Toasty.success(MainActivity.this, "载入成功", Toast.LENGTH_SHORT, true).show();
+                Toasty.success(MainActivity.this, R.string.load_success, Toast.LENGTH_SHORT, true)
+                        .show();
                 break;
 
             case R.id.textShuffleLayout:
                 shuffleInput.setText(regex, BufferType.EDITABLE);
-                Toasty.warning(
-                                MainActivity.this,
-                                "当前界面似乎不需要正则表达式？已将其载入到输入框中",
-                                Toast.LENGTH_LONG,
-                                true)
+                Toasty.warning(MainActivity.this, R.string.loaded_to_input, Toast.LENGTH_LONG, true)
                         .show();
                 break;
 
             case R.id.textSearchLayout:
                 searchTarget.setText(regex, BufferType.EDITABLE);
                 doUseRegexSearchCheckbox.setChecked(true);
-                Toasty.success(MainActivity.this, "载入成功", Toast.LENGTH_SHORT, true).show();
+                Toasty.success(MainActivity.this, R.string.load_success, Toast.LENGTH_SHORT, true)
+                        .show();
                 break;
 
             case R.id.textEncryptLayout:
                 encryptKey.setText(regex, BufferType.EDITABLE);
-                Toasty.success(MainActivity.this, "已载入为密码", Toast.LENGTH_SHORT, true).show();
+                Toasty.success(
+                                MainActivity.this,
+                                R.string.loaded_as_password,
+                                Toast.LENGTH_SHORT,
+                                true)
+                        .show();
                 break;
 
             case R.id.textMoreLayout:
                 moreInput.setText(regex, BufferType.EDITABLE);
-                Toasty.warning(
-                                MainActivity.this,
-                                "当前界面似乎不需要正则表达式？已将其载入到输入框中",
-                                Toast.LENGTH_LONG,
-                                true)
+                Toasty.warning(MainActivity.this, R.string.loaded_to_input, Toast.LENGTH_LONG, true)
                         .show();
                 break;
 

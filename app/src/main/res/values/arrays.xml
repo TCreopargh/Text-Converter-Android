@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="layoutArray">
-        <item>字符串替换</item>
-        <item>字符串查找</item>
-        <item>字符串打乱/排序</item>
-        <item>AES加解密</item>
-        <item>实用工具箱</item>
+        <item>@string/string_replace</item>
+        <item>@string/text_search</item>
+        <item>@string/string_shuffle_sort</item>
+        <item>@string/text_encrypt</item>
+        <item>@string/more_handy_function</item>
     </string-array>
 
     <string-array name="layoutValues"
@@ -18,7 +18,7 @@
     </string-array>
 
     <string-array name="encodingArray">
-        <item>UTF-8 (默认)</item>
+        <item>@string/utf8_default</item>
         <item>GB2312</item>
         <item>GBK</item>
         <item>UTF-7</item>
@@ -40,5 +40,20 @@
         <item>UTF-16BE</item>
         <item>ISO–8859–1</item>
         <item>US-ASCII</item>
+    </string-array>
+
+    <string-array name="languageValues"
+        translatable="false">
+        <item>auto</item>
+        <item>en-us</item>
+        <item>zh-cn</item>
+        <item>zh-hk</item>
+    </string-array>
+
+    <string-array name="languageArray">
+        <item>@string/lang_0</item>
+        <item>English</item>
+        <item>中文(简体)</item>
+        <item>中文(繁體)</item>
     </string-array>
 </resources>

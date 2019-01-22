@@ -91,7 +91,7 @@ public class SettingsActivity extends AppCompatActivity implements MyListener {
                 } else {
                     Toasty.error(
                                     SettingsActivity.this,
-                                    "您拒绝了文件访问权限，因此本功能无法运行。",
+                                    R.string.file_permission_denied,
                                     Toast.LENGTH_LONG,
                                     true)
                             .show();
@@ -116,7 +116,7 @@ public class SettingsActivity extends AppCompatActivity implements MyListener {
         if (!destDir.exists()) {
             boolean doMkdirSuccess = destDir.mkdirs();
             if (!doMkdirSuccess) {
-                Toasty.error(this, "文件夹创建失败！", Toast.LENGTH_LONG, true).show();
+                Toasty.error(this, R.string.folder_create_failed, Toast.LENGTH_LONG, true).show();
                 pathTemp = Environment.getExternalStorageDirectory().getAbsolutePath();
             }
         }
@@ -125,7 +125,7 @@ public class SettingsActivity extends AppCompatActivity implements MyListener {
                 .withActivity(this)
                 .withBackgroundColor("#03a9f4")
                 .withRequestCode(REQUESTCODE_WRITE)
-                .withTitle("选择目标文件夹")
+                .withTitle(getString(R.string.pick_folder))
                 .withChooseMode(false)
                 .withStartPath(pathTemp)
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)

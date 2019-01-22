@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -72,7 +73,7 @@ public class CustomRegexActivity extends AppCompatActivity {
 
         selectionMode = getIntent().getBooleanExtra("selectionMode", false);
         if (selectionMode) {
-            setTitle("选择正则表达式");
+            setTitle(R.string.pick_regex);
         }
 
         initList();
@@ -117,7 +118,7 @@ public class CustomRegexActivity extends AppCompatActivity {
                         Snacky.builder()
                                 .setActivity(CustomRegexActivity.this)
                                 .setDuration(Snacky.LENGTH_LONG)
-                                .setText("已删除")
+                                .setText(R.string.delected)
                                 .setActionText(R.string.undo)
                                 .setActionClickListener(
                                         v -> {
@@ -196,7 +197,7 @@ public class CustomRegexActivity extends AppCompatActivity {
     }
 
     private void showCustomDialog(boolean doAddRegex, int position) {
-        String title = doAddRegex ? "新增正则表达式" : "修改正则表达式";
+        String title = doAddRegex ? getString(R.string.new_regex) : getString(R.string.edit_regex);
         final LovelyCustomDialog dialog = new LovelyCustomDialog(CustomRegexActivity.this);
         LayoutInflater layoutInflater = LayoutInflater.from(CustomRegexActivity.this);
         @SuppressLint("InflateParams")
@@ -221,7 +222,7 @@ public class CustomRegexActivity extends AppCompatActivity {
                                 SharedPreferences sharedPreferences =
                                         getSharedPreferences("settings", MODE_PRIVATE);
                                 int size = sharedPreferences.getInt(CustomRegex.SIZE_KEY, 0);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                Editor editor = sharedPreferences.edit();
                                 editor.putString(CustomRegex.REGEX_KEY + size, value)
                                         .putString(CustomRegex.LABEL_KEY + size, label)
                                         .putInt(CustomRegex.SIZE_KEY, size + 1)
@@ -230,7 +231,7 @@ public class CustomRegexActivity extends AppCompatActivity {
                                 adapter.notifyItemChanged(size);
                                 Toasty.success(
                                                 CustomRegexActivity.this,
-                                                "添加成功！",
+                                                R.string.add_success,
                                                 Toast.LENGTH_SHORT)
                                         .show();
                             } else {
@@ -238,7 +239,7 @@ public class CustomRegexActivity extends AppCompatActivity {
                                 String value = regexValueBox.getText().toString();
                                 SharedPreferences sharedPreferences =
                                         getSharedPreferences("settings", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                Editor editor = sharedPreferences.edit();
                                 editor.putString(CustomRegex.REGEX_KEY + position, value)
                                         .putString(CustomRegex.LABEL_KEY + position, label)
                                         .apply();
@@ -246,7 +247,7 @@ public class CustomRegexActivity extends AppCompatActivity {
                                 adapter.notifyItemChanged(position);
                                 Toasty.success(
                                                 CustomRegexActivity.this,
-                                                "修改成功！",
+                                                R.string.edit_success,
                                                 Toast.LENGTH_SHORT)
                                         .show();
                             }
@@ -263,7 +264,7 @@ public class CustomRegexActivity extends AppCompatActivity {
                 clipboardManager.setPrimaryClip(mClipData);
                 Toasty.success(
                     CustomRegexActivity.this,
-                    "已复制到剪贴板",
+                    R.string.clipboard_success,
                     Toast.LENGTH_SHORT,
                     true)
                     .show();

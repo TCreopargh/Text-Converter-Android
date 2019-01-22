@@ -1,0 +1,422 @@
+<resources>
+    <string name="tc_app_name">文本轉換</string>
+    <string name="navigation_drawer_open">打開抽屜</string>
+    <string name="navigation_drawer_close">關閉抽屜</string>
+    <string name="nav_header_subtitle">一個簡單易用的小工具</string>
+    <string name="nav_header_desc">導航欄</string>
+    <string name="action_settings">設置</string>
+    <string name="input_source_text">輸入源文本</string>
+    <string name="replace_from">需要替換的文本</string>
+    <string name="replace_to">替換爲文本</string>
+    <string name="use_regex">使用正則表達式</string>
+    <string name="output">輸出內容</string>
+    <string name="generate">生成</string>
+    <string name="copy_to_clipboard">復制到剪貼板</string>
+    <string name="no_use_spaces">使用換行符連接打亂後的字符串</string>
+    <string name="random_shuffle">子字符串打亂排序</string>
+    <string name="shuffle_hint">在這裏輸入內容，字符串之間用空格或換行分隔</string>
+    <string name="shuffle_instruction">請在下面的文本框中輸入用空格或換行分隔的字符串，點擊按鈕後，系統將打亂所有的字符串。</string>
+    <string name="shuffle">打亂</string>
+    <string name="sort_by_dict">按字典序排序</string>
+    <string name="sort_by_number">按數字大小排序</string>
+    <string name="string_replace">字符串替換</string>
+    <string name="string_shuffle_sort">字符串打亂/排序</string>
+    <string name="i_know">我知道了</string>
+    <string name="confirm">確定</string>
+    <string name="regex_info">正則表達式是一個強大的功能，如果您不瞭解什麼是正則表達式，建議您參閱我們的幫助文檔。\n我們預先製作了一些您很可能會用到的正則表達式。點擊右上角的菜單，就可以載入這些預設值。</string>
+    <string name="view_help">查看幫助</string>
+    <string name="cleared">已清除</string>
+    <string name="undo">撤銷</string>
+    <string name="caution">注意</string>
+    <string name="reverse_io">將輸出內容復制到輸入內容</string>
+    <string name="clear_all">清除所有</string>
+    <string name="search_next">查找下一個</string>
+    <string name="input_search_hint">輸入要搜索的內容</string>
+    <string name="search_result">搜索結果</string>
+    <string name="search_previous">查找上一個</string>
+    <string name="text_search">字符串查找</string>
+    <string name="reset">重置搜索結果</string>
+    <string name="settings">設置</string>
+    <string name="failed_loading_shortcut">快捷方式菜單加載失敗！</string>
+    <string name="share">分享</string>
+    <string name="load_presets">載入正則表達式</string>
+    <string name="title_activity_view_help">查看幫助</string>
+    <string name="search_all">查找所有</string>
+    <string name="action_share">分享</string>
+    <string name="title_activity_settings">設置</string>
+    <string name="text_encrypt">AES加解密</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value"/>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="uppercase_sensitive">區分大小寫</string>
+    <string name="input_password">密鑰</string>
+    <string name="encrypt">加密</string>
+    <string name="decrypt">解密</string>
+    <string name="password_visible">使密鑰可見</string>
+    <string name="about">關於</string>
+    <string name="app_discription">好用輕便的文本高級轉換工具</string>
+    <string name="error_loading_version">Error loading version</string>
+    <string name="developer">開發者：TCreopargh</string>
+    <string name="visit_my_website">訪問我的網站</string>
+    <string name="update">檢查更新/查看介紹</string>
+    <string name="exception_occurred">發生異常：</string>
+    <string name="key_empty">密鑰不能爲空！</string>
+    <string name="string_reverse">字符串反轉</string>
+    <string name="add_spaces">分段並縮進</string>
+    <string name="more_handy_function">實用工具箱</string>
+    <string name="more_function">其他選項</string>
+    <string name="add_numbers">分段並添加標號</string>
+    <string name="format_java_code">格式化Java代碼</string>
+    <string name="custom_random">自定義隨機數</string>
+    <string name="generate_md5">生成MD5編碼</string>
+    <string name="format_instruction">輸入一段自定義文本，文本中出現的{a,b}(a,b代表整數)將被替換爲一個大於等於a，小於等於b的隨機整數。注意：a和b必須是整數。如果要輸出\"{\"符號，請用\"{{\"代替。</string>
+    <string name="to_base_64">Base64編碼</string>
+    <string name="from_base_64">Base64解碼</string>
+    <string name="read_file">從文件讀取內容</string>
+    <string name="write_file">輸出內容到文件</string>
+    <string name="reverse_substring">顛倒子串順序</string>
+    <string name="replace">替換</string>
+    <string name="to_morse_code">摩爾斯電碼編碼/解碼</string>
+    <string name="from_morse_code">摩斯電碼解碼</string>
+    <string name="switch_cases">切換大小寫</string>
+    <string name="format_json">JSON格式化</string>
+    <string name="char_count">字數統計</string>
+    <string name="set_salt">設置鹽值</string>
+    <string name="star">爲我評分</string>
+    <string name="reset_options">重置設置</string>
+    <string name="tick">tick</string>
+    <string name="set_monospace">設置輸入框爲等寬字體</string>
+    <string name="morse_lower">摩斯電碼使用小寫輸出</string>
+    <string name="multi_line">自動換行</string>
+    <string name="test">test</string>
+    <string name="reverse_disc">將字符串中的每個字符顛倒順序</string>
+    <string name="choose_option">選擇要進行的操作</string>
+    <string name="string_copy">字符串批量複製</string>
+    <string name="string_copy_disc">將字符串複製多份</string>
+    <string name="switch_caps_disc">設置字符串的大小寫，有五種模式</string>
+    <string name="add_numbers_disc">遇到回車即分段，並爲每段添加標號</string>
+    <string name="format_java_disc">輸入一段Java代碼並使其符合規範</string>
+    <string name="custom_random_disc">按照一定的格式生成隨機數，點擊以查看說明</string>
+    <string name="generate_md5_disc">生成文本的MD5摘要</string>
+    <string name="to_base64_disc">將文本轉換爲Base64編碼</string>
+    <string name="from_base64_disc">將Base64編碼轉換爲源文本</string>
+    <string name="morse_code_disc">若輸入爲合法的摩爾斯電碼則將其解碼，否則編碼</string>
+    <string name="format_json_disc">輸入一段Json文本，爲其添加適當的縮進以便閱讀</string>
+    <string name="open_functions_menu">打開功能菜單</string>
+    <string name="text_random">生成自定義隨機文本</string>
+    <string name="text_random_disc">隨機抽取一條自定義的文本，可批量生成</string>
+    <string name="markdown_preview">Markdown預覽</string>
+    <string name="get_source_code_from_url">獲取網頁源碼</string>
+    <string name="enter_edit_mode">進入編輯模式</string>
+    <string name="edit_mode">編輯模式</string>
+    <string name="redo">反撤銷</string>
+    <string name="edit_text_here">請在這裏編輯文本</string>
+    <string name="what_is_this">這是什麼?</string>
+    <string name="title_activity_custom_regex">管理正則表達式</string>
+    <string name="input_title">輸入標題</string>
+    <string name="cancel_zh">取消</string>
+    <string name="regex_value">表達式值</string>
+    <string name="title_hint">標題：</string>
+    <string name="expression_hint">表達式值：</string>
+    <string name="manage_regex">管理正則表達式</string>
+    <string name="val_hint">(用\"$val\"表示匹配到的字符串)</string>
+    <string name="val_dialog_hint">\n可在\"替換爲文本\"中輸入\"$val\"表示匹配到的字符串。使用\"$$\"代表一個\"$\"字符。</string>
+    <string name="do_check_clipboard">進入應用時檢查剪貼板</string>
+    <string name="encoding">編碼格式</string>
+    <string name="select_programming_language">選擇語言</string>
+    <string name="reset_search_result">重置搜索結果</string>
+    <string name="function_menu">功能菜單</string>
+    <string name="copy_regex">複製</string>
+    <string name="_6">6</string>
+    <string name="_12">12</string>
+    <string name="start_code_point">起始碼位</string>
+    <string name="end_code_point">終止碼位</string>
+    <string name="min_length">最小長度</string>
+    <string name="max_length">最大長度</string>
+    <string name="_1">1</string>
+    <string name="_cancel_zh">取消</string>
+    <string name="share_content">我正在使用“文本轉換”工具，你也來試試看吧！\n點擊查看: https://www.coolapk.com/apk/212564</string>
+    <string name="no_responsible_apps">沒有應用能響應請求！</string>
+    <string name="hex_dec_value">十六進制數值</string>
+    <string name="e_mail">電子郵箱</string>
+    <string name="IP_address">IP地址</string>
+    <string name="url">URL</string>
+    <string name="integer_num">整數</string>
+    <string name="regular_num">常規數字</string>
+    <string name="html_label">HTML標籤</string>
+    <string name="wikipedia_notice">維基百科註釋</string>
+    <string name="code_comment">代碼註釋</string>
+    <string name="chinese_character">漢字</string>
+    <string name="to_lower_case">全部轉爲小寫</string>
+    <string name="to_upper_case">全部轉爲大寫</string>
+    <string name="switch_up_low">切換大小寫</string>
+    <string name="word_first_upper">單詞首字母大寫</string>
+    <string name="sentence_first_upper">句子首字母大寫</string>
+    <string name="clipboard_not_empty">您的剪貼板不爲空，是否粘貼？</string>
+    <string name="paste">粘貼</string>
+    <string name="copy_success">操作成功</string>
+    <string name="copy_failed_clipboard_too_long">操作失敗：剪貼板內容過長</string>
+    <string name="receive_success">接收內容成功</string>
+    <string name="err_loading_file">操作失敗：讀取文件時出現錯誤</string>
+    <string name="share_too_long">操作失敗：內容過長</string>
+    <string name="open_menu_here">點擊這裏打開菜單</string>
+    <string name="app_intro">《文本轉換》是一款包含多種實用功能的文本處理應用，菜單可在不同的功能界面進行切換。點擊這裏以繼續嚮導。</string>
+    <string name="more_func_here">這裏包含了更多功能</string>
+    <string name="menu_intro">可以從這個菜單進行讀取/存儲文件、復制到剪貼板、統計字數等操作。</string>
+    <string name="start_to_use">開始使用</string>
+    <string name="tap_seq_end">您已經完成了設置嚮導，點擊旁邊的按鈕，開始使用吧!</string>
+    <string name="copy_fail_too_long">內容過長，無法復制到剪貼板！</string>
+    <string name="copy_success_1">複製成功！</string>
+    <string name="operation_success">操作成功</string>
+    <string name="input_area_count">輸入區字符數:</string>
+    <string name="output_area_count">輸出區字符數:</string>
+    <string name="retrieve_source_code_from_web">從網頁獲取源碼</string>
+    <string name="enter_url">在下面填入網頁Url，系統將從該網頁獲取源碼並填入輸入框</string>
+    <string name="example_google">如: www.google.com</string>
+    <string name="illegal_url">輸入內容不是合法的Url！</string>
+    <string name="wait_plz">請稍等</string>
+    <string name="connecting_hint">正在連接…</string>
+    <string name="retrieve_success">獲取成功！</string>
+    <string name="connection_timeout">連接超時！</string>
+    <string name="digit_err">發生錯誤：所有元素必須是數字！\n</string>
+    <string name="tot_appear">目標共出現</string>
+    <string name="tot_appear_1">處，正在選中第</string>
+    <string name="matches">處\n匹配到的內容爲：</string>
+    <string name="chu">處</string>
+    <string name="target_not_found">未查找到目標！</string>
+    <string name="search_is_empty">查找內容不能爲空！</string>
+    <string name="hint_reset">已重置</string>
+    <string name="not_encrypted">輸入內容不是加密後的密文！</string>
+    <string name="salted_enc">當前設置爲採用加鹽加密，普通AES密文解密時會出現錯誤！</string>
+    <string name="decrypt_fail">解密失敗，可能是密碼錯誤或輸入了不正確的密文！</string>
+    <string name="target_folder_not_selected">未選定目標文件夾！</string>
+    <string name="file_saved">文件已保存爲:</string>
+    <string name="current_encoding">當前文件編碼格式爲:</string>
+    <string name="encoding_not_supported">抱歉，本系統不支持以下編碼格式：</string>
+    <string name="file_permission_denied">您拒絕了文件訪問權限，因此本功能無法運行。</string>
+    <string name="folder_create_failed">文件夾創建失敗！</string>
+    <string name="select_target_folder">選擇目標文件夾</string>
+    <string name="text_too_long_saved">文本過長，因此將直接保存。\n文件已保存爲:</string>
+    <string name="pick_folder">選擇文件</string>
+    <string name="error_loading_prefs">設置載入失敗！</string>
+    <string name="format_html">HTML格式化</string>
+    <string name="format_html_disc">將HTML文本變得易讀</string>
+    <string name="markdown_preview_disc">預覽Markdown文本</string>
+    <string name="unicode_parse">Unicode編碼轉義</string>
+    <string name="unicode_parse_disc">輸入一段unicode編碼，如\\u2333，將其轉爲編碼對應的字符</string>
+    <string name="to_unicode">轉爲Unicode編碼</string>
+    <string name="to_unicode_disc">將Unicode字符轉爲對應的Unicode編碼</string>
+    <string name="string_similarity">字符串相似度</string>
+    <string name="string_similarity_disc">用選定的算法計算輸入區和輸出區字符串的相似程度</string>
+    <string name="trim">去除兩端空白字符</string>
+    <string name="trim_disc">去除字符串兩端的空白字符，包括回車、空格等</string>
+    <string name="parse_all">各種轉義/反轉義</string>
+    <string name="parse_all_disc">可轉義或反轉義HTML、XML、JSON、Java、CSV、ECMAScript</string>
+    <string name="parse_regex">正則表達式轉義</string>
+    <string name="parse_regex_disc">將正則表達式使用的特殊字符轉爲其原本的含義</string>
+    <string name="rand_str">生成隨機字符串</string>
+    <string name="rand_str_disc">依據指定的碼位、長度批量生成隨機字符的字符串</string>
+    <string name="copy_copies">輸入複製份數</string>
+    <string name="input_copy_copies">請在下面輸入您想要複製的份數</string>
+    <string name="input_copies_1">輸入複製份數</string>
+    <string name="empty_input">輸入內容不能爲空！</string>
+    <string name="select_mode">選擇模式</string>
+    <string name="custom_random_example">生成隨機時間：{0,23}:{0,59}</string>
+    <string name="format_err">輸入格式錯誤：</string>
+    <string name="args_err">參數錯誤，隨機數的上界必須大於下界！</string>
+    <string name="illegal_base64">輸入內容不是合法的Base64編碼！</string>
+    <string name="test_rand_hint">在輸入框中輸入一段文本，每行之間用回車分隔，系統將隨機抽取一行文本並顯示。</string>
+    <string name="similarity_">相似度:</string>
+    <string name="choose_similarity_algorithm">選擇相似度算法</string>
+    <string name="sorry_not_supported_8_0">抱歉，Android8.0以下系統暫不支持該功能！</string>
+    <string name="select_operation">選擇操作</string>
+    <string name="parse_html">HTML轉義</string>
+    <string name="unparse_html">HTML反轉義</string>
+    <string name="parse_xml">XML轉義</string>
+    <string name="unparse_xml">XML反轉義</string>
+    <string name="parse_json">JSON轉義</string>
+    <string name="unparse_json">JSON反轉義</string>
+    <string name="parse_java">Java轉義</string>
+    <string name="unparse_java">Java反轉義</string>
+    <string name="parse_csv">CSV轉義</string>
+    <string name="unparse_csv">CSV反轉義</string>
+    <string name="parse_ecma">ECMAScript轉義</string>
+    <string name="unparse_ecma">ECMAScript反轉義</string>
+    <string name="gen_rand_str">生成隨機字符串</string>
+    <string name="codepoint_mismatch">起始碼位應小於終止碼位</string>
+    <string name="length_negative">最小長度應小於最大長度</string>
+    <string name="format_err_or_empty">輸入內容爲空或格式錯誤！</string>
+    <string name="press_more_to_exit">再按一次返回鍵退出程序</string>
+    <string name="load_success">載入成功</string>
+    <string name="loaded_to_input">當前界面似乎不需要正則表達式？已將其載入到輸入框中</string>
+    <string name="loaded_as_password">已載入爲密碼</string>
+    <string name="edit_mode_intro">編輯模式是專爲長文本編輯打造的界面，在這裏你可以屏蔽一切干擾，專心編輯文本。 本模式帶有撤銷和反撤銷功能，如需回退之前的界面輕觸返回鍵即可，系統會詢問您是否需要保存更改。 設置中的等寬字體和自動換行設置在這裏仍然有效。</string>
+    <string name="confirm_to_exit">退出確認</string>
+    <string name="save_changes_whether">是否保存所有的更改?</string>
+    <string name="save">保存</string>
+    <string name="abandon_changes">放棄更改</string>
+    <string name="encoding_now">當前編碼格式:</string>
+    <string name="pick_regex">選擇正則表達式</string>
+    <string name="delected">已刪除</string>
+    <string name="new_regex">新增正則表達式</string>
+    <string name="edit_regex">修改正則表達式</string>
+    <string name="add_success">添加成功！</string>
+    <string name="edit_success">修改成功！</string>
+    <string name="clipboard_success">已復制到剪貼板</string>
+    <string name="utf8_default">UTF-8 (默認)</string>
+    <string name="summary1">此項設置僅在替換、查找不使用正則表達式時有效</string>
+    <string name="summary2">等寬字體更有利於代碼閱讀，此設置將同樣應用於編輯模式</string>
+    <string name="summary3">摩斯電碼不區分大小寫，這一選項將更改摩斯電碼解碼後的字母表現形式</string>
+    <string name="summary4">此項設置決定文字超過輸入框邊界時是否換行顯示。如果此項關閉，請左右拖動以查看未顯示出來的文字</string>
+    <string name="summary5">如果剪貼板不爲空，則可將剪貼板內容快速粘貼到所有功能頁面</string>
+    <string name="summary6">不進行編碼自動判斷，總是以UTF-8編碼打開文件</string>
+    <string name="summary7">對AES加密功能設置鹽值，點擊以查看詳情</string>
+    <string name="summary8">文件的存放默認路徑和起始位置</string>
+    <string name="summary9">選擇進入應用時首先顯示的界面</string>
+    <string name="summary10">選擇輸出文件的編碼格式，建議保持默認</string>
+    <string name="summary11">查看應用信息</string>
+    <string name="summary12">恢復所有設置到默認狀態</string>
+    <string name="always_utf8">總是以UTF-8編碼打開文件</string>
+    <string name="aes_salt">AES鹽值</string>
+    <string name="def_path">文件默認存放路徑</string>
+    <string name="init_layout">初始界面</string>
+    <string name="output_encoding">輸出文件編碼格式</string>
+    <string name="reset_settings">重置設置</string>
+    <string name="normal_settings">常規設置</string>
+    <string name="other_settings">其他設置</string>
+    <string name="file_pos_current">文件的存放默認路徑和起始位置 \n當前位置:</string>
+    <string name="reset_all_settings">重置設置</string>
+    <string name="settings_reset_ask">是否要重置所有設置？此操作不可撤銷。</string>
+    <string name="reset_success">重置成功！</string>
+    <string name="reset_failed">重置失敗！</string>
+    <string name="aes_add_salt">AES加鹽</string>
+    <string name="salt_intro">鹽（Salt），在密碼學中，是指在散列之前將散列內容（例如：密碼）的任意固定位置插入特定的字符串。這個在散列中加入字符串的方式稱爲“加鹽”。其作用是讓加鹽後的散列結果和沒有加鹽的結果不相同，在不同的應用情景中，這個處理可以增加額外的安全性。 注意：解密時需要鹽和密碼都對應才能夠正確解密！ 此項留空則表示不對密碼進行加鹽處理！</string>
+    <string name="empty_to_not_use_salt">留空則表示不對密碼進行加鹽處理</string>
+    <string name="reset_default">恢復默認</string>
+    <string name="already_reset">已恢復</string>
+    <string name="no_use_salt">已設置爲不對密碼進行加鹽！</string>
+    <string name="settings_success">設置成功！</string>
+    <string name="init_layout_current">選擇進入應用時首先顯示的界面 \n當前設置:</string>
+    <string name="encoding_current">選擇輸出文件的編碼格式，建議選擇默認 \n當前設置:</string>
+    <string name="fail_mkdir">文件夾創建失敗！</string>
+    <string name="more_clicks">還需</string>
+    <string name="unlock_easter_egg">次點擊即可解鎖彩蛋！</string>
+    <string name="version_name">版本號:</string>
+    <string name="hard_mode">點擊右邊的按鈕即可進入困難模式</string>
+    <string name="click_me">點我</string>
+    <string name="in_hard_mode">已進入困難模式，請返回主界面查看</string>
+    <string name="missed_easter_egg">哈哈哈，你完美錯過了彩蛋！</string>
+    <string name="my_website">我的網站</string>
+    <string name="github_address">GitHub項目地址</string>
+    <string name="send_feedback">發送反饋</string>
+    <string name="feedback_title">《文本轉換》用戶反饋</string>
+    <string name="feedback_message">請在此處附上您遇到問題的詳細內容，最好能附上截圖。感謝您的反饋。</string>
+    <string name="install_mail_first">請先安裝郵件應用！</string>
+    <string name="about_intro">文本轉換: 好用輕便的文本高級轉換工具\n項目編號: Text-Converter-Android</string>
+    <string name="app_info">應用信息</string>
+    <string name="developer_me">開發者: TCreopargh</string>
+    <string name="relevant_links">相關鏈接</string>
+    <string name="rate_me">爲我評分</string>
+    <string name="rate_intro">您的評分將是我繼續開發的動力，如果您對此App感到滿意，或是發現有不足之處，歡迎留下您的寶貴評論。</string>
+    <string name="okay">好的</string>
+    <string name="maybe_later">下次吧</string>
+    <string name="donate_me">向我捐贈</string>
+    <string name="donate_intro">本App的開發離不開您的支持。如果您能爲我提供一些援助，我將十分感激。</string>
+    <string name="install_alipay_first">請先安裝支付寶！</string>
+    <string name="wechat">微信</string>
+    <string name="alipay">支付寶</string>
+    <string name="os_libs">開源許可</string>
+    <string name="lev_dist">Levenshtein距離</string>
+    <string name="lev_sim">Levenshtein相似度</string>
+    <string name="dl_dist">Damerau-Levenshtein距離</string>
+    <string name="jw_dist">JaroWinkler距離</string>
+    <string name="jw_sim">JaroWinkler相似度</string>
+    <string name="lcs">最長公共子序列</string>
+    <string name="lcs_measure">最長公共子序列(度量值)</string>
+    <string name="n_dist">N-Gram距離</string>
+    <string name="q_dist">Q-Gram距離</string>
+    <string name="gen_copies">"生成&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;份&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;"</string>
+    <string name="view_instance">查看示例</string>
+    <string name="others">其他</string>
+    <string name="set_language">界面語言</string>
+    <string name="summary13">設定應用界面語言</string>
+    <string name="lang_0">跟隨系統</string>
+    <string name="simp_to_trad">簡體轉繁體</string>
+    <string name="simp_to_trad_disc">將簡體中文轉爲繁體中文</string>
+    <string name="trad_to_simp">繁體轉簡體</string>
+    <string name="trad_to_simp_disc">將繁體中文轉爲簡體中文</string>
+    <string name="no_tone">無音標</string>
+    <string name="num_tone">數字音標</string>
+    <string name="unicode_tone">Unicode音標</string>
+    <string name="hanyu_to_pinyin_disc">將漢字轉為帶聲調的拼音字符串</string>
+    <string name="hanyu_to_pinyin">漢字轉拼音</string>
+</resources>

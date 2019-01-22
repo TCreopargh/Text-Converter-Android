@@ -43,8 +43,8 @@
     <Button
         android:id="@+id/cancelAddRegex"
         style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
-        android:layout_width="67dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="@string/cancel_zh"
@@ -54,8 +54,8 @@
     <Button
         android:id="@+id/copyRegex"
         style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
-        android:layout_width="67dp"
-        android:layout_height="47dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="4dp"
         android:text="@string/copy_regex"
@@ -64,8 +64,8 @@
     <Button
         android:id="@+id/confirmAddRegex"
         style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
-        android:layout_width="67dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp"
         android:text="@string/confirm"

@@ -8,10 +8,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
-import android.widget.TextView;
+import android.util.DisplayMetrics;
+import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +30,7 @@ import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import de.mateware.snacky.Snacky;
 import es.dmoral.toasty.Toasty;
 import java.io.File;
+import java.util.Locale;
 import java.util.Objects;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -50,7 +55,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         "default_path",
                         Environment.getExternalStorageDirectory().getAbsolutePath()
                                 + "/TextConverter");
-        storePath.setSummary("文件的存放默认路径和起始位置\n当前位置: " + pathTemp);
+        storePath.setSummary(getString(R.string.file_pos_current) + pathTemp);
     }
 
     @Override
@@ -75,6 +80,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Preference resetSettings = findPreference("resetSettings");
         Preference about = findPreference("about");
         Preference saltItem = findPreference("saltItem");
+        Preference language = findPreference("appLanguage");
         storePath = findPreference("storePath");
         initialLayout = findPreference("initialLayout");
         outputEncoding = findPreference("outputEncoding");
@@ -86,7 +92,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         Environment.getExternalStorageDirectory().getAbsolutePath()
                                 + "/TextConverter");
         loadInitLayout();
-        storePath.setSummary("文件的存放默认路径和起始位置\n当前位置: " + pathTemp);
+        storePath.setSummary(getString(R.string.file_pos_current) + pathTemp);
         salt =
                 Objects.requireNonNull(getContext())
                         .getSharedPreferences("settings", MODE_PRIVATE)
@@ -97,19 +103,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             new LovelyStandardDialog(
                                     getActivity(), LovelyStandardDialog.ButtonLayout.HORIZONTAL);
                     lovelyStandardDialog1
-                            .setTitle("重置设置")
+                            .setTitle(getString(R.string.reset_all_settings))
                             .setTopColorRes(R.color.colorAccent)
                             .setIcon(R.drawable.ic_settings_backup_restore_white_48dp)
-                            .setMessage("是否要重置所有设置？此操作不可撤销。")
+                            .setMessage(getString(R.string.settings_reset_ask))
                             .setButtonsColorRes(R.color.colorAccent)
                             .setPositiveButton(
-                                    "确定",
+                                    R.string.confirm,
                                     v -> {
                                         SharedPreferences sharedPreferences1 =
                                                 Objects.requireNonNull(getContext())
                                                         .getSharedPreferences(
                                                                 "settings", MODE_PRIVATE);
-                                        SharedPreferences.Editor editor = sharedPreferences1.edit();
+                                        Editor editor = sharedPreferences1.edit();
                                         editor.clear();
                                         boolean result = editor.commit();
                                         if (result) {
@@ -119,18 +125,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                             Objects.requireNonNull(activity).reLoadFragView();
                                             Toasty.success(
                                                             Objects.requireNonNull(getActivity()),
-                                                            "重置成功！",
+                                                            R.string.reset_success,
                                                             Toast.LENGTH_LONG)
                                                     .show();
                                         } else {
                                             Toasty.error(
                                                             Objects.requireNonNull(getActivity()),
-                                                            "重置失败！",
+                                                            R.string.reset_failed,
                                                             Toast.LENGTH_LONG)
                                                     .show();
                                         }
                                     })
-                            .setNegativeButton("取消", v -> lovelyStandardDialog1.dismiss())
+                            .setNegativeButton(
+                                    R.string.cancel_zh, v -> lovelyStandardDialog1.dismiss())
                             .create()
                             .show();
                     return true;
@@ -148,13 +155,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     lovelyTextInputDialog
                             .setTopColorRes(R.color.safeGreen)
                             .setIcon(R.drawable.ic_lock_white)
-                            .setTitle("AES加盐")
-                            .setMessage(
-                                    "盐（Salt），在密码学中，是指在散列之前将散列内容（例如：密码）的任意固定位置插入特定的字符串。"
-                                            + "这个在散列中加入字符串的方式称为“加盐”。"
-                                            + "其作用是让加盐后的散列结果和没有加盐的结果不相同，在不同的应用情景中，这个处理可以增加额外的安全性。\n"
-                                            + "注意：解密时需要盐和密码都对应才能够正确解密！\n"
-                                            + "此项留空则表示不对密码进行加盐处理！")
+                            .setTitle(getString(R.string.aes_add_salt))
+                            .setMessage(getString(R.string.salt_intro))
                             .configureView(
                                     v14 -> {
                                         v14.setFocusableInTouchMode(true);
@@ -162,7 +164,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     })
                             .configureEditText(
                                     v15 -> {
-                                        v15.setHint("留空则表示不对密码进行加盐处理");
+                                        v15.setHint(getString(R.string.empty_to_not_use_salt));
                                         if (Objects.requireNonNull(getContext())
                                                 .getSharedPreferences("settings", MODE_PRIVATE)
                                                 .getBoolean("doUseMonospaced", false)) {
@@ -170,7 +172,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                         } else {
                                             v15.setTextAppearance(R.style.MyRegular);
                                         }
-                                        v15.setText(salt, TextView.BufferType.EDITABLE);
+                                        v15.setText(salt, BufferType.EDITABLE);
                                         v15.clearFocus();
                                     })
                             .setConfirmButtonColor(
@@ -178,7 +180,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                             .getColor(R.color.colorAccent))
                             .setNegativeButtonColor(getContext().getColor(R.color.colorAccent))
                             .setNegativeButton(
-                                    "恢复默认",
+                                    getString(R.string.reset_default),
                                     v16 -> {
                                         try {
                                             String tempSalt = salt;
@@ -188,15 +190,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                     getContext()
                                                             .getSharedPreferences(
                                                                     "settings", MODE_PRIVATE);
-                                            SharedPreferences.Editor editor =
-                                                    sharedPreferences.edit();
+                                            Editor editor = sharedPreferences.edit();
                                             editor.putString("salt", salt);
                                             editor.apply();
                                             Snacky.builder()
                                                     .setActivity(
                                                             Objects.requireNonNull(getActivity()))
                                                     .setDuration(Snacky.LENGTH_LONG)
-                                                    .setText("已恢复")
+                                                    .setText(getString(R.string.already_reset))
                                                     .setActionText(R.string.undo)
                                                     .setActionClickListener(
                                                             v1 -> {
@@ -207,7 +208,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                                                         .getSharedPreferences(
                                                                                                 "settings",
                                                                                                 MODE_PRIVATE);
-                                                                SharedPreferences.Editor editor1 =
+                                                                Editor editor1 =
                                                                         sharedPreferences1.edit();
                                                                 editor1.putString("salt", tempSalt);
                                                                 editor1.apply();
@@ -238,8 +239,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                     getContext()
                                                             .getSharedPreferences(
                                                                     "settings", MODE_PRIVATE);
-                                            SharedPreferences.Editor editor =
-                                                    sharedPreferences.edit();
+                                            Editor editor = sharedPreferences.edit();
                                             editor.putString("salt", salt);
                                             editor.apply();
                                             if (salt.isEmpty()) {
@@ -254,7 +254,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                 Toasty.custom(
                                                                 Objects.requireNonNull(
                                                                         getActivity()),
-                                                                "已设置为不对密码进行加盐！",
+                                                                R.string.no_use_salt,
                                                                 R.drawable.lock_open,
                                                                 getActivity()
                                                                         .getColor(
@@ -275,7 +275,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                 Toasty.custom(
                                                                 Objects.requireNonNull(
                                                                         getActivity()),
-                                                                "设置成功！",
+                                                                R.string.settings_success,
                                                                 R.drawable.ic_lock,
                                                                 getActivity()
                                                                         .getColor(
@@ -325,12 +325,27 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 (preference, newValue) -> {
                     int layoutId = Integer.parseInt(newValue.toString());
                     String[] array = getResources().getStringArray(R.array.layoutArray);
-                    initialLayout.setSummary("选择进入应用时首先显示的界面\n当前设置: " + array[layoutId]);
+                    initialLayout.setSummary(
+                            getString(R.string.init_layout_current) + array[layoutId]);
                     return true;
                 });
         outputEncoding.setOnPreferenceChangeListener(
                 (preference, newValue) -> {
-                    outputEncoding.setSummary("选择输出文件的编码格式，建议选择默认\n当前设置: " + newValue);
+                    outputEncoding.setSummary(getString(R.string.encoding_current) + newValue);
+                    return true;
+                });
+        language.setOnPreferenceChangeListener(
+                (preference, newValue) -> {
+                    Intent intent =
+                            Objects.requireNonNull(getActivity())
+                                    .getBaseContext()
+                                    .getPackageManager()
+                                    .getLaunchIntentForPackage(
+                                            getActivity().getBaseContext().getPackageName());
+                    if (intent != null) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    }
+                    startActivity(intent);
                     return true;
                 });
     }
@@ -349,7 +364,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             if (!doMkdirSuccess) {
                 Toasty.error(
                                 Objects.requireNonNull(getActivity()),
-                                "文件夹创建失败！",
+                                R.string.fail_mkdir,
                                 Toast.LENGTH_LONG,
                                 true)
                         .show();
@@ -361,7 +376,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .withActivity(getActivity())
                 .withBackgroundColor("#03a9f4")
                 .withRequestCode(REQUESTCODE_WRITE)
-                .withTitle("选择目标文件夹")
+                .withTitle(getString(R.string.pick_folder))
                 .withChooseMode(false)
                 .withStartPath(pathTemp)
                 .withIconStyle(Constant.ICON_STYLE_YELLOW)
@@ -380,8 +395,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     sharedPreferences0.getString("initialLayout", "0")));
             String currentEncoding = sharedPreferences0.getString("outputEncoding", "UTF-8");
             String[] array = getResources().getStringArray(R.array.layoutArray);
-            initialLayout.setSummary("选择进入应用时首先显示的界面\n当前设置: " + array[layoutId]);
-            outputEncoding.setSummary("选择输出文件的编码格式，建议选择默认\n当前设置: " + currentEncoding);
+            initialLayout.setSummary(getString(R.string.init_layout_current) + array[layoutId]);
+            outputEncoding.setSummary(getString(R.string.encoding_current) + currentEncoding);
         } catch (Exception ignored) {
         }
     }
