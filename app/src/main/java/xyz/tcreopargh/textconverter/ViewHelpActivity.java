@@ -1,8 +1,7 @@
 package xyz.tcreopargh.textconverter;
 
 import android.annotation.SuppressLint;
-import android.content.res.Configuration;
-import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -744,29 +743,34 @@ public class ViewHelpActivity extends AppCompatActivity {
                 handler.proceed();
             }
         });*/
-        Resources resources = getResources();
-        Configuration config = resources.getConfiguration();
         String newValue =
                 getSharedPreferences("settings", MODE_PRIVATE).getString("appLanguage", "auto");
+        Locale locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            locale = getResources().getConfiguration().getLocales().get(0);
+        } else {
+            locale = getResources().getConfiguration().locale;
+        }
+        String lang = "";
         if (newValue != null) {
             switch (newValue) {
                 case "auto":
-                    config.setLocale(Locale.getDefault());
+                    lang = locale.getLanguage() + "-" + locale.getCountry();
                     break;
                 case "en-us":
-                    config.setLocale(Locale.ENGLISH);
+                    lang = "en-US";
                     break;
                 case "zh-cn":
-                    config.setLocale(Locale.SIMPLIFIED_CHINESE);
+                    lang = "zh-CN";
                     break;
                 case "zh-hk":
-                    config.setLocale(Locale.TRADITIONAL_CHINESE);
+                    lang = "zh-HK";
                     break;
             }
         }
-        if (config.locale == Locale.CHINA || config.locale == Locale.SIMPLIFIED_CHINESE) {
+        if (lang.equalsIgnoreCase("zh-CN")) {
             viewHelp.loadDataWithBaseURL(null, helpHtml, "text/html", "UTF-8", null);
-        } else if (config.locale == Locale.TAIWAN || config.locale == Locale.TRADITIONAL_CHINESE) {
+        } else if (lang.equalsIgnoreCase("zh-TW") || lang.equalsIgnoreCase("zh-HK")) {
             viewHelp.loadDataWithBaseURL(null, helpHtmlTraditional, "text/html", "UTF-8", null);
         } else {
             viewHelp.loadUrl("https://en.wikipedia.org/wiki/Regular_expression");
