@@ -333,9 +333,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         language.setOnPreferenceChangeListener(
             (preference, newValue) -> {
-                if (newValue == "auto") {
+                if (newValue.equals("auto")) {
                     Toasty.warning(getContext(), getString(R.string.restart_to_apply), Toast.LENGTH_LONG).show();
-                }
+                } else {
                     /*
                     Intent intent =
                             Objects.requireNonNull(getActivity())
@@ -347,9 +347,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     }
                     startActivity(intent);*/
-                MainActivity.mainActivity.finish();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+                    MainActivity.mainActivity.finish();
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
+                }
                 return true;
             });
         Objects.requireNonNull(getActivity()).setTitle(R.string.title_activity_settings);

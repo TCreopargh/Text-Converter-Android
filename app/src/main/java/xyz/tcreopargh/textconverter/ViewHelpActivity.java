@@ -27,7 +27,6 @@ public class ViewHelpActivity extends AppCompatActivity {
                 handler.proceed();
             }
         });*/
-        setTitle(getString(R.string.title_activity_view_help));
         String newValue =
             getSharedPreferences("settings", MODE_PRIVATE).getString("appLanguage", "auto");
         Locale locale;
@@ -55,10 +54,13 @@ public class ViewHelpActivity extends AppCompatActivity {
         }
         if (lang.equalsIgnoreCase("zh-CN")) {
             viewHelp.loadUrl("file:///android_asset/help_document_zh_simplified.html");
+            setTitle("查看帮助");
         } else if (lang.equalsIgnoreCase("zh-TW") || lang.equalsIgnoreCase("zh-HK")) {
             viewHelp.loadUrl("file:///android_asset/help_document_zh_traditional.html");
+            setTitle("查看幫助");
         } else {
             viewHelp.loadUrl("file:///android_asset/help_document_en.html");
+            setTitle("View Guidelines");
         }
     }
 
