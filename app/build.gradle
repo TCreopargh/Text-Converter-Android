@@ -6,8 +6,8 @@ android {
         applicationId "xyz.tcreopargh.textconverter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 65
-        versionName "4.4.0"
+        versionCode 66
+        versionName "4.4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -98,6 +98,7 @@ public class TextEditActivity extends AppCompatActivity {
         }
         performEdit = new PerformEdit(editText);
         performEdit.setDefaultText(text);
+        setTitle(R.string.edit_mode);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

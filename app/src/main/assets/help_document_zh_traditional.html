@@ -1,0 +1,402 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0058)http://tool.oschina.net/uploads/apidocs/jquery/regexp.html -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>正則表達式幫助</title>
+    <style type="text/css">html, body { font-family: sans-serif; font-size: 1em; } table.wikitable { background: none repeat scroll 0 0 #F9F9F9; border: 1px solid #AAAAAA; border-collapse: collapse; color: black; } .wikitable th, .wikitable td { border: 1px solid #AAAAAA; padding: 0.2em; } .wikitable th { background: none repeat scroll 0 0 #F2F2F2; text-align: center; } p { line-height: 1.5em; margin: 0.4em 0 0.5em; } h2{ margin:0; font-weight:normal;}</style></head>
+
+<body>
+<h2>什麽是正則表達式？</h2>
+
+<blockquote><p>正則表達式使用單個字符串來描述、匹配一系列匹配某個句法規則的字符串。
+    在很多文本編輯器裏，正則表達式通常被用來檢索、替換那些匹配某個模式的文本。<br>
+    ——維基百科</p></blockquote>
+
+<p>換句話說，就是一種字符串的匹配規則，使用正則表達式能夠匹配到所有符合規則的字符串，如"[a-z]"能匹配所有小寫英文字母，"\d+"能匹配所有單個數字等。使用正則表達式，能夠在處理大量文本時省時省力。</p>
+
+<h2>我該如何使用正則表達式？</h2>
+
+<p>本App提供了一些比較常用的正則表達式，您可以點擊主界面右上角菜單中的“載入正則表達式”使用這些預設值。當然，您也可以根據下方提供的規則，自己編寫正則表達式，並且可以將其存入正則表達式列表中，方便以後隨時使用。</p>
+<h2>
+    在替換結果中使用&quot;$&quot;符號
+</h2>
+<p>
+    在正則表達式功能開啟時，&quot;$&quot;符號在本應用的“替換為文本”一欄中具有特殊的意義。
+</p>
+<p>
+    在這一欄中輸入以下以$符號開頭的表達式，將會被轉換為特定的內容。
+</p>
+<ul class=" list-paddingleft-2" style="list-style-type: disc;">
+    <li>
+        <p>
+            <code>$$</code>:表示一個$符號
+        </p>
+    </li>
+    <li>
+        <p>
+            <code>$val</code>:表示當前匹配到的字符串。
+        </p>
+    </li>
+    <li>
+        <p>
+            <code>$num</code>:表示當前匹配到的字符串是總共匹配到的第幾個。
+        </p>
+    </li>
+    <li>
+        <p>
+            <code>$rev</code>:表示當前匹配到的內容反轉後得到的字符串。
+        </p>
+    </li>
+    <li>
+        <p>
+            <code>$len</code>:表示當前匹配到的字符串的長度。
+        </p>
+    </li>
+    <li>
+        <p>
+            <code>$upp</code>:表示當前匹配到的字符串所有字母轉換為大寫後的結果。
+        </p>
+    </li>
+    <li>
+        <p>
+            <code>$low</code>:表示當前匹配到的字符串所有字母轉換為小寫後的結果。
+        </p>
+    </li>
+</ul>
+<h2>表達式全集</h2>
+<table class="wikitable">
+    <tbody>
+    <tr>
+        <th width="10%">字符</th>
+        <th width="90%">描述</th></tr>
+    <tr>
+        <th style="text-align:center;">\</th>
+        <td>將下一個字符標記為一個特殊字符、或一個原義字符、或一個向後引用、或一個八進制轉義符。例如，“
+            <code>n</code>”匹配字符“
+            <code>n</code>”。“
+            <code>\n</code>”匹配一個換行符。串行“
+            <code>\\</code>”匹配“
+            <code>\</code>”而“
+            <code>\(</code>”則匹配“
+            <code>(</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">^</th>
+        <td>匹配輸入字符串的開始位置。如果設置了RegExp對象的Multiline屬性，^也匹配“
+            <code>\n</code>”或“
+            <code>\r</code>”之後的位置。</td></tr>
+    <tr>
+        <th style="text-align:center;">$</th>
+        <td>匹配輸入字符串的結束位置。如果設置了RegExp對象的Multiline屬性，$也匹配“
+            <code>\n</code>”或“
+            <code>\r</code>”之前的位置。</td></tr>
+    <tr>
+        <th style="text-align:center;">*</th>
+        <td>匹配前面的子表達式零次或多次。例如，zo*能匹配“
+            <code>z</code>”以及“
+            <code>zoo</code>”。*等價於{0,}。</td></tr>
+    <tr>
+        <th style="text-align:center;">+</th>
+        <td>匹配前面的子表達式一次或多次。例如，“
+            <code>zo+</code>”能匹配“
+            <code>zo</code>”以及“
+            <code>zoo</code>”，但不能匹配“
+            <code>z</code>”。+等價於{1,}。</td></tr>
+    <tr>
+        <th style="text-align:center;">?</th>
+        <td>匹配前面的子表達式零次或一次。例如，“
+            <code>do(es)?</code>”可以匹配“
+            <code>does</code>”或“
+            <code>does</code>”中的“
+            <code>do</code>”。?等價於{0,1}。</td></tr>
+    <tr>
+        <th style="text-align:center;">{
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>}</th>
+        <td>
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>是一個非負整數。匹配確定的
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>次。例如，“
+            <code>o{2}</code>”不能匹配“
+            <code>Bob</code>”中的“
+            <code>o</code>”，但是能匹配“
+            <code>food</code>”中的兩個o。</td></tr>
+    <tr>
+        <th style="text-align:center;">{
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>,}</th>
+        <td>
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>是一個非負整數。至少匹配
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>次。例如，“
+            <code>o{2,}</code>”不能匹配“
+            <code>Bob</code>”中的“
+            <code>o</code>”，但能匹配“
+            <code>foooood</code>”中的所有o。“
+            <code>o{1,}</code>”等價於“
+            <code>o+</code>”。“
+            <code>o{0,}</code>”則等價於“
+            <code>o*</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">{
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>,
+            <span style="font-family:Times New Roman; font-style:italic;">m</span>}</th>
+        <td>
+            <span style="font-family:Times New Roman; font-style:italic;">m</span>和
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>均為非負整數，其中
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>&lt;=
+            <span style="font-family:Times New Roman; font-style:italic;">m</span>。最少匹配
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>次且最多匹配
+            <span style="font-family:Times New Roman; font-style:italic;">m</span>次。例如，“
+            <code>o{1,3}</code>”將匹配“
+            <code>fooooood</code>”中的前三個o。“
+            <code>o{0,1}</code>”等價於“
+            <code>o?</code>”。請註意在逗號和兩個數之間不能有空格。</td></tr>
+    <tr>
+        <th style="text-align:center;">?</th>
+        <td>當該字符緊跟在任何一個其他限制符（*,+,?，{
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>}，{
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>,}，{
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>,
+            <span style="font-family:Times New Roman; font-style:italic;">m</span>}）後面時，匹配模式是非貪婪的。非貪婪模式盡可能少的匹配所搜索的字符串，而默認的貪婪模式則盡可能多的匹配所搜索的字符串。例如，對於字符串“
+            <code>oooo</code>”，“
+            <code>o+?</code>”將匹配單個“
+            <code>o</code>”，而“
+            <code>o+</code>”將匹配所有“
+            <code>o</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">.</th>
+        <td>匹配除“
+            <code>\</code>
+            <span style="font-family:Times New Roman; font-style:italic;">
+                            <code>n</code></span>”之外的任何單個字符。要匹配包括“
+            <code>\</code>
+            <span style="font-family:Times New Roman; font-style:italic;">
+                            <code>n</code></span>”在內的任何字符，請使用像“
+            <code>(.|\n)</code>”的模式。</td></tr>
+    <tr>
+        <th style="text-align:center;">(pattern)</th>
+        <td>匹配pattern並獲取這一匹配。所獲取的匹配可以從產生的Matches集合得到，在VBScript中使用SubMatches集合，在JScript中則使用$0…$9屬性。要匹配圓括號字符，請使用“
+            <code>\(</code>”或“
+            <code>\)</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">(?:pattern)</th>
+        <td>匹配pattern但不獲取匹配結果，也就是說這是一個非獲取匹配，不進行存儲供以後使用。這在使用或字符“
+            <code>(|)</code>”來組合一個模式的各個部分是很有用。例如“
+            <code>industr(?:y|ies)</code>”就是一個比“
+            <code>industry|industries</code>”更簡略的表達式。</td></tr>
+    <tr>
+        <th style="text-align:center;">(?=pattern)</th>
+        <td>正向肯定預查，在任何匹配pattern的字符串開始處匹配查找字符串。這是一個非獲取匹配，也就是說，該匹配不需要獲取供以後使用。例如，“
+            <code>Windows(?=95|98|NT|2000)</code>”能匹配“
+            <code>Windows2000</code>”中的“
+            <code>Windows</code>”，但不能匹配“
+            <code>Windows3.1</code>”中的“
+            <code>Windows</code>”。預查不消耗字符，也就是說，在一個匹配發生後，在最後一次匹配之後立即開始下一次匹配的搜索，而不是從包含預查的字符之後開始。</td></tr>
+    <tr>
+        <th style="text-align:center;">(?!pattern)</th>
+        <td>正向否定預查，在任何不匹配pattern的字符串開始處匹配查找字符串。這是一個非獲取匹配，也就是說，該匹配不需要獲取供以後使用。例如“
+            <code>Windows(?!95|98|NT|2000)</code>”能匹配“
+            <code>Windows3.1</code>”中的“
+            <code>Windows</code>”，但不能匹配“
+            <code>Windows2000</code>”中的“
+            <code>Windows</code>”。預查不消耗字符，也就是說，在一個匹配發生後，在最後一次匹配之後立即開始下一次匹配的搜索，而不是從包含預查的字符之後開始</td></tr>
+    <tr>
+        <th style="text-align:center;">(?&lt;=pattern)</th>
+        <td>反向肯定預查，與正向肯定預查類擬，只是方向相反。例如，“
+            <code>(?&lt;=95|98|NT|2000)Windows</code>”能匹配“
+            <code>2000Windows</code>”中的“
+            <code>Windows</code>”，但不能匹配“
+            <code>3.1Windows</code>”中的“
+            <code>Windows</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">(?&lt;!pattern)</th>
+        <td>反向否定預查，與正向否定預查類擬，只是方向相反。例如“
+            <code>(?&lt;!95|98|NT|2000)Windows</code>”能匹配“
+            <code>3.1Windows</code>”中的“
+            <code>Windows</code>”，但不能匹配“
+            <code>2000Windows</code>”中的“
+            <code>Windows</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">x|y</th>
+        <td>匹配x或y。例如，“
+            <code>z|food</code>”能匹配“
+            <code>z</code>”或“
+            <code>food</code>”。“
+            <code>(z|f)ood</code>”則匹配“
+            <code>zood</code>”或“
+            <code>food</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">[xyz]</th>
+        <td>字符集合。匹配所包含的任意一個字符。例如，“
+            <code>[abc]</code>”可以匹配“
+            <code>plain</code>”中的“
+            <code>a</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">[^xyz]</th>
+        <td>負值字符集合。匹配未包含的任意字符。例如，“
+            <code>[^abc]</code>”可以匹配“
+            <code>plain</code>”中的“
+            <code>p</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">[a-z]</th>
+        <td>字符範圍。匹配指定範圍內的任意字符。例如，“
+            <code>[a-z]</code>”可以匹配“
+            <code>a</code>”到“
+            <code>z</code>”範圍內的任意小寫字母字符。</td></tr>
+    <tr>
+        <th style="text-align:center;">[^a-z]</th>
+        <td>負值字符範圍。匹配任何不在指定範圍內的任意字符。例如，“
+            <code>[^a-z]</code>”可以匹配任何不在“
+            <code>a</code>”到“
+            <code>z</code>”範圍內的任意字符。</td></tr>
+    <tr>
+        <th style="text-align:center;">\b</th>
+        <td>匹配一個單詞邊界，也就是指單詞和空格間的位置。例如，“
+            <code>er\b</code>”可以匹配“
+            <code>never</code>”中的“
+            <code>er</code>”，但不能匹配“
+            <code>verb</code>”中的“
+            <code>er</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">\B</th>
+        <td>匹配非單詞邊界。“
+            <code>er\B</code>”能匹配“
+            <code>verb</code>”中的“
+            <code>er</code>”，但不能匹配“
+            <code>never</code>”中的“
+            <code>er</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">\cx</th>
+        <td>匹配由x指明的控制字符。例如，\cM匹配一個Control-M或回車符。x的值必須為A-Z或a-z之一。否則，將c視為一個原義的“
+            <code>c</code>”字符。</td></tr>
+    <tr>
+        <th style="text-align:center;">\d</th>
+        <td>匹配一個數字字符。等價於[0-9]。</td></tr>
+    <tr>
+        <th style="text-align:center;">\D</th>
+        <td>匹配一個非數字字符。等價於[^0-9]。</td></tr>
+    <tr>
+        <th style="text-align:center;">\f</th>
+        <td>匹配一個換頁符。等價於\x0c和\cL。</td></tr>
+    <tr>
+        <th style="text-align:center;">\n</th>
+        <td>匹配一個換行符。等價於\x0a和\cJ。</td></tr>
+    <tr>
+        <th style="text-align:center;">\r</th>
+        <td>匹配一個回車符。等價於\x0d和\cM。</td></tr>
+    <tr>
+        <th style="text-align:center;">\s</th>
+        <td>匹配任何空白字符，包括空格、制表符、換頁符等等。等價於[ \f\n\r\t\v]。</td></tr>
+    <tr>
+        <th style="text-align:center;">\S</th>
+        <td>匹配任何非空白字符。等價於[^ \f\n\r\t\v]。</td></tr>
+    <tr>
+        <th style="text-align:center;">\t</th>
+        <td>匹配一個制表符。等價於\x09和\cI。</td></tr>
+    <tr>
+        <th style="text-align:center;">\v</th>
+        <td>匹配一個垂直制表符。等價於\x0b和\cK。</td></tr>
+    <tr>
+        <th style="text-align:center;">\w</th>
+        <td>匹配包括下劃線的任何單詞字符。等價於“
+            <code>[A-Za-z0-9_]</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">\W</th>
+        <td>匹配任何非單詞字符。等價於“
+            <code>[^A-Za-z0-9_]</code>”。</td></tr>
+    <tr>
+        <th style="text-align:center;">\x
+            <span style="font-family:Times New Roman; font-style:italic;">n</span></th>
+        <td>匹配
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>，其中
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>為十六進制轉義值。十六進制轉義值必須為確定的兩個數字長。例如，“
+            <code>\x41</code>”匹配“
+            <code>A</code>”。“
+            <code>\x041</code>”則等價於“
+            <code>\x04&amp;1</code>”。正則表達式中可以使用ASCII編碼。.</td></tr>
+    <tr>
+        <th style="text-align:center;">\
+            <span style="font-family:Times New Roman; font-style:italic;">num</span></th>
+        <td>匹配
+            <span style="font-family:Times New Roman; font-style:italic;">num</span>，其中
+            <span style="font-family:Times New Roman; font-style:italic;">num</span>是一個正整數。對所獲取的匹配的引用。例如，“
+            <code>(.)\1</code>”匹配兩個連續的相同字符。</td></tr>
+    <tr>
+        <th style="text-align:center;">\
+            <span style="font-family:Times New Roman; font-style:italic;">n</span></th>
+        <td>標識一個八進制轉義值或一個向後引用。如果\
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>之前至少
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>個獲取的子表達式，則
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>為向後引用。否則，如果
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>為八進制數字（0-7），則
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>為一個八進制轉義值。</td></tr>
+    <tr>
+        <th style="text-align:center;">\
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span></th>
+        <td>標識一個八進制轉義值或一個向後引用。如果\
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span>之前至少有
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span>個獲得子表達式，則
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span>為向後引用。如果\
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span>之前至少有
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>個獲取，則
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>為一個後跟文字
+            <span style="font-family:Times New Roman; font-style:italic;">m</span>的向後引用。如果前面的條件都不滿足，若
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>和
+            <span style="font-family:Times New Roman; font-style:italic;">m</span>均為八進制數字（0-7），則\
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span>將匹配八進制轉義值
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span>。</td></tr>
+    <tr>
+        <th style="text-align:center;">\
+            <span style="font-family:Times New Roman; font-style:italic;">nml</span></th>
+        <td>如果
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>為八進制數字（0-3），且
+            <span style="font-family:Times New Roman; font-style:italic;">m和l</span>均為八進制數字（0-7），則匹配八進制轉義值
+            <span style="font-family:Times New Roman; font-style:italic;">nm</span>l。</td></tr>
+    <tr>
+        <th style="text-align:center;">\u
+            <span style="font-family:Times New Roman; font-style:italic;">n</span></th>
+        <td>匹配
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>，其中
+            <span style="font-family:Times New Roman; font-style:italic;">n</span>是一個用四個十六進制數字表示的Unicode字符。例如，\u00A9匹配版權符號（©）。</td></tr>
+    </tbody>
+</table>
+<br>
+<h2>常用正則表達式</h2>
+<table class="wikitable" width="100%">
+    <tbody>
+    <tr>
+        <th width="10%">用戶名</th>
+        <td width="90%">/^[a-z0-9_-]{3,16}$/</td></tr>
+    <tr>
+        <th scope="row">密碼</th>
+        <td>/^[a-z0-9_-]{6,18}$/</td></tr>
+    <tr>
+        <th scope="row">十六進制值</th>
+        <td>/^#?([a-f0-9]{6}|[a-f0-9]{3})$/</td></tr>
+    <tr>
+        <th scope="row">電子郵箱</th>
+        <td>/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+            <br>/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/</td></tr>
+    <tr>
+        <th scope="row">URL</th>
+        <td>/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/</td></tr>
+    <tr>
+        <th scope="row">IP 地址</th>
+        <td>/((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)/
+            <br>/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/</td></tr>
+    <tr>
+        <th scope="row">HTML 標簽</th>
+        <td>/^&lt;([a-z]+)([^&lt;]+)*(?:&gt;(.*)&lt;\/\1&gt;|\s+\/&gt;)$/</td></tr>
+    <tr>
+        <th scope="row">刪除代碼\\註釋</th>
+        <td>(?&lt;!http:|\S)//.*$</td></tr>
+    <!-- <tr>
+    <th scope="row">&nbsp;</th>
+    <td>&nbsp;</td></tr>-->
+    <tr>
+        <th scope="row">Unicode編碼中的漢字範圍</th>
+        <td>/^[\u2E80-\u9FFF]+$/</td></tr>
+    </tbody>
+</table>
+<h4>以上表格來源：tool.oschina.net</h4>
+</body>
+
+</html>

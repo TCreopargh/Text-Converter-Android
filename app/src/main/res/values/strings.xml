@@ -189,7 +189,7 @@
     <string name="expression_hint">Regex value:</string>
     <string name="manage_regex">Manage regular expressions</string>
     <string name="val_hint">(Use\"$val\"to instead matched sequence)</string>
-    <string name="val_dialog_hint">\nYou can use \"$val\" to let it be replaced by matched sequence. Use \"$$\" in case you want a single \"$\" character.</string>
+    <string name="val_dialog_hint">\nYou can use $val to let it be replaced by matched sequence. Use $$ in case you want a single $ character.\nView help for more $ statements.</string>
     <string name="do_check_clipboard">Check clipboard on app start</string>
     <string name="encoding">Encoding</string>
     <string name="select_programming_language">Select the programming language</string>
@@ -221,7 +221,7 @@
     <string name="switch_up_low">Toggle cases</string>
     <string name="word_first_upper">Set the first letter of a word to upper case</string>
     <string name="sentence_first_upper">Set the first letter of a sentence to upper case</string>
-    <string name="clipboard_not_empty">Your clipboard is not empty. paste them right now?</string>
+    <string name="clipboard_not_empty">Paste your clipboard content now?</string>
     <string name="paste">Paste</string>
     <string name="copy_success">Success</string>
     <string name="copy_failed_clipboard_too_long">Failed: Clipboard content is too long</string>
@@ -419,4 +419,5 @@
     <string name="unicode_tone">Unicode tones</string>
     <string name="hanyu_to_pinyin_disc">Converts Chinese characters to pinyin String</string>
     <string name="hanyu_to_pinyin">Chinese to pinyin</string>
+    <string name="restart_to_apply">Please restart the app to apply changes</string>
 </resources>

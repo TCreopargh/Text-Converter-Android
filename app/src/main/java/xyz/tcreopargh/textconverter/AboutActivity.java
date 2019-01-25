@@ -572,6 +572,7 @@ public class AboutActivity extends AppCompatActivity {
                         .create();
 
         aboutLayout.addView(aboutView);
+        setTitle(R.string.about);
     }
 
     public void returnHome() {

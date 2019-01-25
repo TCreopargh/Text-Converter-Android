@@ -18,6 +18,7 @@ public class MarkdownPreviewActivity extends AppCompatActivity {
         markdownView
                 .addStyleSheet(new Github())
                 .loadMarkdown(Objects.requireNonNull(getIntent().getStringExtra("markdownText")));
+        setTitle(R.string.markdown_preview);
     }
 
     public void returnHome() {

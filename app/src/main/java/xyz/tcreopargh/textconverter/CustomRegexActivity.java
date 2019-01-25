@@ -74,6 +74,8 @@ public class CustomRegexActivity extends AppCompatActivity {
         selectionMode = getIntent().getBooleanExtra("selectionMode", false);
         if (selectionMode) {
             setTitle(R.string.pick_regex);
+        } else {
+            setTitle(R.string.title_activity_custom_regex);
         }
 
         initList();

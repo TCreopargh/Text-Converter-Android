@@ -189,7 +189,7 @@
     <string name="expression_hint">表達式值：</string>
     <string name="manage_regex">管理正則表達式</string>
     <string name="val_hint">(用\"$val\"表示匹配到的字符串)</string>
-    <string name="val_dialog_hint">\n可在\"替換爲文本\"中輸入\"$val\"表示匹配到的字符串。使用\"$$\"代表一個\"$\"字符。</string>
+    <string name="val_dialog_hint">\n可在替換爲文本中輸入$val表示匹配到的字符串。使用$$代表一個$字符。\n更多$字符的用法請參考幫助文檔。</string>
     <string name="do_check_clipboard">進入應用時檢查剪貼板</string>
     <string name="encoding">編碼格式</string>
     <string name="select_programming_language">選擇語言</string>
@@ -419,4 +419,5 @@
     <string name="unicode_tone">Unicode音標</string>
     <string name="hanyu_to_pinyin_disc">將漢字轉為帶聲調的拼音字符串</string>
     <string name="hanyu_to_pinyin">漢字轉拼音</string>
+    <string name="restart_to_apply">請重啓App以應用更改</string>
 </resources>
