@@ -27,6 +27,8 @@
  
 ### 如有合理建议欢迎提出，我会考虑采纳
 
+已在酷安上架：https://www.coolapk.com/apk/xyz.tcreopargh.textconverter
+
 ```
 Copyright 2019 TCreopargh
 ```
