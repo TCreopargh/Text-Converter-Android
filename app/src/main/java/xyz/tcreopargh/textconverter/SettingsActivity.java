@@ -65,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity implements MyListener {
                 .commit();
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

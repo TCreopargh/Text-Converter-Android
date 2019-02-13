@@ -14,6 +14,16 @@
         android:title="@string/redo"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/menuMultiLine"
+        android:checkable="true"
+        android:title="@string/multi_line"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menuMonospace"
+        android:checkable="true"
+        android:title="@string/menu_monospace"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/editHelp"
         android:icon="@drawable/baselinehelpoutline_white_small"
         android:title="@string/what_is_this"

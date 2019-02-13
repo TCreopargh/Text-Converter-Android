@@ -32,7 +32,7 @@ import java.util.Objects;
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private MyListener myListener;
-    private String defaultSalt = MainActivity.defaultSalt;
+    private String defaultSalt = MainActivity.DEFAULT_SALT;
     private String salt = defaultSalt;
     private Preference storePath, initialLayout, outputEncoding;
 
@@ -333,7 +333,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         language.setOnPreferenceChangeListener(
             (preference, newValue) -> {
-                if (newValue.equals("auto")) {
+                if ("auto".equals(newValue)) {
                     Toasty.warning(getContext(), getString(R.string.restart_to_apply), Toast.LENGTH_LONG).show();
                 } else {
                     /*

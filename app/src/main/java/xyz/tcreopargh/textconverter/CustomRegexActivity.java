@@ -147,40 +147,6 @@ public class CustomRegexActivity extends AppCompatActivity {
                     }
                 });
         recyclerView.setAdapter(adapter);
-        // recyclerView.setItemViewSwipeEnabled(true);
-        /*
-        recyclerView.setOnItemMoveListener(
-                new OnItemMoveListener() {
-                    @Override
-                    public boolean onItemMove(ViewHolder srcHolder, ViewHolder targetHolder) {
-                        int fromPosition = srcHolder.getAdapterPosition();
-                        int toPosition = targetHolder.getAdapterPosition();
-                        Collections.swap(regexList, fromPosition, toPosition);
-                        adapter.notifyItemMoved(fromPosition, toPosition);
-                        return true;
-                    }
-
-                    @Override
-                    public void onItemDismiss(ViewHolder viewHolder) {
-                        int position = viewHolder.getAdapterPosition();
-                        CustomRegex temp = regexList.get(position);
-                        regexList.remove(position);
-                        adapter.notifyItemRemoved(position);
-                        Snacky.builder()
-                                .setActivity(CustomRegexActivity.this)
-                                .setDuration(Snacky.LENGTH_LONG)
-                                .setText("已删除")
-                                .setActionText(R.string.undo)
-                                .setActionClickListener(
-                                        v -> {
-                                            regexList.add(position, temp);
-                                            adapter.notifyItemInserted(position);
-                                        })
-                                .success()
-                                .show();
-                    }
-                });
-                */
 
         FloatingActionButton fab = findViewById(R.id.addRegex);
         fab.setOnClickListener(view -> showCustomDialog(true, 0));

@@ -114,6 +114,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
@@ -143,7 +144,13 @@ public class MainActivity extends AppCompatActivity
     View.OnClickListener,
     View.OnLongClickListener {
 
-    public static final String defaultSalt = "Powered by TCreopargh!";
+    public static final String DEFAULT_SALT = "Powered by TCreopargh!";
+    public static final int EXIT_PRESS_INTERVAL = 2000;
+    public static final int MAX_TOTLEN = 250 * 1024;
+    public static final String NULL_STRING = "null";
+    public static final int MAX_CLIP_LENGTH = 500000;
+    public static final int MAX_CONTENT_LENGTH = 100 * 1024;
+    public static final String PATH_REGEX = "^([/] [\\w-]+)*$";
     public static boolean keyGenNeedToReset = true;
     public static String encoding = "UTF-8";
 
@@ -158,9 +165,9 @@ public class MainActivity extends AppCompatActivity
     final int SENTENCE_FIRST = 4;
     final int REQUESTCODE_READ = 1000;
     final int REQUESTCODE_WRITE = 2000;
-    final boolean settingsBoolean[] = new boolean[]{false, false, false, true, true};
+    final boolean[] settingsBoolean = new boolean[]{false, false, false, true, true};
     final String[] fbsArr = {"\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|"};
-    final String presetsValue[] =
+    final String[] presetsValue =
         new String[]{
             "#?([a-f0-9]{6}|[a-f0-9]{3})",
             "[a-z\\d]+(\\.[a-z\\d]+)*@([\\da-z](-[\\da-z])?)+(\\.{1,2}[a-z]+)+",
@@ -202,7 +209,7 @@ public class MainActivity extends AppCompatActivity
     String generatedKey = "";
     String path = "";
     String defaultPath = "";
-    String salt = defaultSalt;
+    String salt = DEFAULT_SALT;
     DialogPlus dialogPlus;
     ImageView tick;
     CoordinatorLayout mainContext;
@@ -245,7 +252,7 @@ public class MainActivity extends AppCompatActivity
     public static String getMD5(String plainText) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(plainText.getBytes("UTF8"));
+            md.update(plainText.getBytes(StandardCharsets.UTF_8));
             byte s[] = md.digest();
             StringBuilder result = new StringBuilder();
             for (byte value : s) {
@@ -318,18 +325,6 @@ public class MainActivity extends AppCompatActivity
         initView();
         setTitle(R.string.string_replace);
         mainActivity = this;
-
-        // Floating button, may be used later
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        .setAction("Action", null).show();
-        }
-        });
-        */
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle =
@@ -406,7 +401,7 @@ public class MainActivity extends AppCompatActivity
                         .setActionText(getString(R.string.paste))
                         .setActionClickListener(
                             v -> {
-                                if (content.length() < 100 * 1024) {
+                                if (content.length() < MAX_CONTENT_LENGTH) {
                                     replaceInput.setText(content);
                                     searchInput.setText(content);
                                     shuffleInput.setText(content);
@@ -457,13 +452,13 @@ public class MainActivity extends AppCompatActivity
                 content = intent1.getStringExtra(Intent.EXTRA_TEXT);
             } else if (intent1.getStringExtra(Intent.EXTRA_TITLE) != null) {
                 String pathStr = intent1.getStringExtra(Intent.EXTRA_TITLE);
-                if (pathStr.matches("^([/] [\\w-]+)*$")) {
+                if (pathStr.matches(PATH_REGEX)) {
                     content = readToString(pathStr);
                 } else {
                     content = pathStr;
                 }
             }
-            if (content == null || content.length() < 100 * 1024) {
+            if (content == null || content.length() < MAX_CONTENT_LENGTH) {
                 if (content != null) {
                     replaceInput.setText(content);
                     searchInput.setText(content);
@@ -747,6 +742,7 @@ public class MainActivity extends AppCompatActivity
                 case "zh-hk":
                     config.setLocale(Locale.TRADITIONAL_CHINESE);
                     break;
+                default:
             }
         }
         resources.updateConfiguration(config, dm);
@@ -801,7 +797,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 default:
             }
-            if (clip.length() > 500000) {
+            if (clip.length() > MAX_CLIP_LENGTH) {
                 Toasty.error(
                     MainActivity.this,
                     R.string.copy_fail_too_long,
@@ -1086,7 +1082,7 @@ public class MainActivity extends AppCompatActivity
 
                 default:
             }
-            if (outputString.length() < 250 * 1024 && doUseFilePicker) {
+            if (outputString.length() < MAX_TOTLEN && doUseFilePicker) {
                 if (ContextCompat.checkSelfPermission(
                     MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -1225,6 +1221,7 @@ public class MainActivity extends AppCompatActivity
                     sendText = moreInput.getText().toString();
                     moreInput.setText("");
                     break;
+                default:
             }
             returnFromEditMode = true;
             tempString = sendText;
@@ -1302,6 +1299,45 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        Editable input = null;
+        Editable output = null;
+        if (id == R.id.nav_text_replace || id == R.id.nav_text_shuffle || id == R.id.nav_text_search
+            || id == R.id.nav_text_encrypt || id == R.id.nav_more_functions) {
+            switch (getCurrentShowingLayoutId()) {
+                case R.id.textReplaceLayout:
+                    input = replaceInput.getText();
+                    output = replaceOutput.getText();
+                    replaceInput.setText("");
+                    replaceOutput.setText("");
+                    break;
+                case R.id.textSearchLayout:
+                    input = searchInput.getText();
+                    searchInput.setText("");
+                    output = searchOutput.getText();
+                    searchOutput.setText("");
+                    break;
+                case R.id.textShuffleLayout:
+                    input = shuffleInput.getText();
+                    shuffleInput.setText("");
+                    output = shuffleOutput.getText();
+                    shuffleOutput.setText("");
+                    break;
+                case R.id.textEncryptLayout:
+                    input = encryptInput.getText();
+                    encryptInput.setText("");
+                    output = encryptOutput.getText();
+                    encryptOutput.setText("");
+                    break;
+                case R.id.textMoreLayout:
+                    input = moreInput.getText();
+                    moreInput.setText("");
+                    output = moreOutput.getText();
+                    moreOutput.setText("");
+                    break;
+                default:
+            }
+        }
+
         if (id == R.id.nav_text_replace) {
             textReplaceLayout.setVisibility(View.VISIBLE);
             textShuffleLayout.setVisibility(View.GONE);
@@ -1310,6 +1346,8 @@ public class MainActivity extends AppCompatActivity
             textMoreLayout.setVisibility(View.GONE);
             moreFab.setVisibility(View.INVISIBLE);
             setTitle(R.string.string_replace);
+            replaceInput.setText(input, BufferType.EDITABLE);
+            replaceOutput.setText(output, BufferType.EDITABLE);
             // Handle the camera action
         } else if (id == R.id.nav_text_shuffle) {
             textShuffleLayout.setVisibility(View.VISIBLE);
@@ -1318,6 +1356,8 @@ public class MainActivity extends AppCompatActivity
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
             moreFab.setVisibility(View.INVISIBLE);
+            shuffleInput.setText(input, BufferType.EDITABLE);
+            shuffleOutput.setText(output, BufferType.EDITABLE);
             setTitle(R.string.string_shuffle_sort);
         } else if (id == R.id.nav_text_search) {
             textSearchLayout.setVisibility(View.VISIBLE);
@@ -1326,6 +1366,8 @@ public class MainActivity extends AppCompatActivity
             textEncryptLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
             moreFab.setVisibility(View.INVISIBLE);
+            searchInput.setText(input, BufferType.EDITABLE);
+            searchOutput.setText(output, BufferType.EDITABLE);
             setTitle(R.string.text_search);
         } else if (id == R.id.nav_text_encrypt) {
             textEncryptLayout.setVisibility(View.VISIBLE);
@@ -1334,6 +1376,8 @@ public class MainActivity extends AppCompatActivity
             textReplaceLayout.setVisibility(View.GONE);
             textMoreLayout.setVisibility(View.GONE);
             moreFab.setVisibility(View.INVISIBLE);
+            encryptInput.setText(input, BufferType.EDITABLE);
+            encryptOutput.setText(output, BufferType.EDITABLE);
             setTitle(R.string.text_encrypt);
         } else if (id == R.id.nav_more_functions) {
             textMoreLayout.setVisibility(View.VISIBLE);
@@ -1342,6 +1386,8 @@ public class MainActivity extends AppCompatActivity
             textShuffleLayout.setVisibility(View.GONE);
             textReplaceLayout.setVisibility(View.GONE);
             moreFab.setVisibility(View.VISIBLE);
+            moreInput.setText(input, BufferType.EDITABLE);
+            moreOutput.setText(output, BufferType.EDITABLE);
             setTitle(R.string.more_handy_function);
         } else if (id == R.id.nav_share) {
             try {
@@ -1575,7 +1621,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                     elementCount++;
-                    String elements[] = new String[elementCount];
+                    String[] elements = new String[elementCount];
                     for (int i = 0; i < elementCount; i++) {
                         elements = inputStr.split("[\n ]", elementCount);
                     }
@@ -1609,11 +1655,11 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                     elementCount++;
-                    String elements[] = new String[elementCount];
+                    String[] elements = new String[elementCount];
                     for (int i = 0; i < elementCount; i++) {
                         elements = inputStr.split("[\n ]", elementCount);
                     }
-                    double elementNumbers[] = new double[elementCount];
+                    double[] elementNumbers = new double[elementCount];
                     int newElementCount = elementCount;
                     for (int i = 0; i < elementCount; i++) {
                         if (!elements[i].isEmpty()) {
@@ -1667,7 +1713,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                     elementCount++;
-                    String elements[] = new String[elementCount];
+                    String[] elements = new String[elementCount];
                     for (int i = 0; i < elementCount; i++) {
                         elements = inputStr.split("[\n ]", elementCount);
                     }
@@ -2117,7 +2163,6 @@ public class MainActivity extends AppCompatActivity
         try {
             if (resultCode == RESULT_OK) {
                 if (requestCode == REQUESTCODE_READ) {
-                    // List<String> list = data.getStringArrayListExtra(Constant.RESULT_INFO);
                     List<String> list = data.getStringArrayListExtra("paths");
                     path = list.get(0);
                 } else if (requestCode == REQUESTCODE_WRITE) {
@@ -2224,12 +2269,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void writeSDFile(String fileName, String write_str) throws IOException {
+    public void writeSDFile(String fileName, String writeStr) throws IOException {
         SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
         String outputEncoding = sharedPreferences.getString("outputEncoding", "UTF-8");
         File file = new File(fileName);
         FileOutputStream fos = new FileOutputStream(file);
-        byte[] bytes = write_str.getBytes(Objects.requireNonNull(outputEncoding));
+        byte[] bytes = writeStr.getBytes(Objects.requireNonNull(outputEncoding));
         fos.write(bytes);
         fos.close();
     }
@@ -2258,11 +2303,11 @@ public class MainActivity extends AppCompatActivity
             if (charset != null) {
                 encoding = charset.name();
             }
-            if (encoding.equals("US-ASCII")) {
+            if ("US-ASCII".equals(encoding)) {
                 encoding = "UTF-8";
             }
         }
-        if (!encoding.equals("UTF-8")) {
+        if (!"UTF-8".equals(encoding)) {
             Toasty.warning(
                 MainActivity.this,
                 getString(R.string.current_encoding) + encoding,
@@ -2508,7 +2553,7 @@ public class MainActivity extends AppCompatActivity
             settingsBoolean[3] = sharedPreferences.getBoolean("doMultiLine", true);
             settingsBoolean[4] = sharedPreferences.getBoolean("doCheckClipboard", true);
             isGuideShown = sharedPreferences.getBoolean("isGuideShown", false);
-            salt = sharedPreferences.getString("salt", defaultSalt);
+            salt = sharedPreferences.getString("salt", DEFAULT_SALT);
             initialLayout =
                 Integer.parseInt(
                     Objects.requireNonNull(
@@ -2805,7 +2850,8 @@ public class MainActivity extends AppCompatActivity
                 .setOnItemClickListener(
                     (dialog, item, view, position) -> {
                         switch (position) {
-                            case 0: // reverse
+                            case 0:
+                                // reverse
                                 try {
                                     String reverseSrc = moreInput.getText().toString();
                                     StringBuilder reverseResult = new StringBuilder();
@@ -2827,7 +2873,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 1: // copy
+                            case 1:
+                                // copy
                                 LovelyTextInputDialog lovelyTextInputDialog =
                                     new LovelyTextInputDialog(MainActivity.this);
                                 lovelyTextInputDialog
@@ -2917,7 +2964,8 @@ public class MainActivity extends AppCompatActivity
 
                                 break;
 
-                            case 2: // caps switch
+                            case 2:
+                                // caps switch
                                 try {
                                     final int[] mode = {0};
                                     Builder alertDialog =
@@ -3020,7 +3068,7 @@ public class MainActivity extends AppCompatActivity
                                                                 < caseSrc
                                                                 .length();
                                                             i++) {
-                                                            if (sentenceBegin
+                                                            boolean isLetter = sentenceBegin
                                                                 && ((caseSrc
                                                                 .charAt(
                                                                     i)
@@ -3036,7 +3084,8 @@ public class MainActivity extends AppCompatActivity
                                                                 && caseSrc
                                                                 .charAt(
                                                                     i)
-                                                                <= 'Z'))) {
+                                                                <= 'Z'));
+                                                            if (isLetter) {
                                                                 caseOutput
                                                                     .append(
                                                                         Character
@@ -3088,11 +3137,12 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 3: // add numbers
+                            case 3:
+                                // add numbers
                                 try {
                                     String addNumbersSrc =
                                         moreInput.getText().toString();
-                                    String numberParagraphs[] =
+                                    String[] numberParagraphs =
                                         addNumbersSrc.split("\\cJ");
                                     StringBuilder addNumbersOutput =
                                         new StringBuilder();
@@ -3117,7 +3167,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 4: // HTML formatter
+                            case 4:
+                                // HTML formatter
                                 try {
                                     Tidy tidy = new Tidy();
                                     tidy.setXHTML(true);
@@ -3148,11 +3199,10 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 5: // custom random
+                            case 5:
+                                // custom random
                                 try {
                                     final String[] dataQuantityString = {"1"};
-                                    // final AlertDialog.Builder dialog
-                                    // = new AlertDialog.Builder(this);
                                     final LovelyCustomDialog dialog1 =
                                         new LovelyCustomDialog(MainActivity.this);
                                     LayoutInflater layoutInflater =
@@ -3381,7 +3431,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 6: // generate MD5
+                            case 6:
+                                // generate MD5
                                 try {
                                     String md5Src = moreInput.getText().toString();
                                     String md5 = getMD5(md5Src);
@@ -3398,7 +3449,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 7: // Base64 encode
+                            case 7:
+                                // Base64 encode
                                 try {
                                     String plainSrc = moreInput.getText().toString();
                                     String base64 =
@@ -3418,7 +3470,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 8: // Base64 decode
+                            case 8:
+                                // Base64 decode
                                 try {
                                     String base64Input = moreInput.getText().toString();
                                     String decodedStr =
@@ -3445,7 +3498,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 9: // morse code
+                            case 9:
+                                // morse code
                                 try {
                                     String morseCodeInput =
                                         moreInput.getText().toString();
@@ -3504,11 +3558,12 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 10: // format JSON
+                            case 10:
+                                // format JSON
                                 try {
                                     String uglyJson = moreInput.getText().toString();
                                     String formattedJson = jsonFormatter(uglyJson);
-                                    if (!formattedJson.equals("null")) {
+                                    if (!NULL_STRING.equals(formattedJson)) {
                                         moreOutput.setText(
                                             formattedJson, BufferType.EDITABLE);
                                     } else {
@@ -3526,10 +3581,11 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 11: // Random Text
+                            case 11:
+                                // Random Text
                                 String textRandomInput = moreInput.getText().toString();
                                 final String[] dataQuantityString1 = {"1"};
-                                String items[] = textRandomInput.split("\\cJ");
+                                String[] items = textRandomInput.split("\\cJ");
                                 LovelyCustomDialog dialog2 =
                                     new LovelyCustomDialog(MainActivity.this);
                                 LayoutInflater layoutInflater =
@@ -3609,7 +3665,8 @@ public class MainActivity extends AppCompatActivity
 
                                 break;
 
-                            case 12: // View Markdown
+                            case 12:
+                                // View Markdown
                                 int totLen = 0;
                                 totLen += replaceInput.getText().toString().length();
                                 totLen += replaceOutput.getText().toString().length();
@@ -3626,7 +3683,7 @@ public class MainActivity extends AppCompatActivity
                                 totLen += moreInput.getText().toString().length();
                                 totLen += moreOutput.getText().toString().length();
 
-                                if (totLen < 250 * 1024) {
+                                if (totLen < MAX_TOTLEN) {
                                     String mdText = moreInput.getText().toString();
                                     Intent intent1 =
                                         new Intent(
@@ -3637,7 +3694,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 13: // UnicodeParse
+                            case 13:
+                                // UnicodeParse
                                 try {
                                     String unicodeCode = moreInput.getText().toString();
                                     String unicodeChar =
@@ -3655,7 +3713,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 14: // ToUnicode
+                            case 14:
+                                // ToUnicode
                                 try {
                                     String unicodeChar = moreInput.getText().toString();
                                     String unicodeCode =
@@ -3673,7 +3732,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 15: // String Similarity
+                            case 15:
+                                // String Similarity
                                 String m = moreInput.getText().toString();
                                 String n = moreOutput.getText().toString();
                                 final String[] outputType = {
@@ -3773,6 +3833,7 @@ public class MainActivity extends AppCompatActivity
                                                                     m,
                                                                     n));
                                                     break;
+                                                default:
                                             }
                                             new LovelyStandardDialog(this)
                                                 .setPositiveButtonText(
@@ -3792,7 +3853,8 @@ public class MainActivity extends AppCompatActivity
 
                                 break;
 
-                            case 16: // format java code
+                            case 16:
+                                // format java code
                                 try {
                                     if (VERSION.SDK_INT < VERSION_CODES.O) {
                                         Toasty.error(
@@ -3810,26 +3872,6 @@ public class MainActivity extends AppCompatActivity
                                     String formattedCode =
                                         formatter.formatSourceAndFixImports(
                                             formatCodeSrc);
-
-                                                /*
-                                                Jalopy jalopy = new Jalopy();
-                                                jalopy.setEncoding("UTF-8");
-                                                SharedPreferences sharedPreferences =
-                                                        getSharedPreferences(
-                                                                "settings", MODE_PRIVATE);
-                                                jalopy.setInput(
-                                                        formatCodeSrc,
-                                                        Objects.requireNonNull(
-                                                                sharedPreferences.getString(
-                                                                        "default_path",
-                                                                        Environment
-                                                                                        .getExternalStorageDirectory()
-                                                                                        .getAbsolutePath()
-                                                                                + "/TextConverter")));
-                                                StringBuffer stringBuffer = new StringBuffer();
-                                                jalopy.setOutput(stringBuffer);
-                                                String formattedCode = stringBuffer.toString();
-                                                */
                                     moreOutput.setText(
                                         formattedCode, BufferType.EDITABLE);
                                     moreOutput.clearFocus();
@@ -3844,13 +3886,15 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 break;
 
-                            case 17: // String Trim
+                            case 17:
+                                // String Trim
                                 String trimInput = moreInput.getText().toString();
                                 moreOutput.setText(
                                     trimInput.trim(), BufferType.EDITABLE);
                                 break;
 
-                            case 18: // escape Everything
+                            case 18:
+                                // escape Everything
                                 String escapeInput = moreInput.getText().toString();
                                 final String[] escapeOutput = {""};
                                 AlertDialog.Builder builder =
@@ -3948,6 +3992,7 @@ public class MainActivity extends AppCompatActivity
                                                                 .unescapeEcmaScript(
                                                                     escapeInput);
                                                         break;
+                                                    default:
                                                 }
                                                 moreOutput.setText(
                                                     escapeOutput[0],
@@ -3968,7 +4013,8 @@ public class MainActivity extends AppCompatActivity
                                     .show();
                                 break;
 
-                            case 19: // parse Regex
+                            case 19:
+                                // parse Regex
                                 try {
                                     String regexParseInput =
                                         moreInput.getText().toString();
@@ -3991,7 +4037,8 @@ public class MainActivity extends AppCompatActivity
                                     moreOutput.clearFocus();
                                 }
                                 break;
-                            case 20: // Random string
+                            case 20:
+                                // Random string
                                 LovelyCustomDialog randStrDialog =
                                     new LovelyCustomDialog(this);
                                 randStrDialog
@@ -4176,7 +4223,8 @@ public class MainActivity extends AppCompatActivity
                                     .show();
                                 break;
 
-                            case 21: // To hanyu pinyin
+                            case 21:
+                                // To hanyu pinyin
                                 String hanyu = moreInput.getText().toString();
                                 Builder pinyinDialog = new Builder(MainActivity.this);
                                 StringBuilder pinyin = new StringBuilder();
@@ -4190,7 +4238,8 @@ public class MainActivity extends AppCompatActivity
                                             HanyuPinyinOutputFormat format =
                                                 new HanyuPinyinOutputFormat();
                                             switch (which) {
-                                                case 0: // WITHOUT_TONE
+                                                case 0:
+                                                    // WITHOUT_TONE
                                                     format.setToneType(
                                                         HanyuPinyinToneType
                                                             .WITHOUT_TONE);
@@ -4198,7 +4247,8 @@ public class MainActivity extends AppCompatActivity
                                                         HanyuPinyinVCharType
                                                             .WITH_V);
                                                     break;
-                                                case 1: // WITH_TONE_NUMBER
+                                                case 1:
+                                                    // WITH_TONE_NUMBER
                                                     format.setToneType(
                                                         HanyuPinyinToneType
                                                             .WITH_TONE_NUMBER);
@@ -4206,7 +4256,8 @@ public class MainActivity extends AppCompatActivity
                                                         HanyuPinyinVCharType
                                                             .WITH_V);
                                                     break;
-                                                case 2: // WITH_TONE_MARK
+                                                case 2:
+                                                    // WITH_TONE_MARK
                                                     format.setToneType(
                                                         HanyuPinyinToneType
                                                             .WITH_TONE_MARK);
@@ -4214,6 +4265,7 @@ public class MainActivity extends AppCompatActivity
                                                         HanyuPinyinVCharType
                                                             .WITH_U_UNICODE);
                                                     break;
+                                                default:
                                             }
                                             try {
                                                 for (int i = 0;
@@ -4293,7 +4345,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void exit() {
-        if ((System.currentTimeMillis() - clickTime) > 2000) {
+        if ((System.currentTimeMillis() - clickTime) > EXIT_PRESS_INTERVAL) {
             Toasty.info(MainActivity.this, R.string.press_more_to_exit, Toast.LENGTH_SHORT).show();
             clickTime = System.currentTimeMillis();
         } else {
@@ -4386,6 +4438,7 @@ public class MainActivity extends AppCompatActivity
                     .text(R.string.search_next)
                     .show();
                 break;
+            default:
         }
         return true;
     }

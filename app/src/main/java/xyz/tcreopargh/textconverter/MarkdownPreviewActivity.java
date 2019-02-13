@@ -16,8 +16,8 @@ public class MarkdownPreviewActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         MarkdownView markdownView = findViewById(R.id.markdownView);
         markdownView
-                .addStyleSheet(new Github())
-                .loadMarkdown(Objects.requireNonNull(getIntent().getStringExtra("markdownText")));
+            .addStyleSheet(new Github())
+            .loadMarkdown(Objects.requireNonNull(getIntent().getStringExtra("markdownText")));
         setTitle(R.string.markdown_preview);
     }
 
@@ -25,11 +25,14 @@ public class MarkdownPreviewActivity extends AppCompatActivity {
         finish();
     }
 
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 returnHome();
                 break;
+            default:
         }
         return true;
     }

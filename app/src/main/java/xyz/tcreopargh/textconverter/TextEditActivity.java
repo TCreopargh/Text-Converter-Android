@@ -1,6 +1,5 @@
 package xyz.tcreopargh.textconverter;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -33,6 +32,17 @@ public class TextEditActivity extends AppCompatActivity {
     public static String currentCharset = "UTF-8";
     private EditText editText;
     private PerformEdit performEdit;
+    private boolean doMultiLine = true;
+    private boolean doMonospace = false;
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem doMultiLineMenu = menu.findItem(R.id.menuMultiLine);
+        doMultiLineMenu.setChecked(doMultiLine);
+        MenuItem doMonospaceMenu = menu.findItem(R.id.menuMonospace);
+        doMonospaceMenu.setChecked(doMonospace);
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -56,6 +66,10 @@ public class TextEditActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_edit);
+
+        doMultiLine = getSharedPreferences("settings", MODE_PRIVATE).getBoolean("doMultiLine", true);
+        doMonospace = getSharedPreferences("settings", MODE_PRIVATE).getBoolean("doUseMonospaced", false);
+
         charsets = getResources().getStringArray(R.array.encodingValues);
         androidx.appcompat.widget.Toolbar myToolBar = findViewById(R.id.editModeToolbar);
         setSupportActionBar(myToolBar);
@@ -65,33 +79,34 @@ public class TextEditActivity extends AppCompatActivity {
 
         FastScrollDelegate delegate = scrollView.getFastScrollDelegate();
         delegate.initIndicatorPopup(
-                new IndicatorPopup.Builder(delegate)
-                        .indicatorPopupColor(getColor(R.color.colorAccent))
-                        .indicatorTextSize(24)
-                        .build());
+            new IndicatorPopup.Builder(delegate)
+                .indicatorPopupColor(getColor(R.color.colorAccent))
+                .indicatorTextSize(24)
+                .build());
         delegate.setOnFastScrollListener(
-                new OnFastScrollListener() {
-                    @Override
-                    public void onFastScrollStart(
-                            View view, FastScrollDelegate fastScrollDelegate) {}
+            new OnFastScrollListener() {
+                @Override
+                public void onFastScrollStart(
+                    View view, FastScrollDelegate fastScrollDelegate) {
+                }
 
-                    @Override
-                    public void onFastScrolled(
-                            View view,
-                            FastScrollDelegate fastScrollDelegate,
-                            int i,
-                            int i1,
-                            float v) {
-                        delegate.setIndicatorText(String.valueOf((int) (v * 100)) + "%");
-                    }
+                @Override
+                public void onFastScrolled(
+                    View view,
+                    FastScrollDelegate fastScrollDelegate,
+                    int i,
+                    int i1,
+                    float v) {
+                    delegate.setIndicatorText(String.valueOf((int) (v * 100)) + "%");
+                }
 
-                    @Override
-                    public void onFastScrollEnd(View view, FastScrollDelegate fastScrollDelegate) {}
-                });
+                @Override
+                public void onFastScrollEnd(View view, FastScrollDelegate fastScrollDelegate) {
+                }
+            });
 
-        SharedPreferences sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        editText.setHorizontallyScrolling(!sharedPreferences.getBoolean("doMultiLine", true));
-        if (sharedPreferences.getBoolean("doUseMonospaced", false)) {
+        editText.setHorizontallyScrolling(!doMultiLine);
+        if (doMonospace) {
             editText.setTextAppearance(R.style.MyMonospace);
         } else {
             editText.setTextAppearance(R.style.MyRegular);
@@ -101,6 +116,7 @@ public class TextEditActivity extends AppCompatActivity {
         setTitle(R.string.edit_mode);
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -114,24 +130,35 @@ public class TextEditActivity extends AppCompatActivity {
                 break;
             case R.id.editHelp:
                 new LovelyInfoDialog(this)
-                        .setTitle(getString(R.string.edit_mode))
-                        .setTopColorRes(R.color.safeGreen)
-                        .setIcon(R.drawable.baselinehelpoutline_white)
-                        .setMessage(
-                            getString(R.string.edit_mode_intro))
-                        .setConfirmButtonText(R.string.confirm)
-                        .create()
-                        .show();
+                    .setTitle(getString(R.string.edit_mode))
+                    .setTopColorRes(R.color.safeGreen)
+                    .setIcon(R.drawable.baselinehelpoutline_white)
+                    .setMessage(
+                        getString(R.string.edit_mode_intro))
+                    .setConfirmButtonText(R.string.confirm)
+                    .create()
+                    .show();
                 break;
             case R.id.changeEncoding:
                 Builder alertDialog = new Builder(TextEditActivity.this);
                 alertDialog
-                        .setTitle(getString(R.string.encoding_now) + currentCharset)
-                        .setIcon(R.mipmap.ic_launcher)
-                        .setItems(charsets, (dialog12, which) -> setCharset(charsets[which]))
-                        .create()
-                        .show();
+                    .setTitle(getString(R.string.encoding_now) + currentCharset)
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setItems(charsets, (dialog12, which) -> setCharset(charsets[which]))
+                    .create()
+                    .show();
                 break;
+            case R.id.menuMultiLine:
+                item.setChecked(!item.isChecked());
+                doMultiLine = item.isChecked();
+                editText.setHorizontallyScrolling(!doMultiLine);
+                break;
+            case R.id.menuMonospace:
+                item.setChecked(!item.isChecked());
+                doMonospace = item.isChecked();
+                editText.setTextAppearance(doMonospace ? R.style.MyMonospace : R.style.MyRegular);
+                break;
+            default:
         }
 
         return true;
@@ -144,22 +171,23 @@ public class TextEditActivity extends AppCompatActivity {
             finish();
         } else {
             new LovelyStandardDialog(this)
-                    .setIcon(R.drawable.ic_save_white_48dp)
-                    .setTopColorRes(R.color.settingsGrey)
-                    .setTitle(getString(R.string.confirm_to_exit))
-                    .setMessage(getString(R.string.save_changes_whether))
-                    .setNegativeButton(getString(R.string.cancel_zh), v -> {})
-                    .setPositiveButtonColorRes(R.color.colorAccent)
-                    .setPositiveButton(
-                            getString(R.string.save),
-                            v -> {
-                                MainActivity.returnText = verifiedText;
-                                // MainActivity.encoding = currentCharset;
-                                finish();
-                            })
-                    .setNeutralButton(getString(R.string.abandon_changes), v -> finish())
-                    .create()
-                    .show();
+                .setIcon(R.drawable.ic_save_white_48dp)
+                .setTopColorRes(R.color.settingsGrey)
+                .setTitle(getString(R.string.confirm_to_exit))
+                .setMessage(getString(R.string.save_changes_whether))
+                .setNegativeButton(getString(R.string.cancel_zh), v -> {
+                })
+                .setPositiveButtonColorRes(R.color.colorAccent)
+                .setPositiveButton(
+                    getString(R.string.save),
+                    v -> {
+                        MainActivity.returnText = verifiedText;
+                        // MainActivity.encoding = currentCharset;
+                        finish();
+                    })
+                .setNeutralButton(getString(R.string.abandon_changes), v -> finish())
+                .create()
+                .show();
         }
     }
 
@@ -177,7 +205,7 @@ public class TextEditActivity extends AppCompatActivity {
         String temp = currentCharset;
         try {
             editText.setText(
-                    new String(editText.getText().toString().getBytes(currentCharset), newCharset));
+                new String(editText.getText().toString().getBytes(currentCharset), newCharset));
             currentCharset = newCharset;
         } catch (UnsupportedEncodingException e) {
             Toasty.error(this, getString(R.string.encoding_not_supported), Toast.LENGTH_LONG).show();

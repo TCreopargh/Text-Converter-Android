@@ -22,6 +22,7 @@ public class PinyinComparator implements Comparator<String> {
         }
     */
     // Code inferred from: https://he7ning3.iteye.com/blog/2287384
+    @Override
     public int compare(String o1, String o2) {
         for (int i = 0; i < o1.length() && i < o2.length(); i++) {
             // 逐个获取字母
