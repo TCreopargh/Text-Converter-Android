@@ -14,17 +14,21 @@
  * 字符串反转、分段、缩进、标号、大小写转换、批量复制
  * Markdown预览
  * 生成自定义格式的随机数、文本抽签
- * HTML/XML/JSON/Java/CSV/ECMAScript/的转义与反转义
+ * HTML/XML/JSON/Java/CSV/ECMAScript的转义与反转义
  * 转义正则表达式
  * 从文件读取/写入
  * 获取网页源代码
  * 计算字符串相似度
  * 自定义正则表达式
  * 生成随机字符串
+ * 通过汉字生成拼音
  * 可撤销的编辑
+ * 去除字符串两端空白字符
  * 附带正则表达式的参考文档（来源：OSChina）
  
 ### 如有合理建议欢迎提出，我会考虑采纳
+
+已在酷安上架：https://www.coolapk.com/apk/xyz.tcreopargh.textconverter
 
 ```
 Copyright 2019 TCreopargh
