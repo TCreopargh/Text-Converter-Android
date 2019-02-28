@@ -103,6 +103,9 @@
 -keepclassmembers class * extends android.webkit.webViewClient {
     public void *(android.webkit.webView, jav.lang.String);
 }
+-keep class dmax.dialog.** {
+    *;
+}
 
 -dontwarn demo.**
 -dontwarn com.google.**

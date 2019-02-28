@@ -421,4 +421,5 @@
     <string name="hanyu_to_pinyin">Chinese to pinyin</string>
     <string name="restart_to_apply">Please restart the app to apply changes</string>
     <string name="menu_monospace">Monospace font</string>
+    <string name="please_wait">Please wait…</string>
 </resources>

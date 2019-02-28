@@ -421,4 +421,5 @@
     <string name="hanyu_to_pinyin">漢字轉拼音</string>
     <string name="restart_to_apply">請重啓App以應用更改</string>
     <string name="menu_monospace">使用等寬字體</string>
+    <string name="please_wait">請稍等…</string>
 </resources>

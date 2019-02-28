@@ -30,7 +30,6 @@ package xyz.tcreopargh.textconverter;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -93,6 +92,7 @@ import com.yarolegovich.lovelydialog.LovelyCustomDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import de.mateware.snacky.Snacky;
+import dmax.dialog.SpotsDialog;
 import es.dmoral.toasty.Toasty;
 import info.debatty.java.stringsimilarity.Damerau;
 import info.debatty.java.stringsimilarity.JaroWinkler;
@@ -1234,11 +1234,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getSourceCodeFromUrl(String text) {
-        final ProgressDialog progressDialog =
-            ProgressDialog.show(
-                MainActivity.this,
-                getString(R.string.wait_plz),
-                getString(R.string.connecting_hint));
+        final AlertDialog progressDialog = new SpotsDialog.Builder().setContext(this).setTheme(R.style.MySpotsDialog)
+            .setMessage(R.string.connecting_hint).setCancelable(false).build();
+        progressDialog.show();
         Ion.with(getApplicationContext())
             .load(text)
             .asString()
@@ -1486,214 +1484,200 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View v) {
+        String inputString = getInputString();
+        final String[] outputString = {null};
         switch (v.getId()) {
             case R.id.generateReplacedText:
-                try {
-                    boolean bool = false;
-                    String textReplaceInput = replaceInput.getText().toString();
-                    boolean doUseRegex = doUseRegexCheckbox.isChecked();
-                    String textReplaceOutput;
-                    String replaceFromStr = targetSeq.getText().toString();
-                    String replaceToStr = replaceTo.getText().toString();
-                    if (doUseRegex) {
-                        StringBuilder input = new StringBuilder(textReplaceInput);
-                        Pattern p = Pattern.compile(replaceFromStr);
-                        Matcher m = p.matcher(input);
-                        replaceToStr =
-                            replaceToStr.replace("$$", "\u2333\u2888\u7575\u3139\u6666\u4232");
-                        ArrayList<String> strings = new ArrayList<>();
-                        while (m.find()) {
-                            bool = !bool;
-                            strings.add(m.group());
-                            char c = bool ? '\ufffe' : '\uffff';
-                            StringBuilder temp = new StringBuilder();
-                            for (int i = 0; i < m.group().length(); i++) {
-                                temp.append(c);
-                            }
-                            input.replace(m.start(), m.end(), temp.toString());
-                        }
-                        String str = input.toString();
-                        for (int i = 0; i < strings.size(); i++) {
-                            String string = strings.get(i);
-                            str =
-                                str.replaceFirst(
-                                    "\\uFFFF+|\\uFFFE+",
-                                    replaceToStr.replace("$val", string)
-                                        .replace("$num", String.valueOf(i + 1))
-                                        .replace("$rev", new StringBuffer(string).reverse())
-                                        .replace("$len", String.valueOf(string.length()))
-                                        .replace("$low", string.toLowerCase())
-                                        .replace("$upp", string.toUpperCase()));
-                        }
-                        textReplaceOutput =
-                            str.replace("\u2333\u2888\u7575\u3139\u6666\u4232", "$");
-                    } else {
-                        if (settingsBoolean[0]) {
-                            textReplaceOutput =
-                                textReplaceInput.replace(replaceFromStr, replaceToStr);
+
+                AlertDialog spotsDialog = new SpotsDialog.Builder().setContext(this)
+                    .setMessage(R.string.please_wait).setCancelable(false).setTheme(R.style.MySpotsDialog).build();
+                spotsDialog.show();
+                new Thread(() -> {
+                    try {
+                        boolean doUseRegex = doUseRegexCheckbox.isChecked();
+                        String replaceFromStr = targetSeq.getText().toString();
+                        String replaceToStr = replaceTo.getText().toString();
+                        if (doUseRegex) {
+                            outputString[0] = TextConverter.replaceWithRegex(inputString, replaceFromStr, replaceToStr);
                         } else {
-                            for (String key : fbsArr) {
-                                if (replaceFromStr.contains(key)) {
-                                    replaceFromStr = replaceFromStr.replace(key, "\\" + key);
-                                }
-                            }
-                            textReplaceOutput =
-                                textReplaceInput.replaceAll(
-                                    "(?i)" + replaceFromStr, replaceToStr);
+                            outputString[0] = TextConverter
+                                .replaceWithoutRegex(settingsBoolean[0], inputString, replaceFromStr, replaceToStr);
                         }
+                    } catch (Exception e) {
+                        outputString[0] = getString(R.string.exception_occurred) + e.toString();
+
                     }
-                    replaceOutput.setText(textReplaceOutput, BufferType.EDITABLE);
-                    replaceInput.clearFocus();
-                    replaceOutput.clearFocus();
-                    replaceTo.clearFocus();
-                    targetSeq.clearFocus();
-                } catch (Exception e) {
-                    replaceOutput.setText(e.toString(), BufferType.EDITABLE);
-                    replaceInput.clearFocus();
-                    replaceOutput.clearFocus();
-                    replaceTo.clearFocus();
-                    targetSeq.clearFocus();
-                }
+                    replaceOutput.post(() -> replaceOutput.setText(outputString[0]));
+                    spotsDialog.dismiss();
+                }).start();
+                replaceInput.clearFocus();
+                replaceOutput.clearFocus();
+                replaceTo.clearFocus();
+                targetSeq.clearFocus();
+
                 break;
 
             case R.id.generateShuffleRand:
-                try {
-                    char spiltWithChar;
-                    if (noUseSpaces.isChecked()) {
-                        spiltWithChar = '\n';
-                    } else {
-                        spiltWithChar = ' ';
-                    }
-                    String inputStr = shuffleInput.getText().toString();
-                    StringBuilder outputBuilder = new StringBuilder();
-                    int elementCount = 0;
-                    for (int i = 0; i < inputStr.length(); i++) {
-                        if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
-                            elementCount++;
-                        }
-                    }
-                    elementCount++;
-                    String elements[] = new String[elementCount];
-                    for (int i = 0; i < elementCount; i++) {
-                        elements = inputStr.split("[\n ]", elementCount);
-                    }
-                    Random random = new Random();
-                    for (int i = 0; i < elementCount; i++) {
 
-                        int targetPos = random.nextInt(elementCount - i) + i;
-                        String tempStr = elements[i];
-                        elements[i] = elements[targetPos];
-                        elements[targetPos] = tempStr;
-                    }
-                    for (int i = 0; i < elementCount; i++) {
-                        if (!elements[i].isEmpty()) {
-                            if (i < elementCount - 1) {
-                                outputBuilder.append(elements[i]).append(spiltWithChar);
-                            } else {
-                                outputBuilder.append(elements[i]);
+                AlertDialog spotsDialog1 = new SpotsDialog.Builder().setContext(this)
+                    .setMessage(R.string.please_wait).setCancelable(false).setTheme(R.style.MySpotsDialog).build();
+                spotsDialog1.show();
+                new Thread(() -> {
+                    try {
+                        char spiltWithChar;
+                        if (noUseSpaces.isChecked()) {
+                            spiltWithChar = '\n';
+                        } else {
+                            spiltWithChar = ' ';
+                        }
+                        String inputStr = shuffleInput.getText().toString();
+                        StringBuilder outputBuilder = new StringBuilder();
+                        int elementCount = 0;
+                        for (int i = 0; i < inputStr.length(); i++) {
+                            if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
+                                elementCount++;
                             }
                         }
+                        elementCount++;
+                        String elements[] = new String[elementCount];
+                        for (int i = 0; i < elementCount; i++) {
+                            elements = inputStr.split("[\n ]", elementCount);
+                        }
+                        Random random = new Random();
+                        for (int i = 0; i < elementCount; i++) {
+
+                            int targetPos = random.nextInt(elementCount - i) + i;
+                            String tempStr = elements[i];
+                            elements[i] = elements[targetPos];
+                            elements[targetPos] = tempStr;
+                        }
+                        for (int i = 0; i < elementCount; i++) {
+                            if (!elements[i].isEmpty()) {
+                                if (i < elementCount - 1) {
+                                    outputBuilder.append(elements[i]).append(spiltWithChar);
+                                } else {
+                                    outputBuilder.append(elements[i]);
+                                }
+                            }
+                        }
+                        shuffleOutput.post(() -> shuffleOutput.setText(outputBuilder.toString(), BufferType.EDITABLE));
+                    } catch (Exception e) {
+                        shuffleOutput
+                            .post(() -> shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString()));
+                    } finally {
+                        spotsDialog1.dismiss();
                     }
-                    shuffleOutput.setText(outputBuilder.toString(), BufferType.EDITABLE);
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                } catch (Exception e) {
-                    shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString());
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                }
+                }).start();
+                shuffleInput.clearFocus();
+                shuffleOutput.clearFocus();
+
                 break;
 
             case R.id.shuffleReverse:
-                try {
-                    char spiltWithChar;
-                    if (noUseSpaces.isChecked()) {
-                        spiltWithChar = '\n';
-                    } else {
-                        spiltWithChar = ' ';
-                    }
-                    String inputStr = shuffleInput.getText().toString();
-                    StringBuilder outputBuilder = new StringBuilder();
-                    int elementCount = 0;
-                    for (int i = 0; i < inputStr.length(); i++) {
-                        if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
-                            elementCount++;
+
+                AlertDialog spotsDialog2 = new SpotsDialog.Builder().setContext(this)
+                    .setMessage(R.string.please_wait).setCancelable(false).setTheme(R.style.MySpotsDialog).build();
+                spotsDialog2.show();
+                new Thread(() -> {
+                    try {
+                        char spiltWithChar;
+                        if (noUseSpaces.isChecked()) {
+                            spiltWithChar = '\n';
+                        } else {
+                            spiltWithChar = ' ';
                         }
+                        String inputStr = shuffleInput.getText().toString();
+                        StringBuilder outputBuilder = new StringBuilder();
+                        int elementCount = 0;
+                        for (int i = 0; i < inputStr.length(); i++) {
+                            if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
+                                elementCount++;
+                            }
+                        }
+                        elementCount++;
+                        String[] elements = new String[elementCount];
+                        for (int i = 0; i < elementCount; i++) {
+                            elements = inputStr.split("[\n ]", elementCount);
+                        }
+                        for (int i = elements.length - 1; i >= 0; i--) {
+                            outputBuilder.append(elements[i]).append(spiltWithChar);
+                        }
+                        shuffleOutput.post(() -> shuffleOutput.setText(outputBuilder.toString()));
+                    } catch (Exception e) {
+                        shuffleOutput
+                            .post(() -> shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString()));
+
+                    } finally {
+                        spotsDialog2.dismiss();
                     }
-                    elementCount++;
-                    String[] elements = new String[elementCount];
-                    for (int i = 0; i < elementCount; i++) {
-                        elements = inputStr.split("[\n ]", elementCount);
-                    }
-                    for (int i = elements.length - 1; i >= 0; i--) {
-                        outputBuilder.append(elements[i]).append(spiltWithChar);
-                    }
-                    shuffleOutput.setText(outputBuilder.toString());
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                } catch (Exception e) {
-                    shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString());
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                }
+                }).start();
+                shuffleInput.clearFocus();
+                shuffleOutput.clearFocus();
                 break;
 
             case R.id.sortByNumberValue:
-                try {
-                    char spiltWithChar;
-                    if (noUseSpaces.isChecked()) {
-                        spiltWithChar = '\n';
-                    } else {
-                        spiltWithChar = ' ';
-                    }
-                    String inputStr = shuffleInput.getText().toString();
-                    StringBuilder outputBuilder = new StringBuilder();
-                    int elementCount = 0;
-                    for (int i = 0; i < inputStr.length(); i++) {
-                        if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
-                            elementCount++;
-                        }
-                    }
-                    elementCount++;
-                    String[] elements = new String[elementCount];
-                    for (int i = 0; i < elementCount; i++) {
-                        elements = inputStr.split("[\n ]", elementCount);
-                    }
-                    double[] elementNumbers = new double[elementCount];
-                    int newElementCount = elementCount;
-                    for (int i = 0; i < elementCount; i++) {
-                        if (!elements[i].isEmpty()) {
-                            elementNumbers[i] = Double.parseDouble(elements[i]);
+                AlertDialog spotsDialog3 = new SpotsDialog.Builder().setContext(this)
+                    .setMessage(R.string.please_wait).setCancelable(false).setTheme(R.style.MySpotsDialog).build();
+                spotsDialog3.show();
+                new Thread(() -> {
+                    try {
+                        char spiltWithChar;
+                        if (noUseSpaces.isChecked()) {
+                            spiltWithChar = '\n';
                         } else {
-                            elementNumbers[i] = Double.MAX_VALUE;
-                            newElementCount--;
+                            spiltWithChar = ' ';
                         }
-                    }
-                    Arrays.sort(elementNumbers);
-                    DecimalFormat decimalFormat =
-                        new DecimalFormat("###################.###########");
-                    for (int i = 0; i < newElementCount; i++) {
-                        if (i < newElementCount - 1) {
-                            outputBuilder
-                                .append(decimalFormat.format(elementNumbers[i]))
-                                .append(spiltWithChar);
+                        String inputStr = shuffleInput.getText().toString();
+                        StringBuilder outputBuilder = new StringBuilder();
+                        int elementCount = 0;
+                        for (int i = 0; i < inputStr.length(); i++) {
+                            if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
+                                elementCount++;
+                            }
+                        }
+                        elementCount++;
+                        String[] elements = new String[elementCount];
+                        for (int i = 0; i < elementCount; i++) {
+                            elements = inputStr.split("[\n ]", elementCount);
+                        }
+                        double[] elementNumbers = new double[elementCount];
+                        int newElementCount = elementCount;
+                        for (int i = 0; i < elementCount; i++) {
+                            if (!elements[i].isEmpty()) {
+                                elementNumbers[i] = Double.parseDouble(elements[i]);
+                            } else {
+                                elementNumbers[i] = Double.MAX_VALUE;
+                                newElementCount--;
+                            }
+                        }
+                        Arrays.sort(elementNumbers);
+                        DecimalFormat decimalFormat =
+                            new DecimalFormat("###################.###########");
+                        for (int i = 0; i < newElementCount; i++) {
+                            if (i < newElementCount - 1) {
+                                outputBuilder
+                                    .append(decimalFormat.format(elementNumbers[i]))
+                                    .append(spiltWithChar);
+                            } else {
+                                outputBuilder.append(decimalFormat.format(elementNumbers[i]));
+                            }
+                        }
+                        shuffleOutput.post(() -> shuffleOutput.setText(outputBuilder.toString()));
+
+                    } catch (Exception e) {
+                        if (e instanceof NumberFormatException) {
+                            shuffleOutput
+                                .post(() -> shuffleOutput.setText(getString(R.string.digit_err) + e.toString()));
                         } else {
-                            outputBuilder.append(decimalFormat.format(elementNumbers[i]));
+                            shuffleOutput.post(() -> shuffleOutput.setText(
+                                getString(R.string.exception_occurred) + e.toString()));
                         }
+                    } finally {
+                        spotsDialog3.dismiss();
                     }
-                    shuffleOutput.setText(outputBuilder.toString());
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                } catch (Exception e) {
-                    if (e instanceof NumberFormatException) {
-                        shuffleOutput.setText(getString(R.string.digit_err) + e.toString());
-                    } else {
-                        shuffleOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString());
-                    }
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                }
+                }).start();
+                shuffleInput.clearFocus();
+                shuffleOutput.clearFocus();
                 break;
 
             case R.id.sortByDictionaryIndex:
@@ -2067,6 +2051,7 @@ public class MainActivity extends AppCompatActivity
 
             default:
         }
+
     }
 
     private void findAll() {
@@ -4457,6 +4442,23 @@ public class MainActivity extends AppCompatActivity
                 return R.id.nav_more_functions;
             default:
                 throw new Exception("Unknown Exception");
+        }
+    }
+
+    private String getInputString() {
+        switch (getCurrentShowingLayoutId()) {
+            case R.id.textReplaceLayout:
+                return replaceInput.getText().toString();
+            case R.id.textSearchLayout:
+                return searchInput.getText().toString();
+            case R.id.textShuffleLayout:
+                return shuffleInput.getText().toString();
+            case R.id.textEncryptLayout:
+                return encryptInput.getText().toString();
+            case R.id.textMoreLayout:
+                return moreInput.getText().toString();
+            default:
+                return null;
         }
     }
 }
