@@ -1681,44 +1681,51 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.sortByDictionaryIndex:
-                try {
-                    char spiltWithChar;
-                    if (noUseSpaces.isChecked()) {
-                        spiltWithChar = '\n';
-                    } else {
-                        spiltWithChar = ' ';
-                    }
-                    String inputStr = shuffleInput.getText().toString();
-                    StringBuilder outputBuilder = new StringBuilder();
-                    int elementCount = 0;
-                    for (int i = 0; i < inputStr.length(); i++) {
-                        if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
-                            elementCount++;
+                AlertDialog spotsDialog4 = new SpotsDialog.Builder().setContext(this)
+                    .setMessage(R.string.please_wait).setCancelable(false).setTheme(R.style.MySpotsDialog).build();
+                spotsDialog4.show();
+                new Thread(() -> {
+                    try {
+                        char spiltWithChar;
+                        if (noUseSpaces.isChecked()) {
+                            spiltWithChar = '\n';
+                        } else {
+                            spiltWithChar = ' ';
                         }
-                    }
-                    elementCount++;
-                    String[] elements = new String[elementCount];
-                    for (int i = 0; i < elementCount; i++) {
-                        elements = inputStr.split("[\n ]", elementCount);
-                    }
-                    Arrays.sort(elements, new PinyinComparator());
-                    for (int i = 0; i < elementCount; i++) {
-                        if (!elements[i].isEmpty()) {
-                            if (i < elementCount - 1) {
-                                outputBuilder.append(elements[i]).append(spiltWithChar);
-                            } else {
-                                outputBuilder.append(elements[i]);
+                        String inputStr = shuffleInput.getText().toString();
+                        StringBuilder outputBuilder = new StringBuilder();
+                        int elementCount = 0;
+                        for (int i = 0; i < inputStr.length(); i++) {
+                            if (inputStr.charAt(i) == ' ' || inputStr.charAt(i) == '\n') {
+                                elementCount++;
                             }
                         }
+                        elementCount++;
+                        String[] elements = new String[elementCount];
+                        for (int i = 0; i < elementCount; i++) {
+                            elements = inputStr.split("[\n ]", elementCount);
+                        }
+                        Arrays.sort(elements, new PinyinComparator());
+                        for (int i = 0; i < elementCount; i++) {
+                            if (!elements[i].isEmpty()) {
+                                if (i < elementCount - 1) {
+                                    outputBuilder.append(elements[i]).append(spiltWithChar);
+                                } else {
+                                    outputBuilder.append(elements[i]);
+                                }
+                            }
+                        }
+                        shuffleOutput.post(() -> shuffleOutput.setText(outputBuilder.toString()));
+                    } catch (Exception e) {
+                        shuffleOutput
+                            .post(() -> shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString()));
+
+                    } finally {
+                        spotsDialog4.dismiss();
                     }
-                    shuffleOutput.setText(outputBuilder.toString());
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                } catch (Exception e) {
-                    shuffleOutput.setText(getString(R.string.exception_occurred) + e.toString());
-                    shuffleInput.clearFocus();
-                    shuffleOutput.clearFocus();
-                }
+                }).start();
+                shuffleInput.clearFocus();
+                shuffleOutput.clearFocus();
                 break;
 
             case R.id.searchPrevious:
@@ -1946,47 +1953,52 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.encrypt:
-                try {
-                    if (salt.isEmpty()) {
-                        if (encryptKey.getText().toString().isEmpty()) {
-                            encryptOutput.setText(
-                                getString(R.string.key_empty), BufferType.EDITABLE);
-                            return;
-                        }
-                        String originText = encryptInput.getText().toString();
-                        String password = encryptKey.getText().toString();
-                        String encryptedText = AESCrypt.encrypt(password, originText);
-                        encryptOutput.setText(encryptedText, BufferType.EDITABLE);
-                    } else {
-                        if (keyGenNeedToReset) {
+                AlertDialog spotsDialog5 = new SpotsDialog.Builder().setContext(this)
+                    .setMessage(R.string.please_wait).setCancelable(false).setTheme(R.style.MySpotsDialog).build();
+                spotsDialog5.show();
+                new Thread(() -> {
+                    try {
+                        if (salt.isEmpty()) {
                             if (encryptKey.getText().toString().isEmpty()) {
-                                encryptOutput.setText(
-                                    getString(R.string.key_empty), BufferType.EDITABLE);
+                                encryptOutput.post(() -> encryptOutput.setText(
+                                    getString(R.string.key_empty), BufferType.EDITABLE));
                                 return;
                             }
-                            String saltBase64 =
-                                Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
-                            generatedKey =
-                                AESUtils.generateKey(
-                                    encryptKey.getText().toString(), saltBase64);
-                            keyGenNeedToReset = false;
+                            String originText = encryptInput.getText().toString();
+                            String password = encryptKey.getText().toString();
+                            String encryptedText = AESCrypt.encrypt(password, originText);
+                            encryptOutput.post(() -> encryptOutput.setText(encryptedText, BufferType.EDITABLE));
+                        } else {
+                            if (keyGenNeedToReset) {
+                                if (encryptKey.getText().toString().isEmpty()) {
+                                    encryptOutput.post(() -> encryptOutput.setText(
+                                        getString(R.string.key_empty), BufferType.EDITABLE));
+                                    return;
+                                }
+                                String saltBase64 =
+                                    Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
+                                generatedKey =
+                                    AESUtils.generateKey(
+                                        encryptKey.getText().toString(), saltBase64);
+                                keyGenNeedToReset = false;
+                            }
+                            String encryptSourceText = encryptInput.getText().toString();
+                            String encryptResult;
+                            encryptResult = AESUtils.getEnString(encryptSourceText, generatedKey);
+                            encryptOutput.post(() -> encryptOutput.setText(encryptResult, BufferType.EDITABLE));
                         }
-                        String encryptSourceText = encryptInput.getText().toString();
-                        String encryptResult;
-                        encryptResult = AESUtils.getEnString(encryptSourceText, generatedKey);
-                        encryptOutput.setText(encryptResult, BufferType.EDITABLE);
+                    } catch (Exception e) {
+                        encryptOutput.post(() -> encryptOutput.setText(
+                            getString(R.string.exception_occurred) + e.toString(),
+                            BufferType.EDITABLE));
+
+                    } finally {
+                        spotsDialog5.dismiss();
                     }
-                    encryptInput.clearFocus();
-                    encryptOutput.clearFocus();
-                    encryptKey.clearFocus();
-                } catch (Exception e) {
-                    encryptOutput.setText(
-                        getString(R.string.exception_occurred) + e.toString(),
-                        BufferType.EDITABLE);
-                    encryptInput.clearFocus();
-                    encryptOutput.clearFocus();
-                    encryptKey.clearFocus();
-                }
+                }).start();
+                encryptInput.clearFocus();
+                encryptOutput.clearFocus();
+                encryptKey.clearFocus();
                 break;
 
             case R.id.decrypt:
