@@ -422,4 +422,8 @@
     <string name="restart_to_apply">請重啓App以應用更改</string>
     <string name="menu_monospace">使用等寬字體</string>
     <string name="please_wait">請稍等…</string>
+    <string name="to_sbc">半角轉全角字符</string>
+    <string name="to_dbc">全角轉半角字符</string>
+    <string name="to_sbc_disc">將半角字符轉為對應的全角字符</string>
+    <string name="to_dbc_disc">將全角字符轉為對應的半角字符</string>
 </resources>

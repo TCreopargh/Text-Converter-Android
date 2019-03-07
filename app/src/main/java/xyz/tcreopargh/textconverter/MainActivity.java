@@ -2002,68 +2002,72 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.decrypt:
-                try {
-                    if (salt.isEmpty()) {
-                        if (encryptKey.getText().toString().isEmpty()) {
-                            encryptOutput.setText(
-                                getString(R.string.key_empty), BufferType.EDITABLE);
-                            return;
-                        }
-                        String encryptedMsg = encryptInput.getText().toString();
-                        String password = encryptKey.getText().toString();
-                        String decryptedText = AESCrypt.decrypt(password, encryptedMsg);
-                        encryptOutput.setText(decryptedText, BufferType.EDITABLE);
-                    } else {
-                        if (keyGenNeedToReset) {
+                AlertDialog spotsDialog6 = new SpotsDialog.Builder().setContext(this)
+                    .setMessage(R.string.please_wait).setCancelable(false).setTheme(R.style.MySpotsDialog).build();
+                spotsDialog6.show();
+                new Thread(() -> {
+                    try {
+                        if (salt.isEmpty()) {
                             if (encryptKey.getText().toString().isEmpty()) {
                                 encryptOutput.setText(
                                     getString(R.string.key_empty), BufferType.EDITABLE);
                                 return;
                             }
-                            String saltBase64 =
-                                Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
-                            generatedKey =
-                                AESUtils.generateKey(
-                                    encryptKey.getText().toString(), saltBase64);
-                            keyGenNeedToReset = false;
-                        }
-                        String decryptSourceText = encryptInput.getText().toString();
-                        String decryptResult;
-                        decryptResult = AESUtils.getDeString(decryptSourceText, generatedKey);
-                        encryptOutput.setText(decryptResult, BufferType.EDITABLE);
-                    }
-                    encryptInput.clearFocus();
-                    encryptOutput.clearFocus();
-                    encryptKey.clearFocus();
-                } catch (Exception e) {
-                    if (e instanceof IllegalArgumentException) {
-                        if (salt.isEmpty()) {
-                            encryptOutput.setText(
-                                getString(R.string.not_encrypted), BufferType.EDITABLE);
+                            String encryptedMsg = encryptInput.getText().toString();
+                            String password = encryptKey.getText().toString();
+                            String decryptedText = AESCrypt.decrypt(password, encryptedMsg);
+                            encryptOutput.post(() -> encryptOutput.setText(decryptedText, BufferType.EDITABLE));
                         } else {
-                            encryptOutput.setText(
-                                getString(R.string.not_encrypted)
-                                    + "\n"
-                                    + getString(R.string.salted_enc),
-                                BufferType.EDITABLE);
-                        }
-                    } else if (e instanceof GeneralSecurityException) {
-                        encryptOutput.setText(
-                            getString(R.string.decrypt_fail), BufferType.EDITABLE);
-                    } else {
-                        encryptOutput.setText(
-                            getString(R.string.exception_occurred) + e.toString(),
-                            BufferType.EDITABLE);
-                    }
-                    encryptInput.clearFocus();
-                    encryptOutput.clearFocus();
-                    encryptKey.clearFocus();
-                }
-                break;
+                            if (keyGenNeedToReset) {
+                                if (encryptKey.getText().toString().isEmpty()) {
+                                    encryptOutput.setText(
+                                        getString(R.string.key_empty), BufferType.EDITABLE);
+                                    return;
+                                }
+                                String saltBase64 =
+                                    Base64.encodeToString(salt.getBytes(), Base64.DEFAULT);
+                                generatedKey =
+                                    AESUtils.generateKey(
+                                        encryptKey.getText().toString(), saltBase64);
+                                keyGenNeedToReset = false;
+                            }
+                            String decryptSourceText = encryptInput.getText().toString();
+                            String decryptResult;
+                            decryptResult = AESUtils.getDeString(decryptSourceText, generatedKey);
+                            encryptOutput.post(() -> encryptOutput.setText(decryptResult, BufferType.EDITABLE));
 
+                        }
+                    } catch (Exception e) {
+                        if (e instanceof IllegalArgumentException) {
+                            if (salt.isEmpty()) {
+                                encryptOutput.post(() -> encryptOutput.setText(
+                                    getString(R.string.not_encrypted), BufferType.EDITABLE));
+                            } else {
+                                encryptOutput.post(() -> encryptOutput.setText(
+                                    getString(R.string.not_encrypted)
+                                        + "\n"
+                                        + getString(R.string.salted_enc),
+                                    BufferType.EDITABLE));
+                            }
+                        } else if (e instanceof GeneralSecurityException) {
+                            encryptOutput.post(() -> encryptOutput.setText(
+                                getString(R.string.decrypt_fail), BufferType.EDITABLE));
+                        } else {
+                            encryptOutput.post(() -> encryptOutput.setText(
+                                getString(R.string.exception_occurred) + e.toString(),
+                                BufferType.EDITABLE));
+                        }
+                    } finally {
+                        spotsDialog6.dismiss();
+                    }
+                }).start();
+
+                encryptInput.clearFocus();
+                encryptOutput.clearFocus();
+                encryptKey.clearFocus();
+                break;
             default:
         }
-
     }
 
     private void findAll() {
@@ -2829,6 +2833,12 @@ public class MainActivity extends AppCompatActivity
                 getString(R.string.hanyu_to_pinyin),
                 getString(R.string.hanyu_to_pinyin_disc));
         itemsList.add(toPinyin);
+        //22
+        ListItems toSbc = new ListItems(getString(R.string.to_sbc), getString(R.string.to_sbc_disc));
+        itemsList.add(toSbc);
+        //23
+        ListItems toDbc = new ListItems(getString(R.string.to_dbc), getString(R.string.to_dbc_disc));
+        itemsList.add(toDbc);
     }
 
     @SuppressLint("SetTextI18n")
@@ -4320,6 +4330,46 @@ public class MainActivity extends AppCompatActivity
                                         })
                                     .create()
                                     .show();
+                                break;
+
+                            case 22:
+                                //to SBC
+                                try {
+                                    String dbcInput = moreInput.getText().toString();
+                                    moreOutput.setText(AsciiUtil.dbc2sbcCase(dbcInput), BufferType.EDITABLE);
+                                } catch (Exception e
+                                ) {
+                                    moreOutput.setText(
+                                        getString(
+                                            R.string
+                                                .exception_occurred)
+                                            + e.toString(),
+                                        BufferType.EDITABLE);
+                                } finally {
+                                    moreInput.clearFocus();
+                                    moreOutput.clearFocus();
+                                }
+
+                                break;
+
+                            case 23:
+                                //to DBC
+                                try {
+                                    String sbcInput = moreInput.getText().toString();
+                                    moreOutput.setText(AsciiUtil.sbc2dbcCase(sbcInput), BufferType.EDITABLE);
+                                } catch (Exception e
+                                ) {
+                                    moreOutput.setText(
+                                        getString(
+                                            R.string
+                                                .exception_occurred)
+                                            + e.toString(),
+                                        BufferType.EDITABLE);
+                                } finally {
+                                    moreInput.clearFocus();
+                                    moreOutput.clearFocus();
+                                }
+
                                 break;
 
                             default:

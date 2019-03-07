@@ -128,7 +128,7 @@
     <string name="developer">Developer：TCreopargh</string>
     <string name="visit_my_website">View my website</string>
     <string name="update">Check updates</string>
-    <string name="exception_occurred">Error：</string>
+    <string name="exception_occurred">Error:</string>
     <string name="key_empty">Password cannot be empty!</string>
     <string name="string_reverse">Reverse strings</string>
     <string name="add_spaces">Add indents</string>
@@ -422,4 +422,8 @@
     <string name="restart_to_apply">Please restart the app to apply changes</string>
     <string name="menu_monospace">Monospace font</string>
     <string name="please_wait">Please wait…</string>
+    <string name="to_sbc">DBC case to SBC case</string>
+    <string name="to_dbc">SBC case to DBC case</string>
+    <string name="to_sbc_disc">Converts DBC case characters to its corresponding SBC case character</string>
+    <string name="to_dbc_disc">Converts SBC case characters to its corresponding DBC case character</string>
 </resources>
